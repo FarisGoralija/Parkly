@@ -45,6 +45,7 @@ const customMapStyle = [
     elementType: 'labels.text',
     stylers: [{ saturation: '3' }, { lightness: '-56' }, { weight: '2.20' }],
   },
+  //map
   {
     featureType: 'road.highway',
     elementType: 'labels.text.fill',
