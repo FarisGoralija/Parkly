@@ -1,6 +1,7 @@
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import * as Location from "expo-location";
+import React, { useState, useEffect } from "react";
 
 // Custom Google Maps Style
 const customMapStyle = [
@@ -102,45 +103,77 @@ const customMapStyle = [
 ];
 
 export default function CustomMap() {
-    const locations = [
-      { id: 1, name: 'SCC', latitude: 43.8554, longitude: 18.4078 },
-      { id: 2, name: 'BBI', latitude: 43.8587, longitude: 18.4186 },
-      { id: 3, name: 'Random Location 1', latitude: 43.8599, longitude: 18.4250 },
-      { id: 4, name: 'Random Location 2', latitude: 43.8530, longitude: 18.4115 },
-    ];
-  
-    return (
-      <View style={styles.container}>
-        <MapView
-          style={styles.map}
-          customMapStyle={customMapStyle}
-          initialRegion={{
-            latitude: 43.8563,
-            longitude: 18.4131,
-            latitudeDelta: 0.02,
-            longitudeDelta: 0.02,
-          }}
-        >
-          {locations.map((location) => (
-            <Marker
+  const [location, setLocation] = useState(null);
+
+  // Request location and update map
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission Denied", "Allow location access to use this feature.");
+        return;
+      }
+
+      let userLocation = await Location.getCurrentPositionAsync({});
+      setLocation({
+        latitude: userLocation.coords.latitude,
+        longitude: userLocation.coords.longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      });
+    })();
+  }, []);
+
+  const locations = [
+    { id: 1, name: "SCC", latitude: 43.8554, longitude: 18.4078 },
+    { id: 2, name: "BBI", latitude: 43.8587, longitude: 18.4186 },
+    { id: 3, name: "Random Location 1", latitude: 43.8599, longitude: 18.4250 },
+    { id: 4, name: "Random Location 2", latitude: 43.8530, longitude: 18.4115 },
+  ];
+
+  return (
+    <View style={styles.container}>
+      <MapView
+        style={styles.map}
+        customMapStyle={customMapStyle}
+        initialRegion={{
+          latitude: 43.8563,
+          longitude: 18.4131,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        }}
+        region={location} // Updates the map to center on the user
+        showsUserLocation={true} // Shows the blue dot
+        followsUserLocation={true} // Moves the map with the user
+      >
+        {/* Show existing markers */}
+        {locations.map((location) => (
+          <Marker
             key={location.id}
             coordinate={{ latitude: location.latitude, longitude: location.longitude }}
             title={location.name}
             pinColor="green"
           />
-          
-          ))}
-        </MapView>
-      </View>
-    );
-  }
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    map: {
-      ...StyleSheet.absoluteFillObject,
-    },
-  });
-  
+        ))}
+
+        {/* Show User's Location Marker */}
+        {location && (
+          <Marker
+            coordinate={location}
+            title="You are here"
+            pinColor="blue"
+          />
+        )}
+      </MapView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+});
