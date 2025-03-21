@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View,} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from "expo-location";
 import React, { useState, useEffect } from "react";
@@ -157,14 +157,10 @@ export default function CustomMap() {
           />
         ))}
 
-        {/* Show User's Location Marker */}
-        {location && (
-          <Marker
-            coordinate={location}
-            title="You are here"
-            pinColor="blue"
-          />
-        )}
+        
+
+       
+       
       </MapView>
     </View>
   );
@@ -177,4 +173,11 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+  navigationIcon: {
+    width: 25, // Adjust size to match Google Maps
+    height: 25,
+    tintColor: "#007AFF", // Blue color for arrow (optional)
+    transform: [{ rotate: "0deg" }], // Adjust rotation if needed
+  },
+  
 });
