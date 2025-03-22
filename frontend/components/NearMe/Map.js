@@ -103,9 +103,8 @@ const customMapStyle = [
   },
 ];
 
-export default function CustomMap() {
+export default function CustomMap({ onSelectLocation }) {
   const [location, setLocation] = useState(null);
-
   // Request location and update map
   useEffect(() => {
     (async () => {
@@ -128,40 +127,35 @@ export default function CustomMap() {
   const locations = [
     { id: 1, name: "SCC", latitude: 43.8554, longitude: 18.4078 },
     { id: 2, name: "BBI", latitude: 43.8587, longitude: 18.4186 },
-    { id: 3, name: "Random Location 1", latitude: 43.8599, longitude: 18.4250 },
+    { id: 3, name: "Stara Cesta", latitude: 43.8599, longitude: 18.4250 },
     { id: 4, name: "Random Location 2", latitude: 43.8530, longitude: 18.4115 },
   ];
 
   return (
     <View style={styles.container}>
       <MapView
-        style={styles.map}
-        customMapStyle={customMapStyle}
-        initialRegion={{
-          latitude: 43.8563,
-          longitude: 18.4131,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
-        }}
-        region={location} // Updates the map to center on the user
-        showsUserLocation={true} // Shows the blue dot
-        followsUserLocation={true} // Moves the map with the user
-      >
-        {/* Show existing markers */}
-        {locations.map((location) => (
-          <Marker
-            key={location.id}
-            coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-            title={location.name}
-            pinColor="green"
-          />
-        ))}
-
-        
-
-       
-       
-      </MapView>
+      style={styles.map}
+      customMapStyle={customMapStyle}
+      initialRegion={{
+        latitude: 43.8563,
+        longitude: 18.4131,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      }}
+      region={location}
+      showsUserLocation={true}
+      followsUserLocation={true}
+    >
+      {locations.map((loc) => (
+        <Marker
+          key={loc.id}
+          coordinate={{ latitude: loc.latitude, longitude: loc.longitude }}
+          title={loc.name}
+          pinColor="green"
+          onPress={() => onSelectLocation(loc)} // 👈 Trigger parent handler
+        />
+      ))}
+    </MapView>
     </View>
   );
 }
