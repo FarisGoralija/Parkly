@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View,} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from "expo-location";
 import React, { useState, useEffect } from "react";
@@ -45,6 +45,7 @@ const customMapStyle = [
     elementType: 'labels.text',
     stylers: [{ saturation: '3' }, { lightness: '-56' }, { weight: '2.20' }],
   },
+  //map
   {
     featureType: 'road.highway',
     elementType: 'labels.text.fill',
@@ -102,9 +103,8 @@ const customMapStyle = [
   },
 ];
 
-export default function CustomMap() {
+export default function CustomMap({ onSelectLocation }) {
   const [location, setLocation] = useState(null);
-
   // Request location and update map
   useEffect(() => {
     (async () => {
@@ -127,44 +127,35 @@ export default function CustomMap() {
   const locations = [
     { id: 1, name: "SCC", latitude: 43.8554, longitude: 18.4078 },
     { id: 2, name: "BBI", latitude: 43.8587, longitude: 18.4186 },
-    { id: 3, name: "Random Location 1", latitude: 43.8599, longitude: 18.4250 },
+    { id: 3, name: "Stara Cesta", latitude: 43.8599, longitude: 18.4250 },
     { id: 4, name: "Random Location 2", latitude: 43.8530, longitude: 18.4115 },
   ];
 
   return (
     <View style={styles.container}>
       <MapView
-        style={styles.map}
-        customMapStyle={customMapStyle}
-        initialRegion={{
-          latitude: 43.8563,
-          longitude: 18.4131,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
-        }}
-        region={location} // Updates the map to center on the user
-        showsUserLocation={true} // Shows the blue dot
-        followsUserLocation={true} // Moves the map with the user
-      >
-        {/* Show existing markers */}
-        {locations.map((location) => (
-          <Marker
-            key={location.id}
-            coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-            title={location.name}
-            pinColor="green"
-          />
-        ))}
-
-        {/* Show User's Location Marker */}
-        {location && (
-          <Marker
-            coordinate={location}
-            title="You are here"
-            pinColor="blue"
-          />
-        )}
-      </MapView>
+      style={styles.map}
+      customMapStyle={customMapStyle}
+      initialRegion={{
+        latitude: 43.8563,
+        longitude: 18.4131,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      }}
+      region={location}
+      showsUserLocation={true}
+      followsUserLocation={true}
+    >
+      {locations.map((loc) => (
+        <Marker
+          key={loc.id}
+          coordinate={{ latitude: loc.latitude, longitude: loc.longitude }}
+          title={loc.name}
+          pinColor="green"
+          onPress={() => onSelectLocation(loc)} // 👈 Trigger parent handler
+        />
+      ))}
+    </MapView>
     </View>
   );
 }
@@ -176,4 +167,11 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+  navigationIcon: {
+    width: 25, // Adjust size to match Google Maps
+    height: 25,
+    tintColor: "#007AFF", // Blue color for arrow (optional)
+    transform: [{ rotate: "0deg" }], // Adjust rotation if needed
+  },
+  
 });

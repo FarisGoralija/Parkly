@@ -1,0 +1,380 @@
+import React, { useState , useEffect} from "react";
+
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
+import Modal from "react-native-modal";
+import { calculatePrice } from "../../utilis/priceCalculator";
+
+
+
+const { height } = Dimensions.get("window");
+export default function BottomSheetModal({ isVisible, onClose, location }) {
+    const [step, setStep] = useState(1);
+  const [fromTime, setFromTime] = React.useState("");
+  const [untilTime, setUntilTime] = React.useState("");
+  const [liked, setLiked] = React.useState(false);
+
+  useEffect(() => {
+    if (isVisible) {
+      setStep(1); // Reset to Step 1 every time modal opens
+    }
+  }, [isVisible]);
+  const formatTimeInput = (text) => {
+    const digitsOnly = text.replace(/\D/g, "").slice(0, 4); // Keep only 4 digits max
+    if (digitsOnly.length <= 2) {
+      return digitsOnly;
+    }
+    return `${digitsOnly.slice(0, 2)}:${digitsOnly.slice(2)}`;
+  };
+  const isValidTime = (time) => {
+    const timeRegex = /^([01]?\d|2[0-3]):([0-5]\d)$/; // Matches HH:MM from 00:00 to 23:59
+    return timeRegex.test(time);
+  };
+
+  const calculatedPrice =
+    isValidTime(fromTime) && isValidTime(untilTime)
+      ? calculatePrice(fromTime, untilTime)
+      : 0;
+
+  return (
+    <Modal
+      isVisible={isVisible}
+      onSwipeComplete={onClose}
+      swipeDirection="down"
+      style={styles.modal}
+      backdropOpacity={0.3}
+      onBackdropPress={onClose}
+      propagateSwipe
+      avoidKeyboard
+      useNativeDriver={true}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+  <View style={styles.container}>
+    <View style={styles.handle} />
+    {step === 1 ? (
+      // STEP 1: Reserve Screen
+      <>
+        {/* Header */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.title}>
+              {location?.name || "Location name"}
+            </Text>
+            <Text style={styles.subtitle}>2 KM / per h</Text>
+          </View>
+          <View style={styles.headerIcons}>
+            <TouchableOpacity onPress={() => setLiked(!liked)}>
+              <Image
+                source={require("../../assets/icons/Heart.png")}
+                style={[styles.heartIcon, { tintColor: liked ? "darkred" : "#fff" }]}
+              />
+            </TouchableOpacity>
+            <Image source={require("../../assets/icons/ShareRounded.png")} style={styles.shareIcon} />
+            <TouchableOpacity onPress={onClose}>
+              <Image source={require("../../assets/icons/Cancel.png")} style={styles.cancelIcon} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Actions */}
+        <View style={styles.actions}>
+          <ActionButton image={require("../../assets/icons/Navigate.png")} label="Navigate" />
+          <ActionButton image={require("../../assets/icons/Compass.png")} label="Website" />
+          <ActionButton image={require("../../assets/icons/Phone.png")} label="Call" />
+          <ActionButton image={require("../../assets/icons/Walking.png")} label="4 min" />
+        </View>
+
+        {/* Time Selection */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={{ marginTop: 29 }}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+        >
+          <View style={styles.timeRow}>
+            <TextInput
+              style={styles.timeInput}
+              value={fromTime}
+              onChangeText={(text) => setFromTime(formatTimeInput(text))}
+              keyboardType="numeric"
+              placeholder="From"
+              placeholderTextColor="#D2D2D2"
+            />
+            <Text style={styles.arrow}>→</Text>
+            <TextInput
+              style={styles.timeInput}
+              value={untilTime}
+              onChangeText={(text) => setUntilTime(formatTimeInput(text))}
+              keyboardType="numeric"
+              placeholder="Until"
+              placeholderTextColor="#D2D2D2"
+            />
+          </View>
+        </KeyboardAvoidingView>
+
+        {/* Price */}
+        <View style={styles.priceRow}>
+          <Text style={styles.price}>Price: {calculatedPrice}KM</Text>
+          <Text style={styles.available}>18/50</Text>
+        </View>
+
+        {/* Reserve Now Button */}
+        <TouchableOpacity
+          style={[
+            styles.reserveButton,
+            {
+              backgroundColor: isValidTime(fromTime) && isValidTime(untilTime)
+                ? "#0195F5"
+                : "#8AD1FF",
+            },
+          ]}
+          disabled={!(isValidTime(fromTime) && isValidTime(untilTime))}
+          onPress={() => setStep(2)}
+        >
+          <Text style={styles.reserveText}>Reserve now</Text>
+        </TouchableOpacity>
+      </>
+    ) : (
+      // STEP 2: Payment Screen
+      <>
+       <View style={styles.header}>
+    <Text style={[styles.title, { marginBottom: 5 }]}>Payment method</Text>
+    <TouchableOpacity onPress={onClose}>
+      <Image
+        source={require("../../assets/icons/Cancel.png")}
+        style={styles.cancelIcon2}
+      />
+    </TouchableOpacity>
+  </View>
+
+  {/* Price */}
+  <Text style={styles.price2}>Price: {calculatedPrice}KM</Text>
+  
+  {/* Car picker */}
+  <View style={{ marginVertical: 20 }}>
+    <TouchableOpacity style={{
+      backgroundColor: "#9C9C9C",
+      borderRadius: 10,
+      height: 41,
+      justifyContent: "center",
+      paddingHorizontal: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      marginHorizontal: 10,
+    }}>
+      <Text style={{ color: "#fff", flex: 1 }}>Choose car</Text>
+      <Image
+        source={require("../../assets/icons/DropdownArrow.png")}
+        style={{ width: 30, height: 30, tintColor: "#fff" }}
+      />
+    </TouchableOpacity>
+
+    <TouchableOpacity style={{ marginTop: 8 }}>
+      <Text style={{ color: "#fff", textAlign: "right", marginHorizontal:15, }}>Add a car</Text>
+    </TouchableOpacity>
+  </View>
+
+  {/* Next Button */}
+  <TouchableOpacity
+    style={[styles.reserveButton, { backgroundColor: "#0195F5", top:100, }]}
+    onPress={onClose}
+  >
+    <Text style={styles.reserveText}>Next</Text>
+  </TouchableOpacity>
+</>
+    
+    )}
+  </View>
+</TouchableWithoutFeedback>
+
+    </Modal>
+  );
+}
+
+const ActionButton = ({ image, label }) => (
+  <TouchableOpacity style={styles.actionButton}>
+    <Image source={image} style={styles.iconImage} resizeMode="contain" />
+    <Text style={styles.actionLabel}>{label}</Text>
+  </TouchableOpacity>
+);
+
+const styles = StyleSheet.create({
+  modal: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
+  container: {
+    height: Platform.OS === "ios" ? height / 2.3 : height / 2,
+    backgroundColor: "#3D3E45",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 16,
+  },
+  handle: {
+    width: 50,
+    height: 5,
+    backgroundColor: "#888",
+    borderRadius: 3,
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 15,
+  },
+  headerImage: {
+    width: 25,
+    height: 25,
+    marginHorizontal: 4,
+    tintColor: "#fff",
+  },
+  headerIcons: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 15,
+  },
+
+  heartIcon: {
+    width: 27,
+    height: 27,
+    marginRight: 12,
+    tintColor: "#fff", // example: red heart
+  },
+
+  shareIcon: {
+    width: 28,
+    height: 28,
+    marginRight: 12,
+    tintColor: "#fff", 
+  },
+
+  cancelIcon: {
+    width: 25,
+    height: 25,
+    tintColor: "#fff",
+ 
+  },
+  cancelIcon2:{
+    width: 25,
+    height: 25,
+    tintColor: "#fff",
+    right:15,
+    top:12,
+
+  },
+
+  title: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#fff",
+    marginHorizontal: 15,
+  },
+  subtitle: {
+    color: "#fff",
+    marginHorizontal: 15,
+    marginTop: 10,
+    fontWeight: "600",
+    fontSize: 16,
+  },
+
+  iconImage: {
+    width: 20,
+    height: 20,
+  },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 20,
+  },
+  actionButton: {
+    alignItems: "center",
+    backgroundColor: "#2e6ddf",
+    borderRadius: 12,
+    padding: 8,
+    width: "20%",
+    height: 46,
+    justifyContent: "center",
+  },
+  actionLabel: {
+    fontSize: 10,
+    color: "#fff",
+    marginTop: 4,
+    textAlign: "center",
+    fontWeight: "700",
+  },
+  timeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  timeInput: {
+    backgroundColor: "#9C9C9C",
+    height: 45,
+    paddingHorizontal: 15,
+    borderRadius: 15,
+    width: "41.5%",
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  arrow: {
+    color: "#fff",
+    fontSize: 24,
+    marginHorizontal: 12,
+  },
+  priceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 20,
+    marginHorizontal: 15,
+  },
+  price: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    
+  },
+  price2:{
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    marginHorizontal:15,
+
+  },
+  available: {
+    color: "#1CD159",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+
+  reserveButton: {
+    backgroundColor: "#8AD1FF",
+    paddingVertical: 13,
+    borderRadius: 15,
+    marginTop: 10,
+    height: 46,
+    marginHorizontal: 10,
+    alignItems: "center",
+  },
+  reserveText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "600",
+  },
+});
+
+

@@ -51,7 +51,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#333",
+    height: 40, 
+    lineHeight: 20, 
+    textAlignVertical: "center", 
+    paddingVertical: 5, 
+    includeFontPadding: false, 
   },
+  
   icon: {
     marginLeft: 10,
   },
