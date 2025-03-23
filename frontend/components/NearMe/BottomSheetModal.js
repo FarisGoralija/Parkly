@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState , useEffect} from "react";
+
 import {
   View,
   Text,
@@ -15,11 +16,20 @@ import {
 import Modal from "react-native-modal";
 import { calculatePrice } from "../../utilis/priceCalculator";
 
+
+
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
+    const [step, setStep] = useState(1);
   const [fromTime, setFromTime] = React.useState("");
   const [untilTime, setUntilTime] = React.useState("");
   const [liked, setLiked] = React.useState(false);
+
+  useEffect(() => {
+    if (isVisible) {
+      setStep(1); // Reset to Step 1 every time modal opens
+    }
+  }, [isVisible]);
   const formatTimeInput = (text) => {
     const digitsOnly = text.replace(/\D/g, "").slice(0, 4); // Keep only 4 digits max
     if (digitsOnly.length <= 2) {
@@ -50,112 +60,143 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
       useNativeDriver={true}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          {/* Drag handle */}
-          <View style={styles.handle} />
-
-          {/* Header */}
-          <View style={styles.header}>
-            <View>
-              <Text style={styles.title}>
-                {location?.name || "Location name"}
-              </Text>
-              <Text style={styles.subtitle}>2 KM / per h</Text>
-            </View>
-            <View style={styles.headerIcons}>
-              <TouchableOpacity onPress={() => setLiked(!liked)}>
-                <Image
-                  source={require("../../assets/icons/Heart.png")}
-                  style={[
-                    styles.heartIcon,
-                    { tintColor: liked ? "darkred" : "#fff" },
-                  ]}
-                />
-              </TouchableOpacity>
-
+  <View style={styles.container}>
+    <View style={styles.handle} />
+    {step === 1 ? (
+      // STEP 1: Reserve Screen
+      <>
+        {/* Header */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.title}>
+              {location?.name || "Location name"}
+            </Text>
+            <Text style={styles.subtitle}>2 KM / per h</Text>
+          </View>
+          <View style={styles.headerIcons}>
+            <TouchableOpacity onPress={() => setLiked(!liked)}>
               <Image
-                source={require("../../assets/icons/ShareRounded.png")}
-                style={styles.shareIcon}
+                source={require("../../assets/icons/Heart.png")}
+                style={[styles.heartIcon, { tintColor: liked ? "darkred" : "#fff" }]}
               />
-              <TouchableOpacity onPress={onClose}>
-                <Image
-                  source={require("../../assets/icons/Cancel.png")}
-                  style={styles.cancelIcon}
-                />
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
+            <Image source={require("../../assets/icons/ShareRounded.png")} style={styles.shareIcon} />
+            <TouchableOpacity onPress={onClose}>
+              <Image source={require("../../assets/icons/Cancel.png")} style={styles.cancelIcon} />
+            </TouchableOpacity>
           </View>
-
-          {/* Actions */}
-          <View style={styles.actions}>
-            <ActionButton
-              image={require("../../assets/icons/Navigate.png")}
-              label="Navigate"
-            />
-            <ActionButton
-              image={require("../../assets/icons/Compass.png")}
-              label="Website"
-            />
-            <ActionButton
-              image={require("../../assets/icons/Phone.png")}
-              label="Call"
-            />
-            <ActionButton
-              image={require("../../assets/icons/Walking.png")}
-              label="4 min"
-            />
-          </View>
-
-          {/* Wrap this part only in KeyboardAvoidingView */}
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            style={{ marginTop: 29 }}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
-          >
-            <View style={styles.timeRow}>
-              <TextInput
-                style={styles.timeInput}
-                value={fromTime}
-                onChangeText={(text) => setFromTime(formatTimeInput(text))}
-                keyboardType="numeric"
-                placeholder="From"
-                placeholderTextColor="#D2D2D2"
-              />
-              <Text style={styles.arrow}>→</Text>
-              <TextInput
-                style={styles.timeInput}
-                value={untilTime}
-                onChangeText={(text) => setUntilTime(formatTimeInput(text))}
-                keyboardType="numeric"
-                placeholder="Until"
-                placeholderTextColor="#D2D2D2"
-              />
-            </View>
-          </KeyboardAvoidingView>
-
-          {/* Price & availability */}
-          <View style={styles.priceRow}>
-            <Text style={styles.price}>Price: {calculatedPrice}KM</Text>
-            <Text style={styles.available}>18/50</Text>
-          </View>
-
-          {/* Reserve Button */}
-          <TouchableOpacity
-            style={[
-              styles.reserveButton,
-              {
-                backgroundColor:
-                  isValidTime(fromTime) && isValidTime(untilTime)
-                    ? "#0195F5"
-                    : "#8AD1FF",
-              },
-            ]}
-            disabled={!(isValidTime(fromTime) && isValidTime(untilTime))}
-          >
-            <Text style={styles.reserveText}>Reserve now</Text>
-          </TouchableOpacity>
         </View>
-      </TouchableWithoutFeedback>
+
+        {/* Actions */}
+        <View style={styles.actions}>
+          <ActionButton image={require("../../assets/icons/Navigate.png")} label="Navigate" />
+          <ActionButton image={require("../../assets/icons/Compass.png")} label="Website" />
+          <ActionButton image={require("../../assets/icons/Phone.png")} label="Call" />
+          <ActionButton image={require("../../assets/icons/Walking.png")} label="4 min" />
+        </View>
+
+        {/* Time Selection */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={{ marginTop: 29 }}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+        >
+          <View style={styles.timeRow}>
+            <TextInput
+              style={styles.timeInput}
+              value={fromTime}
+              onChangeText={(text) => setFromTime(formatTimeInput(text))}
+              keyboardType="numeric"
+              placeholder="From"
+              placeholderTextColor="#D2D2D2"
+            />
+            <Text style={styles.arrow}>→</Text>
+            <TextInput
+              style={styles.timeInput}
+              value={untilTime}
+              onChangeText={(text) => setUntilTime(formatTimeInput(text))}
+              keyboardType="numeric"
+              placeholder="Until"
+              placeholderTextColor="#D2D2D2"
+            />
+          </View>
+        </KeyboardAvoidingView>
+
+        {/* Price */}
+        <View style={styles.priceRow}>
+          <Text style={styles.price}>Price: {calculatedPrice}KM</Text>
+          <Text style={styles.available}>18/50</Text>
+        </View>
+
+        {/* Reserve Now Button */}
+        <TouchableOpacity
+          style={[
+            styles.reserveButton,
+            {
+              backgroundColor: isValidTime(fromTime) && isValidTime(untilTime)
+                ? "#0195F5"
+                : "#8AD1FF",
+            },
+          ]}
+          disabled={!(isValidTime(fromTime) && isValidTime(untilTime))}
+          onPress={() => setStep(2)}
+        >
+          <Text style={styles.reserveText}>Reserve now</Text>
+        </TouchableOpacity>
+      </>
+    ) : (
+      // STEP 2: Payment Screen
+      <>
+       <View style={styles.header}>
+    <Text style={[styles.title, { marginBottom: 5 }]}>Payment method</Text>
+    <TouchableOpacity onPress={onClose}>
+      <Image
+        source={require("../../assets/icons/Cancel.png")}
+        style={styles.cancelIcon2}
+      />
+    </TouchableOpacity>
+  </View>
+
+  {/* Price */}
+  <Text style={styles.price}>Price: {calculatedPrice}KM</Text>
+  
+  {/* Car picker */}
+  <View style={{ marginVertical: 20 }}>
+    <TouchableOpacity style={{
+      backgroundColor: "#9C9C9C",
+      borderRadius: 10,
+      height: 41,
+      justifyContent: "center",
+      paddingHorizontal: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      marginHorizontal: 10,
+    }}>
+      <Text style={{ color: "#fff", flex: 1 }}>Choose car</Text>
+      <Image
+        source={require("../../assets/icons/DropdownArrow.png")}
+        style={{ width: 30, height: 30, tintColor: "#fff" }}
+      />
+    </TouchableOpacity>
+
+    <TouchableOpacity style={{ marginTop: 8 }}>
+      <Text style={{ color: "#fff", textAlign: "right", marginHorizontal:15, }}>Add a car</Text>
+    </TouchableOpacity>
+  </View>
+
+  {/* Next Button */}
+  <TouchableOpacity
+    style={[styles.reserveButton, { backgroundColor: "#0195F5", top:100, }]}
+    onPress={onClose}
+  >
+    <Text style={styles.reserveText}>Next</Text>
+  </TouchableOpacity>
+</>
+    
+    )}
+  </View>
+</TouchableWithoutFeedback>
+
     </Modal>
   );
 }
@@ -223,7 +264,16 @@ const styles = StyleSheet.create({
   cancelIcon: {
     width: 25,
     height: 25,
-    tintColor: "#fff", 
+    tintColor: "#fff",
+ 
+  },
+  cancelIcon2:{
+    width: 25,
+    height: 25,
+    tintColor: "#fff",
+    right:15,
+    top:12,
+
   },
 
   title: {
@@ -296,6 +346,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    marginHorizontal:15,
   },
   available: {
     color: "#1CD159",
@@ -318,3 +369,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
+
