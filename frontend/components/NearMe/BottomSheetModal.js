@@ -158,7 +158,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   </View>
 
   {/* Price */}
-  <Text style={styles.price}>Price: {calculatedPrice}KM</Text>
+  <Text style={styles.price2}>Price: {calculatedPrice}KM</Text>
   
   {/* Car picker */}
   <View style={{ marginVertical: 20 }}>
@@ -346,7 +346,14 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    
+  },
+  price2:{
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
     marginHorizontal:15,
+
   },
   available: {
     color: "#1CD159",
