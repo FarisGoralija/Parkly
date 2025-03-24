@@ -51,30 +51,30 @@ const ForgotPasswordScreen = () => {
               setEmail(text);
               if (text.trim() === '') {
                 setErrorMessage('');
-                setIsEmailValid(true); // Reset when email is empty
+                setIsEmailValid(true); 
               }
             }}
           />
           {email.length > 0 && (
             <TouchableOpacity onPress={handleClearInput} style={styles.clearIconContainer}>
               <Image
-                source={require('../../assets/icons/clear.png')} // Update this with your image path
+                source={require('../../assets/icons/clear.png')} 
                 style={styles.clearIcon}
               />
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Error message placed outside the input field */}
+    
         {errorMessage ? (
-          <Text style={styles.errorText}>{errorMessage}</Text>  // Display error message below input field
+          <Text style={styles.errorText}>{errorMessage}</Text> 
         ) : null}
 
         <View style={styles.resetPasswordButton}>
           <BlueUniversalButton 
             text="Reset password" 
-            onPress={handleResetPassword}  // Trigger the reset password logic on press
-            disabled={isSubmitDisabled}  // Disable button if email is empty
+            onPress={handleResetPassword}  
+            disabled={isSubmitDisabled} 
           />
         </View>
       </View>
@@ -85,13 +85,13 @@ const ForgotPasswordScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start', // Align content at the top
+    justifyContent: 'flex-start', 
     paddingHorizontal: 20,
-    paddingTop: 80, // Add space at the top for better alignment
+    paddingTop: 80, 
     backgroundColor: 'white',
   },
   titleText: {
-    marginBottom: 20, // Adjust this value to add space between title and input field
+    marginBottom: 20, 
   },
   inputField: {
     height: 45,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   inputError: {
     borderColor: '#E92440',
     borderRadius: 11,
-    borderWidth: 1, // Red border for invalid email
+    borderWidth: 1, 
   },
   clearIconContainer: {
     position: 'absolute',

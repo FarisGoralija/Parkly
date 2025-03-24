@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Font from 'expo-font';
 import InputField from '../components/common/InputField';
@@ -39,61 +39,64 @@ const LoginScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={styles.container}>
-      <View style={styles.content}>
-        
-        <MainLogo/>
-
-        <View style={styles.inputField}>
-          <InputField 
-            placeholder="Username"
-            value={username}
-            placeholderColor="#D2D2D2"
-            onChangeText={setUsername}
-          />
-        </View>
-
-        <View style={styles.passwordContainer}>
-          <InputField
-            placeholder="Password"
-            value={password}
-            placeholderColor="#D2D2D2"
-            onChangeText={setPassword}
-            secureTextEntry={secureText}
-          />
-        
-        {password && ( 
-          <TouchableOpacity onPress={() => setSecureText(!secureText)}>
-            <Ionicons 
-              name={secureText ? "eye-off-outline" : "eye-outline"} 
-              size={24} 
-              color="white" 
-              style={styles.eyeIconContainer} 
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <MainLogo />
+          <View style={styles.inputField}>
+            <InputField 
+              placeholder="Username"
+              value={username}
+              placeholderColor="#D2D2D2"
+              onChangeText={setUsername}
             />
+          </View>
+
+          <View style={styles.passwordContainer}>
+            <InputField
+              placeholder="Password"
+              value={password}
+              placeholderColor="#D2D2D2"
+              onChangeText={setPassword}
+              secureTextEntry={secureText}
+            />
+            {password && ( 
+              <TouchableOpacity onPress={() => setSecureText(!secureText)}>
+                <Ionicons 
+                  name={secureText ? "eye-off-outline" : "eye-outline"} 
+                  size={24} 
+                  color="white" 
+                  style={styles.eyeIconContainer} 
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => navigation.navigate('ForgotPasswordScreen')} >
+            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </TouchableOpacity>
-          )}
 
+          <View style={styles.loginButton}>
+            <BlueUniversalButton disabled={isLoginDisabled} onPress={() => {}} text="Log in" />
+          </View>
+          <Text style={styles.orText}>OR LOGIN WITH</Text>
+
+          <View style={styles.socialButtonContainer}>
+            <Image source={require('../assets/icons/pngwing1.png')} style={styles.appleIcon} />
+            <SocialButton text="Login with Apple" onPress={() => {}} />
+          </View>
+
+          <View style={styles.socialButtonContainer}>
+            <Image source={require('../assets/icons/pngwing2.png')} style={styles.googleIcon} />
+            <SocialButton text="Login with Google" onPress={() => {}} />
+          </View>
         </View>
 
-        <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => navigation.navigate('ForgotPasswordScreen')} >
-          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-        </TouchableOpacity>
-
-        <View style={styles.loginButton}>
-          <BlueUniversalButton disabled={isLoginDisabled} onPress={() => {}} text="Log in" />
+        <View style={styles.footerContainer}>
+          <Text style={styles.registerText}>
+            Don't have an account? <Text style={styles.registerLink}>Register now</Text>
+          </Text>
         </View>
-        <Text style={styles.orText}>OR LOGIN WITH</Text>
-
-        <SocialButton imageSource={require('../assets/icons/pngwing1.png')} text="Login with Apple" onPress={() => {}} />
-        <SocialButton imageSource={require('../assets/icons/pngwing2.png')} text="Login with Google" onPress={() => {}} />
       </View>
-
-      <View style={styles.footerContainer}>
-        <Text style={styles.registerText}>
-          Don't have an account? <Text style={styles.registerLink}>Register now</Text>
-        </Text>
-      </View>
-    </View>
     </TouchableWithoutFeedback>
   );
 };
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
     marginVertical: 25,
     color: '#9C9C9C',
     fontSize: 13,
-    fontWeight: 400,
+    fontWeight: '400',
   },
   loginButton: {
     width: '100%',
@@ -129,12 +132,13 @@ const styles = StyleSheet.create({
   },
   registerText: {
     fontSize: 15,
-    fontWeight: 400,
+    fontWeight: '400',
+    color: '#9C9C9C',
   },
   registerLink: {
     color: '#3797EF',
     fontSize: 15,
-    fontWeight: 400,
+    fontWeight: '400',
   },
   forgotPasswordContainer: {
     marginTop: 2,
@@ -144,14 +148,13 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     color: "#3797EF",
     fontSize: 13,
-    fontWeight: 500,
+    fontWeight: '500',
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
     marginBottom: 5,
-  
   },
   eyeIconContainer: {
     zIndex: 1,
@@ -168,6 +171,29 @@ const styles = StyleSheet.create({
   inputField: {
     width: '100%',
     marginBottom: 18,
+  },
+  socialButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 4,
+  },
+  appleIcon: {
+    width: 17.33,
+    height: 21,
+    position: 'relative',
+    left: 107,
+    bottom: 8,
+    zIndex: 1,
+  },
+  googleIcon: {
+    width: 16.5,
+    height: 19,
+    position: 'relative',
+    left: 105,
+    bottom: 7,
+    zIndex: 1,
   },
 });
 
