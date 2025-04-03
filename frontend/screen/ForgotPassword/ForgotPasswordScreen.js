@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, Text, Keyboard, TouchableWithoutFeedback} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Text, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 import InputField from '../../components/common/InputField.js';
 import BlueUniversalButton from '../../components/common/BlueUniversalButton.js';
 import TitleText from '../../components/common/TitleText.js';
@@ -9,21 +10,20 @@ const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(true);
+  const navigation = useNavigation(); // Initialize navigation
 
   const isSubmitDisabled = email.trim() === ''; 
 
   const handleResetPassword = () => {
     if (isValidEmail(email)) {
-
       setErrorMessage('');
       setIsEmailValid(true); 
-
+      navigation.navigate('ForgotPasswordVerifyCodeScreen'); // Navigate only if email is valid
     } else {
       setErrorMessage('Please enter a valid email address.');
       setIsEmailValid(false); 
     }
   };
-
 
   const handleClearInput = () => {
     setEmail('');
@@ -34,7 +34,6 @@ const ForgotPasswordScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-    
         <View style={styles.titleText}>
           <TitleText 
             title="Forgot password" 
@@ -65,10 +64,7 @@ const ForgotPasswordScreen = () => {
           )}
         </View>
 
-    
-        {errorMessage ? (
-          <Text style={styles.errorText}>{errorMessage}</Text> 
-        ) : null}
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
         <View style={styles.resetPasswordButton}>
           <BlueUniversalButton 
@@ -92,13 +88,6 @@ const styles = StyleSheet.create({
   },
   titleText: {
     marginBottom: 20, 
-  },
-  inputField: {
-    height: 45,
-    padding: 15,
-    borderRadius: 10,
-    backgroundColor: '#9C9C9C',
-
   },
   inputError: {
     borderColor: '#E92440',
