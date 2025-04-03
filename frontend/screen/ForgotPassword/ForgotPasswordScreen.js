@@ -46,7 +46,7 @@ const ForgotPasswordScreen = () => {
           <InputField
             placeholder="Email"
             value={email}
-            placeholderColor="white"
+            placeholderColor="#D2D2D2"
             onChangeText={(text) => {
               setEmail(text);
               if (text.trim() === '') {

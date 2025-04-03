@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Font from 'expo-font';
 import InputField from '../components/common/InputField';
@@ -92,10 +92,14 @@ const LoginScreen = () => {
         </View>
 
         <View style={styles.footerContainer}>
-          <Text style={styles.registerText}>
-            Don't have an account? <Text style={styles.registerLink}>Register now</Text>
-          </Text>
+         <View style={styles.registerContainer}>
+          <Text style={styles.registerText}>Don't have an account?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
+          <Text style={styles.registerLink}> Register now</Text>
+        </TouchableOpacity>
         </View>
+      </View>
+
       </View>
     </TouchableWithoutFeedback>
   );
@@ -138,6 +142,7 @@ const styles = StyleSheet.create({
   registerLink: {
     color: '#3797EF',
     fontSize: 15,
+
     fontWeight: '400',
   },
   forgotPasswordContainer: {
