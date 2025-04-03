@@ -2,17 +2,17 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const TitleText = ({ title, subtitle }) => {
+const TitleText = ({ title, subtitle, subtitleStyle, backIconStyle }) => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Image source={require('../../assets/icons/back.png')} style={styles.backIcon} />
+        <Image source={require('../../assets/icons/back.png')} style={[styles.backIcon, backIconStyle]} />
       </TouchableOpacity>
       <View style={styles.textContainer}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        <Text style={[styles.subtitle, subtitleStyle]}>{subtitle}</Text>
       </View>
     </View>
   );

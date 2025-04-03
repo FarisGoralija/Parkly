@@ -11,11 +11,18 @@ const TimerFooter = ({ onResend }) => {
     }
   }, [timeLeft]);
 
+  const handleResend = () => {
+    setTimeLeft(60); // Reset timer
+    if (onResend) {
+      onResend();
+    }
+  };
+
   return (
     <View style={styles.footerContainer}>
       <Text style={styles.timer}>Time remaining: {timeLeft}</Text>
       {timeLeft === 0 && (
-        <TouchableOpacity onPress={onResend}>
+        <TouchableOpacity onPress={handleResend}>
           <Text style={styles.resend}>Resend code</Text>
         </TouchableOpacity>
       )}
@@ -31,13 +38,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   timer: {
-    fontSize: 14,
-    color: 'gray',
+    fontSize: 15,
+    color: '#9C9C9C',
+    fontWeight: '400',
   },
   resend: {
-    fontSize: 14,
-    color: 'blue',
-    fontWeight: 'bold',
+    fontSize: 15,
+    color: 'black',
+    fontWeight: '400',
   },
 });
 
