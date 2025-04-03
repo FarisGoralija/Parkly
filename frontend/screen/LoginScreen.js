@@ -1,24 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard, Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import * as Font from 'expo-font';
-import InputField from '../components/common/InputField';
-import SocialButton from '../components/Login/SocialButton';
-import BlueUniversalButton from '../components/common/BlueUniversalButton';
-import MainLogo from '../components/Login/MainLogo';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+  Image,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Pressable,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import * as Font from "expo-font";
+import InputField from "../components/common/InputField";
+import SocialButton from "../components/Login/SocialButton";
+import BlueUniversalButton from "../components/common/BlueUniversalButton";
+import MainLogo from "../components/Login/MainLogo";
+import { Ionicons } from "@expo/vector-icons";
 
 const LoginScreen = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
 
   const navigation = useNavigation();
 
   const loadFonts = async () => {
     await Font.loadAsync({
-      'Montserrat Alternates': require('../assets/fonts/MontserratAlternates-Bold.ttf'),
+      "Montserrat Alternates": require("../assets/fonts/MontserratAlternates-Bold.ttf"),
     });
     setFontsLoaded(true);
   };
@@ -43,7 +53,7 @@ const LoginScreen = () => {
         <View style={styles.content}>
           <MainLogo />
           <View style={styles.inputField}>
-            <InputField 
+            <InputField
               placeholder="Username"
               value={username}
               placeholderColor="#D2D2D2"
@@ -59,47 +69,61 @@ const LoginScreen = () => {
               onChangeText={setPassword}
               secureTextEntry={secureText}
             />
-            {password && ( 
+            {password && (
               <TouchableOpacity onPress={() => setSecureText(!secureText)}>
-                <Ionicons 
-                  name={secureText ? "eye-off-outline" : "eye-outline"} 
-                  size={24} 
-                  color="white" 
-                  style={styles.eyeIconContainer} 
+                <Ionicons
+                  name={secureText ? "eye-off-outline" : "eye-outline"}
+                  size={24}
+                  color="white"
+                  style={styles.eyeIconContainer}
                 />
               </TouchableOpacity>
             )}
           </View>
 
-          <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => navigation.navigate('ForgotPasswordScreen')} >
+          <TouchableOpacity
+            style={styles.forgotPasswordContainer}
+            onPress={() => navigation.navigate("ForgotPasswordScreen")}
+          >
             <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </TouchableOpacity>
 
           <View style={styles.loginButton}>
-            <BlueUniversalButton disabled={isLoginDisabled} onPress={() => {}} text="Log in" />
+            <BlueUniversalButton
+              disabled={isLoginDisabled}
+              onPress={() => {}}
+              text="Log in"
+            />
           </View>
           <Text style={styles.orText}>OR LOGIN WITH</Text>
 
           <View style={styles.socialButtonContainer}>
-            <Image source={require('../assets/icons/pngwing1.png')} style={styles.appleIcon} />
+            <Image
+              source={require("../assets/icons/pngwing1.png")}
+              style={styles.appleIcon}
+            />
             <SocialButton text="Login with Apple" onPress={() => {}} />
           </View>
 
           <View style={styles.socialButtonContainer}>
-            <Image source={require('../assets/icons/pngwing2.png')} style={styles.googleIcon} />
+            <Image
+              source={require("../assets/icons/pngwing2.png")}
+              style={styles.googleIcon}
+            />
             <SocialButton text="Login with Google" onPress={() => {}} />
           </View>
         </View>
 
         <View style={styles.footerContainer}>
-         <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>Don't have an account?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
-          <Text style={styles.registerLink}> Register now</Text>
-        </TouchableOpacity>
+          <View style={styles.registerContainer}>
+            <Text style={styles.registerText}>Don't have an account?</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(" ")}
+            >
+              <Text style={styles.registerLink}> Register now</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-
       </View>
     </TouchableWithoutFeedback>
   );
@@ -108,86 +132,86 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'white',
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "white",
     padding: 20,
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   orText: {
     marginVertical: 25,
-    color: '#9C9C9C',
+    color: "#9C9C9C",
     fontSize: 13,
-    fontWeight: '400',
+    fontWeight: "400",
   },
   loginButton: {
-    width: '100%',
+    width: "100%",
     marginTop: 25,
   },
   registerText: {
     fontSize: 15,
-    fontWeight: '400',
-    color: '#9C9C9C',
+    fontWeight: "400",
+    color: "#9C9C9C",
   },
   registerLink: {
-    color: '#3797EF',
+    color: "#3797EF",
     fontSize: 15,
 
-    fontWeight: '400',
+    fontWeight: "400",
   },
   forgotPasswordContainer: {
     marginTop: 2,
-    width: '100%',
-    alignItems: 'flex-end',
+    width: "100%",
+    alignItems: "flex-end",
   },
   forgotPasswordText: {
     color: "#3797EF",
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
     marginBottom: 5,
   },
   eyeIconContainer: {
     zIndex: 1,
     width: 25,
     height: 25,
-    position: 'relative',
+    position: "relative",
     right: 40,
     top: 2,
   },
   footerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingBottom: 20,
   },
   inputField: {
-    width: '100%',
+    width: "100%",
     marginBottom: 18,
   },
   socialButtonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     marginBottom: 4,
   },
   appleIcon: {
     width: 17.33,
     height: 21,
-    position: 'relative',
+    position: "relative",
     left: 107,
     bottom: 8,
     zIndex: 1,
@@ -195,10 +219,15 @@ const styles = StyleSheet.create({
   googleIcon: {
     width: 16.5,
     height: 19,
-    position: 'relative',
+    position: "relative",
     left: 105,
     bottom: 7,
     zIndex: 1,
+  },
+
+  registerContainer: {
+    flexDirection: "row", // Ensures elements stay in one line
+    alignItems: "center", // Aligns text vertically
   },
 });
 
