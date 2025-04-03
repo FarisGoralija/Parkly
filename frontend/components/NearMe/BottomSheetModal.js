@@ -14,7 +14,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Modal from "react-native-modal";
-import { calculatePrice } from "../../utilis/priceCalculator";
+import { calculatePrice } from "../../utils/priceCalculator";
 
 
 
