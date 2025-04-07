@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import VerifyInput from "../../components/ForgotPassword/VerifyInput";
 import TitleText from "../../components/common/TitleText";
 import TimerFooter from "../../components/ForgotPassword/TimerFooter";
@@ -18,6 +18,7 @@ const ForgotPasswordVerifyCodeScreen = () => {
   const [borderColor, setBorderColor] = useState("#9C9C9C");
 
   const route = useRoute();
+  const navigation = useNavigation();
   const email = route.params?.email || "your email";
 
   const handleVerify = () => {
@@ -25,6 +26,8 @@ const ForgotPasswordVerifyCodeScreen = () => {
       console.log("Entered Code:", code);
       setError("");
       setBorderColor("#00C851"); // Green border for success
+
+      navigation.navigate("ForgotNewPasswordScreen", { email });
     } else {
       setError("Code is incorrect, please try again.");
       setBorderColor("#E92440"); // Red border for error

@@ -26,7 +26,7 @@ const ForgotPasswordScreen = () => {
     if (isValidEmail(email)) {
       setErrorMessage("");
       setIsEmailValid(true);
-      navigation.navigate("ForgotPasswordVerifyCodeScreen", { email }); // Navigate only if email is valid
+      navigation.navigate("ForgotVerifyCodeScreen", { email }); // Navigate only if email is valid
     } else {
       setErrorMessage("Please enter a valid email address.");
       setIsEmailValid(false);
