@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     backgroundColor: '#9C9C9C',
+    color: "white"
   },
   inputActive: {
     color: 'white',

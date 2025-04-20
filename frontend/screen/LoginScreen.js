@@ -8,7 +8,6 @@ import {
   Image,
   TouchableWithoutFeedback,
   Keyboard,
-  Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as Font from "expo-font";
@@ -117,9 +116,7 @@ const LoginScreen = () => {
         <View style={styles.footerContainer}>
           <View style={styles.registerContainer}>
             <Text style={styles.registerText}>Don't have an account?</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate(" ")}
-            >
+            <TouchableOpacity onPress={() => navigation.navigate(" ")}>
               <Text style={styles.registerLink}> Register now</Text>
             </TouchableOpacity>
           </View>
