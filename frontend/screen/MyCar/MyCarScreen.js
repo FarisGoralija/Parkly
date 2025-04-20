@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AddCarButton from "../components/MyCar/AddCarButton"; // Import button component
+import AddCarButton from "../../components/MyCar/AddCarButton"; // Import button component
 
 const MyCarScreen = () => {
   const navigation = useNavigation();
@@ -9,8 +9,14 @@ const MyCarScreen = () => {
   return (
     <View style={styles.container}>
       {/* Back Button */}
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Image source={require("../assets/icons/backButton.png")} style={styles.backButtonImage} />
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backButton}
+      >
+        <Image
+          source={require("../../assets/icons/backButton.png")}
+          style={styles.backButtonImage}
+        />
       </TouchableOpacity>
 
       {/* Title */}
@@ -18,12 +24,17 @@ const MyCarScreen = () => {
 
       {/* Car Icon and Message */}
       <View style={styles.content}>
-        <Image source={require("../assets/icons/Car.png")} style={styles.carIcon} />
-        <Text style={styles.message}>No registered car. Click below to register.</Text>
+        <Image
+          source={require("../../assets/icons/Car.png")}
+          style={styles.carIcon}
+        />
+        <Text style={styles.message}>
+          No registered car. Click below to register.
+        </Text>
       </View>
 
       <View style={styles.buttonContainer}>
-        <AddCarButton onPress={() => console.log("Add Car Pressed")} />
+        <AddCarButton onPress={() => navigation.navigate("CarDetailsScreen")} />
       </View>
     </View>
   );
@@ -56,12 +67,11 @@ const styles = StyleSheet.create({
   content: {
     alignItems: "center",
     justifyContent: "center",
-    
   },
   carIcon: {
     width: 80,
     height: 80,
-    tintColor: "white", 
+    tintColor: "white",
   },
   message: {
     color: "white",
@@ -71,10 +81,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: "absolute",
-    bottom: 140, 
+    bottom: 140,
     width: "100%",
     alignItems: "center",
-
   },
 });
 
