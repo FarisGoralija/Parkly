@@ -13,7 +13,7 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-      initialRouteName="Home">
+      initialRouteName="LoginScreen">
         <Stack.Screen name="Home" component={BottomTabs} /> 
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} /> 
