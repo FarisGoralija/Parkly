@@ -6,6 +6,7 @@ import LoginScreen from "./screen/LoginScreen";
 import ForgotPasswordScreen from "./screen/ForgotPassword/ForgotPasswordScreen";
 import ForgotVerifyCodeScreen from "./screen/ForgotPassword/ForgotVerifyCodeScreen";
 import ForgotNewPasswordScreen from "./screen/ForgotPassword/ForgotNewPasswordScreen";
+import RegistrationUsernameScreen from "./screen/Registration/RegistrationUsernameScreen";
 
 
 const Stack = createStackNavigator();
@@ -20,6 +21,7 @@ export default function Navigation() {
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} /> 
         <Stack.Screen name="ForgotVerifyCodeScreen" component={ForgotVerifyCodeScreen} /> 
         <Stack.Screen name="ForgotNewPasswordScreen" component={ForgotNewPasswordScreen} /> 
+        <Stack.Screen name="RegistrationUsernameScreen" component={RegistrationUsernameScreen} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

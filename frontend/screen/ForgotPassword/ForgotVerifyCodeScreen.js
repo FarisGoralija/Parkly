@@ -25,12 +25,12 @@ const ForgotPasswordVerifyCodeScreen = () => {
     if (parseInt(code, 10) >= 50000) {
       console.log("Entered Code:", code);
       setError("");
-      setBorderColor("#00C851"); // Green border for success
+      setBorderColor("#00C851"); 
 
       navigation.navigate("ForgotNewPasswordScreen", { email });
     } else {
       setError("Code is incorrect, please try again.");
-      setBorderColor("#E92440"); // Red border for error
+      setBorderColor("#E92440"); 
     }
   };
 
@@ -43,7 +43,7 @@ const ForgotPasswordVerifyCodeScreen = () => {
 
     if (input.trim() === "") {
       setError("");
-      setBorderColor("#9C9C9C"); // Reset to default when cleared
+      setBorderColor("#9C9C9C"); 
     }
   };
 
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
 
   errorContainer: {
-    minHeight: 10, // Reserve space even if there's no error
+    minHeight: 10, 
     justifyContent: "center",
     alignItems: "center",
   },

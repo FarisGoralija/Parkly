@@ -8,7 +8,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // Import navigation hook
+import { useNavigation } from "@react-navigation/native"; 
 import InputField from "../../components/common/InputField.js";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton.js";
 import TitleText from "../../components/common/TitleText.js";
@@ -18,7 +18,7 @@ const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(true);
-  const navigation = useNavigation(); // Initialize navigation
+  const navigation = useNavigation(); 
 
   const isSubmitDisabled = email.trim() === "";
 
@@ -26,7 +26,7 @@ const ForgotPasswordScreen = () => {
     if (isValidEmail(email)) {
       setErrorMessage("");
       setIsEmailValid(true);
-      navigation.navigate("ForgotVerifyCodeScreen", { email }); // Navigate only if email is valid
+      navigation.navigate("ForgotVerifyCodeScreen", { email }); 
     } else {
       setErrorMessage("Please enter a valid email address.");
       setIsEmailValid(false);
