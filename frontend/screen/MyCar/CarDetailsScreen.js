@@ -16,6 +16,8 @@ const CarDetailsScreen = ({ navigation }) => {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const [registrationPlate, setRegistrationPlate] = useState("");
+  const { addCar } = navigation.getState()?.routes?.find(r => r.name === "CarDetailsScreen")?.params || {};
+
 
   // ✅ Check if registration plate format is valid
   const isValidPlate = (plate) => {
@@ -27,13 +29,17 @@ const CarDetailsScreen = ({ navigation }) => {
   const isFormValid =
     selectedBrand && selectedModel && isValidPlate(registrationPlate);
 
-  const handleAddCar = () => {
-    console.log("Selected Brand:", selectedBrand);
-    console.log("Selected Model:", selectedModel);
-    console.log("Registration Plate:", registrationPlate);
-
-    // You can add navigation or API calls here
-  };
+    const handleAddCar = () => {
+      if (addCar) {
+        addCar({
+          brand: selectedBrand,
+          model: selectedModel,
+          registration: registrationPlate,
+        });
+      }
+      navigation.goBack(); // ✅ After adding, go back to MyCarScreen
+    };
+    
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -78,8 +84,9 @@ const CarDetailsScreen = ({ navigation }) => {
               backgroundColor: isFormValid ? "#0195F5" : "#8AD1FF", // ✅ Correct colors
             }}
             textStyle={{
-              color: "white", // ✅ Always white text
+              color: "white", 
             }}
+            
           />
         </View>
       </View>

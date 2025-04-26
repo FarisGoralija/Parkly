@@ -1,51 +1,78 @@
-import React from "react";
-import { View, StyleSheet, Text } from "react-native"; // ✅ Import Text!
-import AddCarButton from "../../components/MyCar/AddCarButton";
+import React, { useState } from "react";
+import { View, StyleSheet, FlatList, Text } from "react-native";
 import GrayHeader from "../../components/common/GrayHeader";
-import Car from "../../components/svg/Car";
+import CarCard from "../../components/MyCar/CarCard";
+import AddCarButton from "../../components/MyCar/AddCarButton";
+import Car from "../../components/svg/Car"; // ✅ Import your Car SVG
 
 const MyCarScreen = ({ navigation }) => {
+  const [cars, setCars] = useState([]);
+
+  const handleDeleteCar = (index) => {
+    const updatedCars = [...cars];
+    updatedCars.splice(index, 1);
+    setCars(updatedCars);
+  };
+
   return (
     <View style={styles.container}>
-      {/* Gray Header */}
       <GrayHeader title="My cars" />
 
-      {/* Centered Car Icon and Message */}
-      <View style={styles.carIconContainer}>
-        <Car width={200} height={200} />
-        <Text style={styles.messageText}>
-          No registered car? Click below button to register
-        </Text>
-      </View>
+      {/* If no cars, show big car icon */}
+      {cars.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Car width={200} height={200} />
+          <Text style={styles.emptyText}>No registered car? Click below button to register.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={cars}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <CarCard
+              brand={item.brand}
+              model={item.model}
+              registration={item.registration}
+              onDelete={() => handleDeleteCar(index)}
+            />
+          )}
+          contentContainerStyle={{ paddingTop: 20 }}
+        />
+      )}
 
       {/* Add Car Button */}
       <View style={styles.buttonContainer}>
         <AddCarButton
-          onPress={() => navigation.navigate("CarDetailsScreen")}
-          style={{ backgroundColor: "#0195F5" }} // ✅ Blue button
-          textStyle={{ color: "white" }} // ✅ White text
+          onPress={() =>
+            navigation.navigate("CarDetailsScreen", {
+              addCar: (newCar) => setCars((prev) => [...prev, newCar]),
+            })
+          }
+          style={{ backgroundColor: "#0195F5" }}
+          textStyle={{ color: "white" }}
         />
       </View>
     </View>
   );
 };
 
+export default MyCarScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#3A3A3C",
   },
-  carIconContainer: {
+  emptyContainer: {
     flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "flex-start",
-    marginTop: 150,
+    marginTop: -300, // Pull up little closer to header
   },
-  messageText: {
-    color: "white",
+  emptyText: {
     fontSize: 16,
+    color: "white",
     textAlign: "center",
-    paddingHorizontal: 20, // ✅ safe padding for smaller devices
   },
   buttonContainer: {
     position: "absolute",
@@ -54,5 +81,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-export default MyCarScreen;
