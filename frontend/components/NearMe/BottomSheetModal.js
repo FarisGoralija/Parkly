@@ -32,7 +32,6 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [selectedCard, setSelectedCard] = useState(null); // for Step 3
   const [showCardPicker, setShowCardPicker] = useState(false); // NEW for Step 3
 
-
   useEffect(() => {
     if (isVisible) {
       setStep(1); // Reset to Step 1 every time modal opens
@@ -261,8 +260,12 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
               </View>
 
               <TouchableOpacity
-                style={styles.reserveButton}
+                style={[
+                  styles.reserveButton,
+                  { backgroundColor: selectedCar ? "#0195F5" : "#8AD1FF" },
+                ]}
                 onPress={() => setStep(3)}
+                disabled={!selectedCar}
               >
                 <Text style={styles.reserveText}>Next</Text>
               </TouchableOpacity>
@@ -294,11 +297,9 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     <TouchableOpacity
                       style={styles.chooseCarButton}
                       onPress={() => setShowCardPicker(!showCardPicker)}
-
                     >
                       <Text style={{ color: "#fff", flex: 1 }}>
-                      {selectedCard ? selectedCard : "Choose card"}
-
+                        {selectedCard ? selectedCard : "Choose card"}
                       </Text>
                       <Image
                         source={require("../../assets/icons/DropdownArrow.png")}
@@ -316,7 +317,6 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                             setSelectedCard("Visa •••• 1234");
 
                             setShowCardPicker(false);
-
                           }}
                         >
                           <Text style={{ color: "#fff" }}>Visa •••• 1234</Text>
@@ -326,7 +326,6 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                           onPress={() => {
                             setSelectedCard("Mastercard •••• 5678");
                             setShowCardPicker(false);
-
                           }}
                         >
                           <Text style={{ color: "#fff" }}>
