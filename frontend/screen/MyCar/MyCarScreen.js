@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Text } from "react-native"; // ✅ Import Text!
 import AddCarButton from "../../components/MyCar/AddCarButton";
 import GrayHeader from "../../components/common/GrayHeader";
-import Car from "../../components/svg/car"; 
+import Car from "../../components/svg/Car"; 
 
 const MyCarScreen = ({ navigation }) => {
   return (

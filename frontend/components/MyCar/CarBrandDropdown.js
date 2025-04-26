@@ -1,48 +1,40 @@
-import React from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import React, { useState } from "react";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const CarBrandDropdown = ({ selectedBrand, onBrandChange }) => {
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    { label: "BMW", value: "BMW" },
+    { label: "Audi", value: "Audi" },
+    { label: "Mercedes", value: "Mercedes" },
+  ]);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Select Brand</Text>
-      <View style={styles.pickerWrapper}>
-        <Picker
-          selectedValue={selectedBrand}
-          onValueChange={(itemValue) => onBrandChange(itemValue)}
-          style={styles.picker}
-          dropdownIconColor="white"
-        >
-          <Picker.Item label="Choose brand..." value="" />
-          <Picker.Item label="BMW" value="BMW" />
-          <Picker.Item label="Audi" value="Audi" />
-          <Picker.Item label="Mercedes" value="Mercedes" />
-          {/* Add more brands */}
-        </Picker>
-      </View>
-    </View>
+    <DropDownPicker
+      open={open}
+      value={selectedBrand}
+      items={items}
+      setOpen={setOpen}
+      setValue={onBrandChange}
+      setItems={setItems}
+      placeholder="Choose brand"
+      style={{
+        backgroundColor: "#2C2C2E",
+        borderColor: "#2C2C2E",
+        marginBottom: 20,
+      }}
+      textStyle={{
+        color: "white",
+      }}
+      placeholderStyle={{
+        color: "#ccc",
+      }}
+      dropDownContainerStyle={{
+        backgroundColor: "#2C2C2E",
+        borderColor: "#2C2C2E",
+      }}
+    />
   );
 };
 
 export default CarBrandDropdown;
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-    paddingHorizontal: 16,
-  },
-  label: {
-    color: "white",
-    marginBottom: 8,
-    fontSize: 14,
-  },
-  pickerWrapper: {
-    backgroundColor: "#2C2C2E",
-    borderRadius: 12,
-  },
-  picker: {
-    color: "white",
-    height: 50,
-    width: "100%",
-  },
-});

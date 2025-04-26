@@ -1,16 +1,17 @@
 import React from "react";
-import { View, TextInput, StyleSheet, Text } from "react-native";
+import { View, TextInput, Text, StyleSheet } from "react-native";
 
 const RegistrationInput = ({ value, onChange }) => {
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.label}>Registration Plate</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter registration plate"
         placeholderTextColor="#ccc"
         value={value}
-        onChangeText={onChange}
+        onChangeText={(text) => onChange(text.toUpperCase())}
+        autoCapitalize="characters"
       />
     </View>
   );
@@ -19,14 +20,11 @@ const RegistrationInput = ({ value, onChange }) => {
 export default RegistrationInput;
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-    paddingHorizontal: 16,
-  },
   label: {
     color: "white",
     marginBottom: 8,
     fontSize: 14,
+    paddingHorizontal: 4,
   },
   input: {
     backgroundColor: "#2C2C2E",
