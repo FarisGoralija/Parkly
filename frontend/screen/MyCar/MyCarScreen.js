@@ -1,83 +1,51 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import AddCarButton from "../../components/MyCar/AddCarButton"; // Import button component
+import { View, StyleSheet, Text } from "react-native"; // ✅ Import Text!
+import AddCarButton from "../../components/MyCar/AddCarButton";
+import GrayHeader from "../../components/common/GrayHeader";
+import Car from "../../components/svg/car"; 
 
-const MyCarScreen = () => {
-  const navigation = useNavigation();
-
+const MyCarScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      {/* Back Button */}
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
-        style={styles.backButton}
-      >
-        <Image
-          source={require("../../assets/icons/backButton.png")}
-          style={styles.backButtonImage}
-        />
-      </TouchableOpacity>
+      {/* Gray Header */}
+      <GrayHeader title="My cars" />
 
-      {/* Title */}
-      <Text style={styles.title}>My cars</Text>
-
-      {/* Car Icon and Message */}
-      <View style={styles.content}>
-        <Image
-          source={require("../../assets/icons/Car.png")}
-          style={styles.carIcon}
-        />
-        <Text style={styles.message}>
-          No registered car. Click below to register.
+      {/* Centered Car Icon and Message */}
+      <View style={styles.carIconContainer}>
+        <Car width={200} height={200} />
+        <Text style={styles.messageText}>
+          No registered car? Click below button to register
         </Text>
       </View>
 
+      {/* Add Car Button */}
       <View style={styles.buttonContainer}>
-        <AddCarButton onPress={() => navigation.navigate("CarDetailsScreen")} />
+        <AddCarButton
+          onPress={() => navigation.navigate("CarDetailsScreen")}
+          style={{ backgroundColor: "white" }}
+          textStyle={{ color: "#3A3A3C" }}
+        />
       </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#3A3A3C",
+  },
+  carIconContainer: {
+    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    justifyContent: "flex-start",
+    marginTop: 150,
   },
-  backButton: {
-    position: "absolute",
-    top: 56,
-    left: 26,
-  },
-  backButtonImage: {
-    width: 63,
-    height: 42,
-    tintColor: "white", // Adjust color if needed
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "white",
-    position: "absolute",
-    top: 77,
-  },
-  content: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  carIcon: {
-    width: 80,
-    height: 80,
-    tintColor: "white",
-  },
-  message: {
+  messageText: {
     color: "white",
     fontSize: 16,
-    marginTop: 10,
     textAlign: "center",
+    paddingHorizontal: 20, // ✅ safe padding for smaller devices
   },
   buttonContainer: {
     position: "absolute",
