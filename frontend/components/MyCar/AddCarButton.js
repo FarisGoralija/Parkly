@@ -1,10 +1,25 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 
-const AddCarButton = ({ onPress }) => {
+const AddCarButton = ({ onPress, disabled, style, textStyle }) => {
   return (
-    <TouchableOpacity style={styles.addButton} onPress={onPress}>
-      <Text style={styles.addButtonText}>Add car</Text>
+    <TouchableOpacity
+      style={[
+        styles.addButton,
+        style, // 🔥 allow custom style
+        disabled && { backgroundColor: "#8AD1FF" }, // 🔥 disabled color override
+      ]}
+      onPress={onPress}
+      disabled={disabled} // 🔥 make it really disabled
+    >
+      <Text
+        style={[
+          styles.addButtonText,
+          textStyle, // 🔥 allow custom text style
+        ]}
+      >
+        Add car
+      </Text>
     </TouchableOpacity>
   );
 };

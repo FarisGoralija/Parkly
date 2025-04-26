@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Text } from "react-native"; // ✅ Import Text!
 import AddCarButton from "../../components/MyCar/AddCarButton";
 import GrayHeader from "../../components/common/GrayHeader";
-import Car from "../../components/svg/Car"; 
+import Car from "../../components/svg/Car";
 
 const MyCarScreen = ({ navigation }) => {
   return (
@@ -22,8 +22,8 @@ const MyCarScreen = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <AddCarButton
           onPress={() => navigation.navigate("CarDetailsScreen")}
-          style={{ backgroundColor: "white" }}
-          textStyle={{ color: "#3A3A3C" }}
+          style={{ backgroundColor: "#0195F5" }} // ✅ Blue button
+          textStyle={{ color: "white" }} // ✅ White text
         />
       </View>
     </View>

@@ -1,63 +1,88 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
+
 import GrayHeader from "../../components/common/GrayHeader";
 import AddCarButton from "../../components/MyCar/AddCarButton";
 import CarBrandDropdown from "../../components/MyCar/CarBrandDropdown";
 import CarModelDropdown from "../../components/MyCar/CarModelDropdown";
-import RegistrationInput from "../../components/MyCar/RegistrationInput"; // ✅ New input field
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import RegistrationInput from "../../components/MyCar/RegistrationInput";
 
 const CarDetailsScreen = ({ navigation }) => {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const [registrationPlate, setRegistrationPlate] = useState("");
 
+  // ✅ Check if registration plate format is valid
+  const isValidPlate = (plate) => {
+    const regex = /^[A-Z][0-9]{2}-[A-Z]-[0-9]{3}$/;
+    return regex.test(plate);
+  };
+
+  // ✅ Form is valid if all 3 fields are properly entered
+  const isFormValid =
+    selectedBrand && selectedModel && isValidPlate(registrationPlate);
+
+  const handleAddCar = () => {
+    console.log("Selected Brand:", selectedBrand);
+    console.log("Selected Model:", selectedModel);
+    console.log("Registration Plate:", registrationPlate);
+
+    // You can add navigation or API calls here
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-    <View style={styles.container}>
-      <GrayHeader title="Add car" />
+      <View style={styles.container}>
+        {/* Gray header */}
+        <GrayHeader title="Add car" />
 
-      {/* Brand dropdown */}
-      <View style={[styles.dropdownContainer, { zIndex: 3 }]}>
-        <CarBrandDropdown
-          selectedBrand={selectedBrand}
-          onBrandChange={(value) => {
-            setSelectedBrand(value);
-            setSelectedModel(null); // reset model when brand changes
-          }}
-        />
-      </View>
+        {/* Brand dropdown */}
+        <View style={[styles.dropdownContainer, { zIndex: 3 }]}>
+          <CarBrandDropdown
+            selectedBrand={selectedBrand}
+            onBrandChange={(value) => {
+              setSelectedBrand(value);
+              setSelectedModel(null); // reset model when brand changes
+            }}
+          />
+        </View>
 
-      {/* Model dropdown */}
-      <View style={[styles.dropdownContainer, { zIndex: 2, marginTop: 10 }]}>
-        <CarModelDropdown
-          selectedBrand={selectedBrand}
-          selectedModel={selectedModel}
-          onModelChange={setSelectedModel}
-        />
-      </View>
+        {/* Model dropdown */}
+        <View style={[styles.dropdownContainer, { zIndex: 2, marginTop: 10 }]}>
+          <CarModelDropdown
+            selectedBrand={selectedBrand}
+            selectedModel={selectedModel}
+            onModelChange={setSelectedModel}
+          />
+        </View>
 
-      {/* Registration Plate Input */}
-      <View style={[styles.inputContainer, { zIndex: 1, marginTop: 10 }]}>
-        <RegistrationInput
-          value={registrationPlate}
-          onChange={setRegistrationPlate}
-        />
-      </View>
+        {/* Registration Plate Input */}
+        <View style={[styles.inputContainer, { zIndex: 1, marginTop: 10 }]}>
+          <RegistrationInput
+            value={registrationPlate}
+            onChange={setRegistrationPlate}
+          />
+        </View>
 
-      {/* Add Car Button */}
-      <View style={styles.buttonContainer}>
-        <AddCarButton
-          onPress={() => {
-            console.log("Selected Brand:", selectedBrand);
-            console.log("Selected Model:", selectedModel);
-            console.log("Registration Plate:", registrationPlate);
-          }}
-          style={{ backgroundColor: "white" }}
-          textStyle={{ color: "#3A3A3C" }}
-        />
+        {/* Add Car Button */}
+        <View style={styles.buttonContainer}>
+          <AddCarButton
+            onPress={handleAddCar}
+            disabled={!isFormValid}
+            style={{
+              backgroundColor: isFormValid ? "#0195F5" : "#8AD1FF", // ✅ Correct colors
+            }}
+            textStyle={{
+              color: "white", // ✅ Always white text
+            }}
+          />
+        </View>
       </View>
-    </View>
     </TouchableWithoutFeedback>
   );
 };
@@ -71,7 +96,7 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     paddingHorizontal: 16,
-    marginTop: 80,
+    marginTop: 80, // margin under header
   },
   inputContainer: {
     paddingHorizontal: 16,
