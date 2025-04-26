@@ -4,9 +4,11 @@ import GrayHeader from "../../components/common/GrayHeader";
 import CarCard from "../../components/MyCar/CarCard";
 import AddCarButton from "../../components/MyCar/AddCarButton";
 import Car from "../../components/svg/Car"; // ✅ Import your Car SVG
+import { useCar } from "../../context/CarContext";
 
 const MyCarScreen = ({ navigation }) => {
-  const [cars, setCars] = useState([]);
+  const { cars, setCars } = useCar();
+
 
   const handleDeleteCar = (index) => {
     const updatedCars = [...cars];
