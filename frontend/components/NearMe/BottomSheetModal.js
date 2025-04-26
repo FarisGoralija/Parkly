@@ -28,6 +28,10 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [liked, setLiked] = React.useState(false);
   const [selectedCar, setSelectedCar] = useState(null); // ✅ Selected car
   const [showPicker, setShowPicker] = useState(false); // ✅ Show/hide car picker
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null); // for Step 3
+  const [showCardPicker, setShowCardPicker] = useState(false); // NEW for Step 3
+
 
   useEffect(() => {
     if (isVisible) {
@@ -67,9 +71,8 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
         <View style={styles.container}>
           <View style={styles.handle} />
           {step === 1 ? (
-            // STEP 1: Reserve Screen
             <>
-              {/* Header */}
+              {/* STEP 1: Reserve Screen */}
               <View style={styles.header}>
                 <View>
                   <Text style={styles.title}>
@@ -170,9 +173,9 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 <Text style={styles.reserveText}>Reserve now</Text>
               </TouchableOpacity>
             </>
-          ) : (
-            // STEP 2: Payment Screen
+          ) : step === 2 ? (
             <>
+              {/* STEP 2: Payment Screen */}
               <View style={styles.header}>
                 <Text style={[styles.title, { marginBottom: 5 }]}>
                   Payment method
@@ -188,9 +191,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
               {/* Price */}
               <Text style={styles.price2}>Price: {calculatedPrice}KM</Text>
 
-              <View style={{ flex: 1, marginTop: 10 }}>
-                {/* ✅ Add marginTop: 20 here to push the ChooseCar button lower */}
-
+              <View style={{ flex: 1, marginTop: 20 }}>
                 {/* Choose Car Button */}
                 <TouchableOpacity
                   style={styles.chooseCarButton}
@@ -258,9 +259,154 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity style={styles.reserveButton} onPress={onClose}>
+
+              <TouchableOpacity
+                style={styles.reserveButton}
+                onPress={() => setStep(3)}
+              >
                 <Text style={styles.reserveText}>Next</Text>
               </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              {/* STEP 3: Final Payment (accept terms) */}
+              <>
+                {/* STEP 3: Payment Confirmation Screen */}
+                <>
+                  {/* STEP 3: Payment Confirmation Screen */}
+                  <View style={styles.header}>
+                    <Text style={[styles.title, { marginBottom: 5 }]}>
+                      Payment method
+                    </Text>
+                    <TouchableOpacity onPress={onClose}>
+                      <Image
+                        source={require("../../assets/icons/Cancel.png")}
+                        style={styles.cancelIcon2}
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Price */}
+                  <Text style={styles.price2}>Price: {calculatedPrice}KM</Text>
+
+                  <View style={{ flex: 1, marginTop: 20 }}>
+                    {/* Choose Card Button */}
+                    <TouchableOpacity
+                      style={styles.chooseCarButton}
+                      onPress={() => setShowCardPicker(!showCardPicker)}
+
+                    >
+                      <Text style={{ color: "#fff", flex: 1 }}>
+                      {selectedCard ? selectedCard : "Choose card"}
+
+                      </Text>
+                      <Image
+                        source={require("../../assets/icons/DropdownArrow.png")}
+                        style={{ width: 30, height: 30, tintColor: "#fff" }}
+                      />
+                    </TouchableOpacity>
+
+                    {/* Dropdown */}
+                    {showCardPicker && (
+                      <View style={styles.pickerDropdown}>
+                        {/* Fake card options */}
+                        <TouchableOpacity
+                          style={{ paddingVertical: 10, paddingHorizontal: 16 }}
+                          onPress={() => {
+                            setSelectedCard("Visa •••• 1234");
+
+                            setShowCardPicker(false);
+
+                          }}
+                        >
+                          <Text style={{ color: "#fff" }}>Visa •••• 1234</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={{ paddingVertical: 10, paddingHorizontal: 16 }}
+                          onPress={() => {
+                            setSelectedCard("Mastercard •••• 5678");
+                            setShowCardPicker(false);
+
+                          }}
+                        >
+                          <Text style={{ color: "#fff" }}>
+                            Mastercard •••• 5678
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+
+                    {/* Add a card */}
+                    <TouchableOpacity
+                      style={{ marginTop: 8 }}
+                      onPress={() => {
+                        onClose();
+                        navigation.navigate("AddCardScreen"); // You can create this screen later
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#fff",
+                          textAlign: "right",
+                          marginHorizontal: 15,
+                        }}
+                      >
+                        Add a card
+                      </Text>
+                    </TouchableOpacity>
+
+                    {/* Accept Terms */}
+                    <TouchableOpacity
+                      onPress={() => setAcceptTerms(!acceptTerms)}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginTop: 20,
+                        marginHorizontal: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: 22,
+                          height: 22,
+                          borderRadius: 6,
+                          borderWidth: 2,
+                          borderColor: "#fff",
+                          backgroundColor: acceptTerms
+                            ? "#0195F5"
+                            : "transparent",
+                          marginRight: 10,
+                        }}
+                      />
+                      <Text style={{ color: "#fff" }}>
+                        I accept the terms and conditions
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Pay Now Button */}
+                  <TouchableOpacity
+                    style={[
+                      styles.reserveButton,
+                      {
+                        backgroundColor: acceptTerms ? "#0195F5" : "#8AD1FF",
+                        marginTop: 30,
+                      },
+                    ]}
+                    disabled={!acceptTerms}
+                    onPress={() => {
+                      onClose();
+                      setStep(1);
+                      setAcceptTerms(false);
+                      setSelectedCar(null);
+                      setFromTime("");
+                      setUntilTime("");
+                    }}
+                  >
+                    <Text style={styles.reserveText}>Pay Now</Text>
+                  </TouchableOpacity>
+                </>
+              </>
             </>
           )}
         </View>
