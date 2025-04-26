@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
+import { View, Text } from "react-native";
 
 const CarModelDropdown = ({ selectedBrand, selectedModel, onModelChange }) => {
   const [open, setOpen] = useState(false);
@@ -32,6 +33,8 @@ const CarModelDropdown = ({ selectedBrand, selectedModel, onModelChange }) => {
   }, [selectedBrand]);
 
   return (
+     <View style={{ marginBottom: 0 }}>
+      <Text style={{ color: "white", fontSize: 14, marginBottom: 8 }}>Select Car Model</Text>
     <DropDownPicker
       open={open}
       value={selectedModel}
@@ -57,6 +60,7 @@ const CarModelDropdown = ({ selectedBrand, selectedModel, onModelChange }) => {
       }}
       disabled={!selectedBrand} // 🔥 Disable if no brand selected
     />
+    </View>
   );
 };
 
