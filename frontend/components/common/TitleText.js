@@ -1,8 +1,15 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import BackButton from "../svg/backButton"; 
 
-const TitleText = ({ title, subtitle, subtitleStyle, backIconStyle }) => {
+const TitleText = ({
+  title,
+  subtitle,
+  subtitleStyle,
+  backIconStyle,
+  titleStyle,
+}) => {
   const navigation = useNavigation();
 
   return (
@@ -11,13 +18,11 @@ const TitleText = ({ title, subtitle, subtitleStyle, backIconStyle }) => {
         onPress={() => navigation.goBack()}
         style={styles.backButton}
       >
-        <Image
-          source={require("../../assets/icons/back.png")}
-          style={[styles.backIcon, backIconStyle]}
-        />
+        <BackButton style={backIconStyle} /> 
       </TouchableOpacity>
+
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, titleStyle]}>{title}</Text>
         <Text style={[styles.subtitle, subtitleStyle]}>{subtitle}</Text>
       </View>
     </View>
@@ -29,20 +34,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     marginBottom: 20,
-    paddingTop: 20, // Ensure spacing consistency
+    paddingTop: 20,
   },
   backButton: {
     position: "absolute",
     left: 0,
-    top: 5, // Adjust for proper alignment
-    // padding: 10, // Give more tap area
-  },
-  backIcon: {
-    width: 63,
-    height: 42, // Adjusted for better scaling
+    top: 5,
   },
   textContainer: {
-    flex: 1, // Takes available space
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -51,15 +51,14 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 20,
     textAlign: "center",
+    color: "black", 
   },
   subtitle: {
     fontSize: 15,
-    color: "#9C9C9C",
+    color: "#9C9C9C", 
     textAlign: "center",
     fontWeight: "400",
-    textAlign: 'center',
-    alignSelf: 'center',
-    
+    alignSelf: "center",
   },
 });
 
