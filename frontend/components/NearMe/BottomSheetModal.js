@@ -185,10 +185,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   Payment method
                 </Text>
                 <TouchableOpacity onPress={onClose}>
-                  <Image
-                    source={require("../../assets/icons/Cancel.png")}
-                    style={styles.cancelIcon2}
-                  />
+                  <CancelIcon size={25} color="#fff" />
                 </TouchableOpacity>
               </View>
 
@@ -285,10 +282,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                       Payment method
                     </Text>
                     <TouchableOpacity onPress={onClose}>
-                      <Image
-                        source={require("../../assets/icons/Cancel.png")}
-                        style={styles.cancelIcon2}
-                      />
+                      <CancelIcon size={25} color="#fff" />
                     </TouchableOpacity>
                   </View>
 
