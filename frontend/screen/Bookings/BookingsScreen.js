@@ -4,19 +4,14 @@ import GrayHeader from "../../components/common/GrayHeader";
 import TabsSwitcher from "../../components/Booking/TabsSwitcher";
 import AddCarButton from "../../components/MyCar/AddCarButton";
 import NearMeScreen from "../../screen/NearMeScreen";
-import ActiveParkingCard from "../../components/Booking/ActiveParkingCard"; // ✅ Import!
+import ActiveParkingCard from "../../components/Booking/ActiveParkingCard"; 
+import { useParking } from "../../context/ParkingContext";
+
 
 export default function BookingsScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState("Active");
+  const { activeParking } = useParking(); 
 
-  // Example parking object
-  const [activeParking, setActiveParking] = useState({
-    location: "Stara cesta",
-    price: "8KM",
-    carModel: "Ford Focus 1",
-    registration: "B33-A-111",
-    duration: "14:00-18:00",
-  });
 
   return (
     <View style={styles.container}>

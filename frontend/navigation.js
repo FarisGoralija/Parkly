@@ -8,6 +8,7 @@ import ForgotVerifyCodeScreen from "./screen/ForgotPassword/ForgotVerifyCodeScre
 import ForgotNewPasswordScreen from "./screen/ForgotPassword/ForgotNewPasswordScreen";
 import CarDetailsScreen from "./screen/MyCar/CarDetailsScreen";
 import { CarProvider } from "./context/CarContext";
+import { ParkingProvider } from "./context/ParkingContext";
 
 
 
@@ -16,6 +17,7 @@ const Stack = createStackNavigator();
 export default function Navigation() {
   return (
     <NavigationContainer>
+       <ParkingProvider>
        <CarProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}
       initialRouteName="Home">
@@ -27,6 +29,7 @@ export default function Navigation() {
         <Stack.Screen name="CarDetailsScreen" component={CarDetailsScreen} />
       </Stack.Navigator>
       </CarProvider>
+      </ParkingProvider>
     </NavigationContainer>
   );
 }

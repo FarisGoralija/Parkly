@@ -17,6 +17,8 @@ import Modal from "react-native-modal";
 import { calculatePrice } from "../../utils/priceCalculator";
 import { useNavigation } from "@react-navigation/native";
 import { useCar } from "../../context/CarContext";
+import { useParking } from "../../context/ParkingContext";
+
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -26,19 +28,21 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [fromTime, setFromTime] = React.useState("");
   const [untilTime, setUntilTime] = React.useState("");
   const [liked, setLiked] = React.useState(false);
-  const [selectedCar, setSelectedCar] = useState(null); // ✅ Selected car
-  const [showPicker, setShowPicker] = useState(false); // ✅ Show/hide car picker
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [showPicker, setShowPicker] = useState(false); 
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null); // for Step 3
-  const [showCardPicker, setShowCardPicker] = useState(false); // NEW for Step 3
+  const [selectedCard, setSelectedCard] = useState(null); 
+  const [showCardPicker, setShowCardPicker] = useState(false); 
+  const { setActiveParking } = useParking(); 
+
 
   useEffect(() => {
     if (isVisible) {
-      setStep(1); // Reset to Step 1 every time modal opens
+      setStep(1); 
     }
   }, [isVisible]);
   const formatTimeInput = (text) => {
-    const digitsOnly = text.replace(/\D/g, "").slice(0, 4); // Keep only 4 digits max
+    const digitsOnly = text.replace(/\D/g, "").slice(0, 4); 
     if (digitsOnly.length <= 2) {
       return digitsOnly;
     }
@@ -394,6 +398,13 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     ]}
                     disabled={!acceptTerms}
                     onPress={() => {
+                      setActiveParking({
+                        location: location?.name || "Unknown location",
+                        price: `${calculatedPrice}KM`,
+                        carModel: selectedCar || "Unknown car",
+                        registration: selectedCar?.match(/\(([^)]+)\)/)?.[1] || "Unknown plate", // extract registration inside ( )
+                        duration: `${fromTime}-${untilTime}`,
+                      });
                       onClose();
                       setStep(1);
                       setAcceptTerms(false);
@@ -401,6 +412,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                       setFromTime("");
                       setUntilTime("");
                     }}
+                    
                   >
                     <Text style={styles.reserveText}>Pay Now</Text>
                   </TouchableOpacity>
