@@ -2,8 +2,8 @@ import * as React from "react";
 import Svg, { Rect, Defs, Pattern, Use, Image } from "react-native-svg";
 const Navigate = (props) => (
   <Svg
-    width={25}
-    height={25}
+    width={10}
+    height={10}
     viewBox="0 0 25 25"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

@@ -22,6 +22,9 @@ import HeartIcon from "../../components/svg/HeartIcon";
 import ShareIcon from "../../components/svg/ShareIcon";
 import CancelIcon from "../../components/svg/CancelIcon";
 import NavigateIcon from "../../components/svg/navigate";
+import Compass from "../svg/Compass";
+import Call from "../svg/Call";
+import Walking from "../svg/Walking";
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -111,15 +114,15 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 />
 
                 <ActionButton
-                  image={require("../../assets/icons/Compass.png")}
+                  icon={<Compass size={22} color="#fff" />}
                   label="Website"
                 />
                 <ActionButton
-                  image={require("../../assets/icons/Phone.png")}
+                  icon={<Call size={22} color="#fff" />}
                   label="Call"
                 />
                 <ActionButton
-                  image={require("../../assets/icons/Walking.png")}
+                  icon={<Walking size={22} color="#fff" />}
                   label="4 min"
                 />
               </View>
@@ -429,11 +432,14 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
 
 const ActionButton = ({ icon, image, label }) => (
   <TouchableOpacity style={styles.actionButton}>
-    {icon ? icon : <Image source={image} style={styles.iconImage} resizeMode="contain" />}
+    {icon ? (
+      icon
+    ) : (
+      <Image source={image} style={styles.iconImage} resizeMode="contain" />
+    )}
     <Text style={styles.actionLabel}>{label}</Text>
   </TouchableOpacity>
 );
-
 
 const styles = StyleSheet.create({
   modal: {
