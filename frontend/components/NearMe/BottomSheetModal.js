@@ -18,6 +18,9 @@ import { calculatePrice } from "../../utils/priceCalculator";
 import { useNavigation } from "@react-navigation/native";
 import { useCar } from "../../context/CarContext";
 import { useParking } from "../../context/ParkingContext";
+import HeartIcon from "../../components/svg/HeartIcon";
+import ShareIcon from "../../components/svg/ShareIcon";
+import CancelIcon from "../../components/svg/CancelIcon";
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -82,24 +85,19 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   <Text style={styles.subtitle}>2 KM / per h</Text>
                 </View>
                 <View style={styles.headerIcons}>
-                  <TouchableOpacity onPress={() => setLiked(!liked)}>
-                    <Image
-                      source={require("../../assets/icons/Heart.png")}
-                      style={[
-                        styles.heartIcon,
-                        { tintColor: liked ? "darkred" : "#fff" },
-                      ]}
-                    />
+                  <TouchableOpacity
+                    onPress={() => setLiked(!liked)}
+                    style={{ marginRight: 12 }}
+                  >
+                    <HeartIcon liked={liked} />
                   </TouchableOpacity>
-                  <Image
-                    source={require("../../assets/icons/ShareRounded.png")}
-                    style={styles.shareIcon}
-                  />
+
+                  <View style={{ marginRight: 12 }}>
+                    <ShareIcon size={25} color="#fff" />
+                  </View>
+
                   <TouchableOpacity onPress={onClose}>
-                    <Image
-                      source={require("../../assets/icons/Cancel.png")}
-                      style={styles.cancelIcon}
-                    />
+                    <CancelIcon size={25} color="#fff" />
                   </TouchableOpacity>
                 </View>
               </View>
