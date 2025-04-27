@@ -21,6 +21,7 @@ import { useParking } from "../../context/ParkingContext";
 import HeartIcon from "../../components/svg/HeartIcon";
 import ShareIcon from "../../components/svg/ShareIcon";
 import CancelIcon from "../../components/svg/CancelIcon";
+import NavigateIcon from "../../components/svg/navigate";
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -105,9 +106,10 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
               {/* Actions */}
               <View style={styles.actions}>
                 <ActionButton
-                  image={require("../../assets/icons/Navigate.png")}
+                  icon={<NavigateIcon size={22} color="#fff" />}
                   label="Navigate"
                 />
+
                 <ActionButton
                   image={require("../../assets/icons/Compass.png")}
                   label="Website"
@@ -425,12 +427,13 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   );
 }
 
-const ActionButton = ({ image, label }) => (
+const ActionButton = ({ icon, image, label }) => (
   <TouchableOpacity style={styles.actionButton}>
-    <Image source={image} style={styles.iconImage} resizeMode="contain" />
+    {icon ? icon : <Image source={image} style={styles.iconImage} resizeMode="contain" />}
     <Text style={styles.actionLabel}>{label}</Text>
   </TouchableOpacity>
 );
+
 
 const styles = StyleSheet.create({
   modal: {
