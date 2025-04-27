@@ -19,7 +19,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useCar } from "../../context/CarContext";
 import { useParking } from "../../context/ParkingContext";
 
-
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
   const { cars } = useCar();
@@ -29,20 +28,19 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [untilTime, setUntilTime] = React.useState("");
   const [liked, setLiked] = React.useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
-  const [showPicker, setShowPicker] = useState(false); 
+  const [showPicker, setShowPicker] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null); 
-  const [showCardPicker, setShowCardPicker] = useState(false); 
-  const { setActiveParking } = useParking(); 
-
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [showCardPicker, setShowCardPicker] = useState(false);
+  const { setActiveParking } = useParking();
 
   useEffect(() => {
     if (isVisible) {
-      setStep(1); 
+      setStep(1);
     }
   }, [isVisible]);
   const formatTimeInput = (text) => {
-    const digitsOnly = text.replace(/\D/g, "").slice(0, 4); 
+    const digitsOnly = text.replace(/\D/g, "").slice(0, 4);
     if (digitsOnly.length <= 2) {
       return digitsOnly;
     }
@@ -278,9 +276,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
             <>
               {/* STEP 3: Final Payment (accept terms) */}
               <>
-  
                 <>
-                 
                   <View style={styles.header}>
                     <Text style={[styles.title, { marginBottom: 5 }]}>
                       Payment method
@@ -359,32 +355,34 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     </TouchableOpacity>
 
                     {/* Accept Terms */}
-                    <TouchableOpacity
-                      onPress={() => setAcceptTerms(!acceptTerms)}
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginTop: 20,
-                        marginHorizontal: 10,
-                      }}
-                    >
-                      <View
+                    {!showCardPicker && (
+                      <TouchableOpacity
+                        onPress={() => setAcceptTerms(!acceptTerms)}
                         style={{
-                          width: 22,
-                          height: 22,
-                          borderRadius: 6,
-                          borderWidth: 2,
-                          borderColor: "#fff",
-                          backgroundColor: acceptTerms
-                            ? "#0195F5"
-                            : "transparent",
-                          marginRight: 10,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginTop: 20,
+                          marginHorizontal: 10,
                         }}
-                      />
-                      <Text style={{ color: "#fff" }}>
-                        I accept the terms and conditions
-                      </Text>
-                    </TouchableOpacity>
+                      >
+                        <View
+                          style={{
+                            width: 22,
+                            height: 22,
+                            borderRadius: 6,
+                            borderWidth: 2,
+                            borderColor: "#fff",
+                            backgroundColor: acceptTerms
+                              ? "#0195F5"
+                              : "transparent",
+                            marginRight: 10,
+                          }}
+                        />
+                        <Text style={{ color: "#fff" }}>
+                          I accept the terms and conditions
+                        </Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
 
                   {/* Pay Now Button */}
@@ -392,17 +390,21 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     style={[
                       styles.reserveButton,
                       {
-                        backgroundColor: acceptTerms ? "#0195F5" : "#8AD1FF",
+                        backgroundColor:
+                          acceptTerms && selectedCard ? "#0195F5" : "#8AD1FF",
+
                         marginTop: 30,
                       },
                     ]}
-                    disabled={!acceptTerms}
+                    disabled={!(acceptTerms && selectedCard)}
                     onPress={() => {
                       setActiveParking({
                         location: location?.name || "Unknown location",
                         price: `${calculatedPrice}KM`,
                         carModel: selectedCar || "Unknown car",
-                        registration: selectedCar?.match(/\(([^)]+)\)/)?.[1] || "Unknown plate", // extract registration inside ( )
+                        registration:
+                          selectedCar?.match(/\(([^)]+)\)/)?.[1] ||
+                          "Unknown plate", // extract registration inside ( )
                         duration: `${fromTime}-${untilTime}`,
                       });
                       onClose();
@@ -412,7 +414,6 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                       setFromTime("");
                       setUntilTime("");
                     }}
-                    
                   >
                     <Text style={styles.reserveText}>Pay Now</Text>
                   </TouchableOpacity>
