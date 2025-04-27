@@ -274,9 +274,9 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
             <>
               {/* STEP 3: Final Payment (accept terms) */}
               <>
-                {/* STEP 3: Payment Confirmation Screen */}
+  
                 <>
-                  {/* STEP 3: Payment Confirmation Screen */}
+                 
                   <View style={styles.header}>
                     <Text style={[styles.title, { marginBottom: 5 }]}>
                       Payment method
