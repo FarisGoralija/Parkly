@@ -7,9 +7,12 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Text,
 } from "react-native";
 import GrayHeader from "../../components/common/GrayHeader";
 import AddCarButton from "../../components/MyCar/AddCarButton";
+import Visa from "../../components/svg/Visa";           
+import ChipCard from "../../components/svg/ChipCard";
 
 export default function CardDetails({ navigation }) {
   const [cardholderName, setCardholderName] = useState("");
@@ -18,7 +21,6 @@ export default function CardDetails({ navigation }) {
   const [cvv, setCvv] = useState("");
 
   const handleAddCard = () => {
-    // Add your card saving logic here
     navigation.goBack();
   };
 
@@ -28,6 +30,19 @@ export default function CardDetails({ navigation }) {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <GrayHeader title="Add card" />
+
+        {/* Card Preview */}
+        <View style={styles.cardPreview}>
+          <ChipCard style={styles.chip} />
+          <Text style={styles.cardNumberText}>
+            {cardNumber || "•••• •••• •••• ••••"}
+          </Text>
+          <View style={styles.cardBottomRow}>
+            <Text style={styles.label}>{cardholderName || "Cardholder Name"}</Text>
+            <Text style={styles.label}>{expiry || "MM/YY"}</Text>
+          </View>
+          <Visa style={styles.visaLogo} />
+        </View>
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -89,8 +104,43 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#3A3A3C",
   },
+  cardPreview: {
+    backgroundColor: "#4F4F52",
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 30,
+    marginHorizontal: 20,
+    height: 170,
+    justifyContent: "space-between",
+  },
+  chip: {
+    width: 40,
+    height: 30,
+  },
+  visaLogo: {
+    alignSelf: "flex-end",
+    width: 60,
+    height: 25,
+  },
+  cardNumberText: {
+    color: "#fff",
+    fontSize: 20,
+    letterSpacing: 2,
+    marginTop: 10,
+  },
+  cardBottomRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+    marginTop: 10,
+  },
+  label: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "500",
+  },
   form: {
-    marginTop: 80,
+    marginTop: 30,
     paddingHorizontal: 20,
   },
   input: {
