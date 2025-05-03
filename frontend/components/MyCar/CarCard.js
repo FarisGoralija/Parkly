@@ -29,7 +29,7 @@ export default CarCard;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#2C2C2E",
+    backgroundColor: "#2E2F36",
     borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",

@@ -32,7 +32,7 @@ export default ActiveParkingCard;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#2C2C2E",
+    backgroundColor: "#2E2F36",
     borderRadius: 20,
     paddingHorizontal: 20,
     marginHorizontal: 16,
