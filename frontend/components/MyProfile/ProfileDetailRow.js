@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import EyeIcon from "../svg/EyeIcon"; // 👁️ Replace with your actual icon
-import { TYPOGRAPHY_COLORS } from "../../constants";
+import Feather from "react-native-vector-icons/Feather";
 
 export default function ProfileDetailRow({ icon, label, value, showEye = false }) {
   return (
@@ -15,7 +14,7 @@ export default function ProfileDetailRow({ icon, label, value, showEye = false }
       </View>
       {showEye && (
         <TouchableOpacity>
-          <EyeIcon />
+          <Feather name="eye-off" size={20} color="#ccc" />
         </TouchableOpacity>
       )}
     </View>
@@ -38,12 +37,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   label: {
-    color: "#ccc",
+    color: "#fff",
     fontSize: 11,
     fontWeight: "700",
   },
   value: {
-    color: "#fff",
+    color: "#C7C7C7",
     fontSize: 15,
     marginTop: 4,
   },

@@ -1,13 +1,16 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import GrayHeader from "../../components/common/GrayHeader";
 import ProfileDetailRow from "../../components/MyProfile/ProfileDetailRow";
 import User from "../../components/svg/User";
 import MailIcon from "../../components/svg/MailIcon";
-import UsernameIcon from "../../components/svg/Username";
-import LockIcon from "../../components/svg/Lock";
+import UsernameIcon from "../../components/svg/UsernameIcon";
+import LockIcon from "../../components/svg/LockIcon";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ProfileDetailsScreen() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <GrayHeader title="Profile Details" />
@@ -16,6 +19,11 @@ export default function ProfileDetailsScreen() {
         <ProfileDetailRow icon={<MailIcon />} label="Email address" value="erol.erca@gmail.com" />
         <ProfileDetailRow icon={<UsernameIcon />} label="Username" value="erol_1946" />
         <ProfileDetailRow icon={<LockIcon />} label="Password" value="•••••••••••" showEye />
+
+        {/* 👇 Add clickable "Change password" text */}
+        <TouchableOpacity >
+          <Text style={styles.changePassword}>Change password</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -29,5 +37,14 @@ const styles = StyleSheet.create({
   content: {
     marginTop: 60,
     paddingHorizontal: 16,
+  },
+  changePassword: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "400",
+    textAlign: "right",
+    marginTop: -10,
+    marginBottom: 20,
+    marginRight: 4,
   },
 });
