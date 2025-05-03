@@ -1,14 +1,21 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import GrayHeader from "../../components/common/GrayHeader";
+import ProfileDetailRow from "../../components/MyProfile/ProfileDetailRow";
+import User from "../../components/svg/User";
+import MailIcon from "../../components/svg/MailIcon";
+import UsernameIcon from "../../components/svg/Username";
+import LockIcon from "../../components/svg/Lock";
 
 export default function ProfileDetailsScreen() {
   return (
     <View style={styles.container}>
       <GrayHeader title="Profile Details" />
       <View style={styles.content}>
-        <Text style={styles.text}>Your profile details go here.</Text>
-        {/* Add more form fields or info as needed */}
+        <ProfileDetailRow icon={<User />} label="Name & surname" value="Erol Karisik" />
+        <ProfileDetailRow icon={<MailIcon />} label="Email address" value="erol.erca@gmail.com" />
+        <ProfileDetailRow icon={<UsernameIcon />} label="Username" value="erol_1946" />
+        <ProfileDetailRow icon={<LockIcon />} label="Password" value="•••••••••••" showEye />
       </View>
     </View>
   );
@@ -17,13 +24,10 @@ export default function ProfileDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#3A3A3C", // Dark background
+    backgroundColor: "#3A3A3C",
   },
   content: {
-    padding: 20,
-  },
-  text: {
-    color: "#fff",
-    fontSize: 16,
+    marginTop: 60,
+    paddingHorizontal: 16,
   },
 });
