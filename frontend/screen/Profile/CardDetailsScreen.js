@@ -13,6 +13,7 @@ import GrayHeader from "../../components/common/GrayHeader";
 import AddCarButton from "../../components/MyCar/AddCarButton";
 import Visa from "../../components/svg/Visa";           
 import ChipCard from "../../components/svg/ChipCard";
+import CardBackground from "../../components/svg/CardBackground";
 
 export default function CardDetails({ navigation }) {
   const [cardholderName, setCardholderName] = useState("");
@@ -33,16 +34,21 @@ export default function CardDetails({ navigation }) {
 
         {/* Card Preview */}
         <View style={styles.cardPreview}>
-          <ChipCard style={styles.chip} />
-          <Text style={styles.cardNumberText}>
-            {cardNumber || "•••• •••• •••• ••••"}
-          </Text>
-          <View style={styles.cardBottomRow}>
-            <Text style={styles.label}>{cardholderName || "Cardholder Name"}</Text>
-            <Text style={styles.label}>{expiry || "MM/YY"}</Text>
-          </View>
-          <Visa style={styles.visaLogo} />
-        </View>
+  <View style={StyleSheet.absoluteFill}>
+    <CardBackground width="100%" height="100%" />
+  </View>
+
+  <ChipCard style={styles.chip} />
+  <Text style={styles.cardNumberText}>
+    {cardNumber || "•••• •••• •••• ••••"}
+  </Text>
+  <View style={styles.cardBottomRow}>
+    <Text style={styles.label}>{cardholderName || "Cardholder Name"}</Text>
+    <Text style={styles.label}>{expiry || "MM/YY"}</Text>
+  </View>
+  <Visa style={styles.visaLogo} />
+</View>
+
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -60,7 +66,12 @@ export default function CardDetails({ navigation }) {
             placeholderTextColor="#D0D0D0"
             style={styles.input}
             value={cardNumber}
-            onChangeText={setCardNumber}
+            onChangeText={(text) => {
+                const cleaned = text.replace(/\D/g, "").slice(0, 16); // only digits, max 12
+                const spaced = cleaned.replace(/(.{4})/g, "$1 ").trim(); // format as xxxx xxxx xxxx
+                setCardNumber(spaced);
+              }}
+              
             keyboardType="numeric"
           />
           <View style={styles.row}>
@@ -69,7 +80,14 @@ export default function CardDetails({ navigation }) {
               placeholderTextColor="#D0D0D0"
               style={[styles.input, styles.halfInput]}
               value={expiry}
-              onChangeText={setExpiry}
+              onChangeText={(text) => {
+                const cleaned = text.replace(/\D/g, "").slice(0, 4); // max 4 digits
+                const formatted = cleaned.length > 2
+                  ? `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`
+                  : cleaned;
+                setExpiry(formatted);
+              }}
+              
               keyboardType="numeric"
             />
             <TextInput
@@ -77,7 +95,11 @@ export default function CardDetails({ navigation }) {
               placeholderTextColor="#D0D0D0"
               style={[styles.input, styles.halfInput]}
               value={cvv}
-              onChangeText={setCvv}
+              onChangeText={(text) => {
+                const cleaned = text.replace(/\D/g, "").slice(0, 3);
+                setCvv(cleaned);
+              }}
+              
               secureTextEntry
               keyboardType="numeric"
             />
@@ -123,7 +145,7 @@ const styles = StyleSheet.create({
     height: 25,
   },
   cardNumberText: {
-    color: "#fff",
+    color: "#888888",
     fontSize: 20,
     letterSpacing: 2,
     marginTop: 10,
@@ -135,7 +157,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   label: {
-    color: "#fff",
+    color: "#888888",
     fontSize: 14,
     fontWeight: "500",
   },
