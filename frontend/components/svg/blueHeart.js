@@ -2,18 +2,18 @@ import * as React from "react";
 import Svg, { Rect, Defs, Pattern, Use, Image } from "react-native-svg";
 const BlueHeart = (props) => (
   <Svg
-    width={38}
+    width={33}
     height={42}
-    viewBox="0 0 38 42"
+    viewBox="0 0 33 42"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     {...props}
   >
     <Rect
-      width={38}
+      width={33}
       height={42}
-      transform="matrix(-1 0 0 1 38 0)"
+      transform="matrix(-1 0 0 1 33 0)"
       fill="url(#pattern0_522_50)"
     />
     <Defs>
@@ -25,7 +25,7 @@ const BlueHeart = (props) => (
       >
         <Use
           xlinkHref="#image0_522_50"
-          transform="matrix(0.01 0 0 0.00904762 0 0.047619)"
+          transform="matrix(0.01 0 0 0.00785714 0 0.107143)"
         />
       </Pattern>
       <Image
