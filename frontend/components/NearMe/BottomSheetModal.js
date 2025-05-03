@@ -19,7 +19,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useCar } from "../../context/CarContext";
 import { useParking } from "../../context/ParkingContext";
 import HeartIcon from "../../components/svg/HeartIcon";
-import ShareIcon from "../../components/svg/ShareIcon";
 import CancelIcon from "../../components/svg/CancelIcon";
 import NavigateIcon from "../../components/svg/Navigate";
 import Compass from "../svg/Compass";
@@ -185,10 +184,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     <HeartIcon liked={liked} />
                   </TouchableOpacity>
 
-                  <View style={{ marginRight: 12 }}>
-                    <ShareIcon size={25} color="#fff" />
-                  </View>
-
+          
                   <TouchableOpacity onPress={onClose}>
                     <CancelIcon size={25} color="#fff" />
                   </TouchableOpacity>
@@ -590,12 +586,6 @@ const styles = StyleSheet.create({
     tintColor: "#fff", // example: red heart
   },
 
-  shareIcon: {
-    width: 28,
-    height: 28,
-    marginRight: 12,
-    tintColor: "#fff",
-  },
 
   cancelIcon: {
     width: 25,
