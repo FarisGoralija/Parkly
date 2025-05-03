@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import GrayHeader from "../../components/common/GrayHeader";
 import ProfileOptionCard from "../../components/MyProfile/ProfileOptionCard";
 import BlueHeart from "../../components/svg/blueHeart";
@@ -9,6 +10,8 @@ import Card from "../../components/svg/Card";
 import LogOut from "../../components/svg/LogOut";
 
 export default function ProfileScreen() {
+  const navigation = useNavigation();
+
   const handleLogoutPress = () => {
     Alert.alert(
       "Log out",
@@ -16,15 +19,15 @@ export default function ProfileScreen() {
       [
         {
           text: "Cancel",
-          style: "destructive", // iOS red
+          style: "destructive",
         },
         {
           text: "Confirm",
           onPress: () => {
-            // Your logout logic here
             console.log("Logged out");
+            // Add your logout logic here
           },
-          style: "default", // iOS blue
+          style: "default",
         },
       ],
       { cancelable: true }
@@ -37,7 +40,11 @@ export default function ProfileScreen() {
       <View style={styles.content}>
         <ProfileOptionCard text="Profile details" icon={<User />} />
         <ProfileOptionCard text="Payment methods" icon={<Card />} />
-        <ProfileOptionCard text="Favourite parkings" icon={<BlueHeart />} />
+        <ProfileOptionCard
+          text="Favourite parkings"
+          icon={<BlueHeart />}
+          onPress={() => navigation.navigate("FavouriteScreen")}
+        />
         <ProfileOptionCard text="About us" icon={<AboutUs />} />
         <ProfileOptionCard
           text="Log out"

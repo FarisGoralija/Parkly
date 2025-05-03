@@ -22,6 +22,7 @@ export default function BottomTabs() {
       <Tab.Screen name="Bookings" component={BookingsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       
+      
     </Tab.Navigator>
   );
 }

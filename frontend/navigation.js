@@ -9,6 +9,8 @@ import ForgotNewPasswordScreen from "./screen/ForgotPassword/ForgotNewPasswordSc
 import CarDetailsScreen from "./screen/MyCar/CarDetailsScreen";
 import { CarProvider } from "./context/CarContext";
 import { ParkingProvider } from "./context/ParkingContext";
+import ProfileScreen from "./screen/Profile/ProfileScreen";
+import FavouriteScreen from "./screen/Profile/FavouriteScreen";
 
 
 
@@ -27,6 +29,8 @@ export default function Navigation() {
         <Stack.Screen name="ForgotVerifyCodeScreen" component={ForgotVerifyCodeScreen} /> 
         <Stack.Screen name="ForgotNewPasswordScreen" component={ForgotNewPasswordScreen} /> 
         <Stack.Screen name="CarDetailsScreen" component={CarDetailsScreen} />
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Stack.Screen name="FavouriteScreen" component={FavouriteScreen} />
       </Stack.Navigator>
       </CarProvider>
       </ParkingProvider>
