@@ -27,6 +27,9 @@ import Call from "../svg/Call";
 import Walking from "../svg/Walking";
 import { Linking } from "react-native";
 import * as Location from "expo-location";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import dayjs from "dayjs";
+
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -43,6 +46,8 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [showCardPicker, setShowCardPicker] = useState(false);
   const { setActiveParking } = useParking();
   const [walkingDuration, setWalkingDuration] = useState("...");
+  const [isFromPickerVisible, setFromPickerVisible] = useState(false);
+  const [isUntilPickerVisible, setUntilPickerVisible] = useState(false);
 
   useEffect(() => {
     if (isVisible) {
@@ -123,6 +128,18 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
+  };
+
+  const handleConfirmFrom = (date) => {
+    const formatted = dayjs(date).format("HH:mm");
+    setFromTime(formatted);
+    setFromPickerVisible(false);
+  };
+
+  const handleConfirmUntil = (date) => {
+    const formatted = dayjs(date).format("HH:mm");
+    setUntilTime(formatted);
+    setUntilPickerVisible(false);
   };
 
   const isValidTime = (time) => {
@@ -207,23 +224,25 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
               >
                 <View style={styles.timeRow}>
-                  <TextInput
-                    style={styles.timeInput}
-                    value={fromTime}
-                    onChangeText={(text) => setFromTime(formatTimeInput(text))}
-                    keyboardType="numeric"
-                    placeholder="From"
-                    placeholderTextColor="#D2D2D2"
-                  />
+                  <TouchableOpacity
+                    style={styles.timeInputButton}
+                    onPress={() => setFromPickerVisible(true)}
+                  >
+                    <Text style={styles.timeInputText}>
+                      {fromTime || "From"}
+                    </Text>
+                  </TouchableOpacity>
+
                   <Text style={styles.arrow}>→</Text>
-                  <TextInput
-                    style={styles.timeInput}
-                    value={untilTime}
-                    onChangeText={(text) => setUntilTime(formatTimeInput(text))}
-                    keyboardType="numeric"
-                    placeholder="Until"
-                    placeholderTextColor="#D2D2D2"
-                  />
+
+                  <TouchableOpacity
+                    style={styles.timeInputButton}
+                    onPress={() => setUntilPickerVisible(true)}
+                  >
+                    <Text style={styles.timeInputText}>
+                      {untilTime || "Until"}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </KeyboardAvoidingView>
 
@@ -493,6 +512,23 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
           )}
         </View>
       </TouchableWithoutFeedback>
+      <DateTimePickerModal
+        isVisible={isFromPickerVisible}
+        mode="time"
+        onConfirm={handleConfirmFrom}
+        onCancel={() => setFromPickerVisible(false)}
+        is24Hour={true}
+        pickerContainerStyleIOS={{ alignSelf: 'center' }}
+      />
+
+      <DateTimePickerModal
+        isVisible={isUntilPickerVisible}
+        mode="time"
+        onConfirm={handleConfirmUntil}
+        onCancel={() => setUntilPickerVisible(false)}
+        is24Hour={true}
+        pickerContainerStyleIOS={{ alignSelf: 'center' }}
+      />
     </Modal>
   );
 }
@@ -618,6 +654,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
+  timeInputButton: {
+    backgroundColor: "#9C9C9C",
+    height: 45,
+    paddingHorizontal: 15,
+    borderRadius: 15,
+    width: "41.5%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  timeInputText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  
   timeInput: {
     backgroundColor: "#9C9C9C",
     height: 45,
