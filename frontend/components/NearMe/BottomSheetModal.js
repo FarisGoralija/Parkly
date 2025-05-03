@@ -26,6 +26,7 @@ import Compass from "../svg/Compass";
 import Call from "../svg/Call";
 import Walking from "../svg/Walking";
 import { Linking } from "react-native";
+import * as Location from "expo-location";
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -41,6 +42,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [selectedCard, setSelectedCard] = useState(null);
   const [showCardPicker, setShowCardPicker] = useState(false);
   const { setActiveParking } = useParking();
+  const [walkingDuration, setWalkingDuration] = useState("...");
 
   useEffect(() => {
     if (isVisible) {
@@ -55,19 +57,18 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
     return `${digitsOnly.slice(0, 2)}:${digitsOnly.slice(2)}`;
   };
 
-  
   const openNavigation = async () => {
     if (!location?.latitude || !location?.longitude) return;
-  
+
     const lat = location.latitude;
     const lng = location.longitude;
     const label = encodeURIComponent(location.name || "Destination");
-  
+
     const url =
       Platform.OS === "ios"
         ? `http://maps.apple.com/?daddr=${lat},${lng}&dirflg=d`
         : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
-  
+
     try {
       const supported = await Linking.canOpenURL(url);
       if (supported) {
@@ -83,7 +84,46 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
       }
     }
   };
-  
+
+  useEffect(() => {
+    const estimateWalkingTime = async () => {
+      if (!isVisible || !location?.latitude || !location?.longitude) return;
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setWalkingDuration("N/A");
+        return;
+      }
+
+      const currentLoc = await Location.getCurrentPositionAsync({});
+      const dist = getDistanceInMeters(
+        currentLoc.coords.latitude,
+        currentLoc.coords.longitude,
+        location.latitude,
+        location.longitude
+      );
+
+      const duration = Math.round(dist / 83.33); // 5 km/h avg = 83.33 m/min
+      setWalkingDuration(`${duration} min`);
+    };
+
+    estimateWalkingTime();
+  }, [isVisible]);
+
+  const getDistanceInMeters = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371000; // Earth radius in meters
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
 
   const isValidTime = (time) => {
     const timeRegex = /^([01]?\d|2[0-3]):([0-5]\d)$/; // Matches HH:MM from 00:00 to 23:59
@@ -156,7 +196,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 />
                 <ActionButton
                   icon={<Walking size={22} color="#fff" />}
-                  label="4 min"
+                  label={walkingDuration}
                 />
               </View>
 
