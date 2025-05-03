@@ -2,7 +2,11 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import GrayHeader from "../../components/common/GrayHeader";
 import ProfileOptionCard from "../../components/MyProfile/ProfileOptionCard";
-import User from "../../components/svg/User"; // ✅ your base64-wrapped icon
+import BlueHeart from "../../components/svg/blueHeart";
+import User from "../../components/svg/User";
+import AboutUs from "../../components/svg/AboutUs";
+import Card from "../../components/svg/Card";
+import LogOut from "../../components/svg/LogOut";
 
 export default function ProfileScreen() {
   return (
@@ -10,7 +14,11 @@ export default function ProfileScreen() {
       <GrayHeader title="Profile" />
       <View style={styles.content}>
         <ProfileOptionCard text="Profile details" icon={<User />} />
-        {/* Other cards will follow... */}
+        <ProfileOptionCard text="Payment methods" icon={<Card />} />
+        <ProfileOptionCard text="Favourite parkings" icon={<BlueHeart/>} />
+        <ProfileOptionCard text="About us" icon={<AboutUs/>} />
+        <ProfileOptionCard text="Log out" icon={<LogOut />} />
+
       </View>
     </View>
   );

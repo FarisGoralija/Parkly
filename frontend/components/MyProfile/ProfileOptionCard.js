@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     height: "100%", 
   },
   iconContainer: {
-    marginRight: 12,
+    marginRight: 22,
   },
   label: {
     color: "#FFFFFF",
