@@ -8,12 +8,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Text,
+  TouchableOpacity,
 } from "react-native";
 import GrayHeader from "../../components/common/GrayHeader";
 import AddCarButton from "../../components/MyCar/AddCarButton";
-import Visa from "../../components/svg/Visa";           
+import Visa from "../../components/svg/Visa";
 import ChipCard from "../../components/svg/ChipCard";
 import CardBackground from "../../components/svg/CardBackground";
+import Cancel from "../../components/svg/Cancel";
 
 export default function CardDetails({ navigation }) {
   const [cardholderName, setCardholderName] = useState("");
@@ -34,75 +36,122 @@ export default function CardDetails({ navigation }) {
 
         {/* Card Preview */}
         <View style={styles.cardPreview}>
-  <View style={StyleSheet.absoluteFill}>
-    <CardBackground width="100%" height="100%" />
-  </View>
+          <View style={StyleSheet.absoluteFill}>
+            <CardBackground width="100%" height="100%" />
+          </View>
 
-  <ChipCard style={styles.chip} />
-  <Text style={styles.cardNumberText}>
-    {cardNumber || "•••• •••• •••• ••••"}
-  </Text>
-  <View style={styles.cardBottomRow}>
-    <Text style={styles.label}>{cardholderName || "Cardholder Name"}</Text>
-    <Text style={styles.label}>{expiry || "MM/YY"}</Text>
-  </View>
-  <Visa style={styles.visaLogo} />
-</View>
-
+          <ChipCard style={styles.chip} />
+          <Text style={styles.cardNumberText}>
+            {cardNumber || "•••• •••• •••• ••••"}
+          </Text>
+          <View style={styles.cardBottomRow}>
+            <Text style={styles.label}>
+              {cardholderName || "Cardholder Name"}
+            </Text>
+            <Text style={styles.label}>{expiry || "MM/YY"}</Text>
+          </View>
+          <Visa style={styles.visaLogo} />
+        </View>
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={styles.form}
         >
-          <TextInput
-            placeholder="Cardholder’s name"
-            placeholderTextColor="#D0D0D0"
-            style={styles.input}
-            value={cardholderName}
-            onChangeText={setCardholderName}
-          />
-          <TextInput
-            placeholder="Card number"
-            placeholderTextColor="#D0D0D0"
-            style={styles.input}
-            value={cardNumber}
-            onChangeText={(text) => {
-                const cleaned = text.replace(/\D/g, "").slice(0, 16); // only digits, max 12
-                const spaced = cleaned.replace(/(.{4})/g, "$1 ").trim(); // format as xxxx xxxx xxxx
+          {/* Cardholder Name */}
+          <View style={styles.inputWrapper}>
+            <TextInput
+              placeholder="Cardholder’s name"
+              placeholderTextColor="#D0D0D0"
+              style={styles.input}
+              value={cardholderName}
+              onChangeText={setCardholderName}
+            />
+            {cardholderName.length > 0 && (
+              <TouchableOpacity
+                style={styles.clearIcon}
+                onPress={() => setCardholderName("")}
+              >
+                <Cancel width={20} height={20} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Card Number */}
+          <View style={styles.inputWrapper}>
+            <TextInput
+              placeholder="Card number"
+              placeholderTextColor="#D0D0D0"
+              style={styles.input}
+              value={cardNumber}
+              onChangeText={(text) => {
+                const cleaned = text.replace(/\D/g, "").slice(0, 16);
+                const spaced = cleaned.replace(/(.{4})/g, "$1 ").trim();
                 setCardNumber(spaced);
               }}
-              
-            keyboardType="numeric"
-          />
+              keyboardType="numeric"
+            />
+            {cardNumber.length > 0 && (
+              <TouchableOpacity
+                style={styles.clearIcon}
+                onPress={() => setCardNumber("")}
+              >
+                <Cancel width={20} height={20} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Expiry */}
           <View style={styles.row}>
-            <TextInput
-              placeholder="MM/YY"
-              placeholderTextColor="#D0D0D0"
-              style={[styles.input, styles.halfInput]}
-              value={expiry}
-              onChangeText={(text) => {
-                const cleaned = text.replace(/\D/g, "").slice(0, 4); // max 4 digits
-                const formatted = cleaned.length > 2
-                  ? `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`
-                  : cleaned;
-                setExpiry(formatted);
-              }}
-              
-              keyboardType="numeric"
-            />
-            <TextInput
-              placeholder="CVV"
-              placeholderTextColor="#D0D0D0"
-              style={[styles.input, styles.halfInput]}
-              value={cvv}
-              onChangeText={(text) => {
-                const cleaned = text.replace(/\D/g, "").slice(0, 3);
-                setCvv(cleaned);
-              }}
-              
-              secureTextEntry
-              keyboardType="numeric"
-            />
+            {/* Expiry */}
+            <View style={[styles.inputWrapper, styles.halfInput]}>
+              <TextInput
+                placeholder="MM/YY"
+                placeholderTextColor="#D0D0D0"
+                style={styles.input}
+                value={expiry}
+                onChangeText={(text) => {
+                  const cleaned = text.replace(/\D/g, "").slice(0, 4);
+                  const formatted =
+                    cleaned.length > 2
+                      ? `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`
+                      : cleaned;
+                  setExpiry(formatted);
+                }}
+                keyboardType="numeric"
+              />
+              {expiry.length > 0 && (
+                <TouchableOpacity
+                  style={styles.clearIcon}
+                  onPress={() => setExpiry("")}
+                >
+                  <Cancel width={20} height={20} />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* CVV */}
+            <View style={[styles.inputWrapper, styles.halfInput]}>
+              <TextInput
+                placeholder="CVV"
+                placeholderTextColor="#D0D0D0"
+                style={styles.input}
+                value={cvv}
+                onChangeText={(text) => {
+                  const cleaned = text.replace(/\D/g, "").slice(0, 3);
+                  setCvv(cleaned);
+                }}
+                secureTextEntry
+                keyboardType="numeric"
+              />
+              {cvv.length > 0 && (
+                <TouchableOpacity
+                  style={styles.clearIcon}
+                  onPress={() => setCvv("")}
+                >
+                  <Cancel width={20} height={20} />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </KeyboardAvoidingView>
 
@@ -186,5 +235,18 @@ const styles = StyleSheet.create({
     bottom: 40,
     width: "100%",
     alignItems: "center",
+  },
+  inputWrapper: {
+    position: "relative",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+
+  clearIcon: {
+    position: "absolute",
+    right: 15,
+    top: "50%",
+    transform: [{ translateY: -17 }],
+    zIndex: 1,
   },
 });
