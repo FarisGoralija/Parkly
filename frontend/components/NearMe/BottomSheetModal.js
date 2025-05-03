@@ -17,6 +17,17 @@ import Modal from "react-native-modal";
 import { calculatePrice } from "../../utils/priceCalculator";
 import { useNavigation } from "@react-navigation/native";
 import { useCar } from "../../context/CarContext";
+import { useParking } from "../../context/ParkingContext";
+import HeartIcon from "../../components/svg/HeartIcon";
+import CancelIcon from "../../components/svg/CancelIcon";
+import NavigateIcon from "../../components/svg/Navigate";
+import Compass from "../svg/Compass";
+import Call from "../svg/Call";
+import Walking from "../svg/Walking";
+import { Linking } from "react-native";
+import * as Location from "expo-location";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import dayjs from "dayjs";
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -25,25 +36,110 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [step, setStep] = useState(1);
   const [fromTime, setFromTime] = React.useState("");
   const [untilTime, setUntilTime] = React.useState("");
-  const [liked, setLiked] = React.useState(false);
-  const [selectedCar, setSelectedCar] = useState(null); // ✅ Selected car
-  const [showPicker, setShowPicker] = useState(false); // ✅ Show/hide car picker
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [showPicker, setShowPicker] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null); // for Step 3
-  const [showCardPicker, setShowCardPicker] = useState(false); // NEW for Step 3
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [showCardPicker, setShowCardPicker] = useState(false);
+  const { setActiveParking } = useParking();
+  const [walkingDuration, setWalkingDuration] = useState("...");
+  const [isFromPickerVisible, setFromPickerVisible] = useState(false);
+  const [isUntilPickerVisible, setUntilPickerVisible] = useState(false);
+  const { toggleFavorite, isFavorited } = useParking();
 
   useEffect(() => {
     if (isVisible) {
-      setStep(1); // Reset to Step 1 every time modal opens
+      setStep(1);
     }
   }, [isVisible]);
   const formatTimeInput = (text) => {
-    const digitsOnly = text.replace(/\D/g, "").slice(0, 4); // Keep only 4 digits max
+    const digitsOnly = text.replace(/\D/g, "").slice(0, 4);
     if (digitsOnly.length <= 2) {
       return digitsOnly;
     }
     return `${digitsOnly.slice(0, 2)}:${digitsOnly.slice(2)}`;
   };
+
+  const openNavigation = async () => {
+    if (!location?.latitude || !location?.longitude) return;
+
+    const lat = location.latitude;
+    const lng = location.longitude;
+    const label = encodeURIComponent(location.name || "Destination");
+
+    const url =
+      Platform.OS === "ios"
+        ? `http://maps.apple.com/?daddr=${lat},${lng}&dirflg=d`
+        : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert("Error", "Maps app is not supported on this device.");
+      }
+    } catch (err) {
+      if (!__DEV__) {
+        Alert.alert("Error", "Failed to open maps.");
+      } else {
+        console.warn("Maps warning (non-blocking):", err.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const estimateWalkingTime = async () => {
+      if (!isVisible || !location?.latitude || !location?.longitude) return;
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setWalkingDuration("N/A");
+        return;
+      }
+
+      const currentLoc = await Location.getCurrentPositionAsync({});
+      const dist = getDistanceInMeters(
+        currentLoc.coords.latitude,
+        currentLoc.coords.longitude,
+        location.latitude,
+        location.longitude
+      );
+
+      const duration = Math.round(dist / 83.33); // 5 km/h avg = 83.33 m/min
+      setWalkingDuration(`${duration} min`);
+    };
+
+    estimateWalkingTime();
+  }, [isVisible]);
+
+  const getDistanceInMeters = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371000; // Earth radius in meters
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const handleConfirmFrom = (date) => {
+    const formatted = dayjs(date).format("HH:mm");
+    setFromTime(formatted);
+    setFromPickerVisible(false);
+  };
+
+  const handleConfirmUntil = (date) => {
+    const formatted = dayjs(date).format("HH:mm");
+    setUntilTime(formatted);
+    setUntilPickerVisible(false);
+  };
+
   const isValidTime = (time) => {
     const timeRegex = /^([01]?\d|2[0-3]):([0-5]\d)$/; // Matches HH:MM from 00:00 to 23:59
     return timeRegex.test(time);
@@ -64,7 +160,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
       onBackdropPress={onClose}
       propagateSwipe
       avoidKeyboard
-      useNativeDriver={true}
+      useNativeDriver={false}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
@@ -80,24 +176,19 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   <Text style={styles.subtitle}>2 KM / per h</Text>
                 </View>
                 <View style={styles.headerIcons}>
-                  <TouchableOpacity onPress={() => setLiked(!liked)}>
-                    <Image
-                      source={require("../../assets/icons/Heart.png")}
-                      style={[
-                        styles.heartIcon,
-                        { tintColor: liked ? "darkred" : "#fff" },
-                      ]}
-                    />
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (location && location.id) {
+                        toggleFavorite(location);
+                      }
+                    }}
+                    style={{ marginRight: 16 }} // ✅ shift heart icon left
+                  >
+                    <HeartIcon liked={isFavorited(location)} />
                   </TouchableOpacity>
-                  <Image
-                    source={require("../../assets/icons/ShareRounded.png")}
-                    style={styles.shareIcon}
-                  />
+
                   <TouchableOpacity onPress={onClose}>
-                    <Image
-                      source={require("../../assets/icons/Cancel.png")}
-                      style={styles.cancelIcon}
-                    />
+                    <CancelIcon size={27} color="#fff" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -105,20 +196,22 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
               {/* Actions */}
               <View style={styles.actions}>
                 <ActionButton
-                  image={require("../../assets/icons/Navigate.png")}
+                  icon={<NavigateIcon size={22} color="#fff" />}
                   label="Navigate"
+                  onPress={openNavigation}
                 />
+
                 <ActionButton
-                  image={require("../../assets/icons/Compass.png")}
+                  icon={<Compass size={22} color="#fff" />}
                   label="Website"
                 />
                 <ActionButton
-                  image={require("../../assets/icons/Phone.png")}
+                  icon={<Call size={22} color="#fff" />}
                   label="Call"
                 />
                 <ActionButton
-                  image={require("../../assets/icons/Walking.png")}
-                  label="4 min"
+                  icon={<Walking size={22} color="#fff" />}
+                  label={walkingDuration}
                 />
               </View>
 
@@ -129,23 +222,25 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
               >
                 <View style={styles.timeRow}>
-                  <TextInput
-                    style={styles.timeInput}
-                    value={fromTime}
-                    onChangeText={(text) => setFromTime(formatTimeInput(text))}
-                    keyboardType="numeric"
-                    placeholder="From"
-                    placeholderTextColor="#D2D2D2"
-                  />
+                  <TouchableOpacity
+                    style={styles.timeInputButton}
+                    onPress={() => setFromPickerVisible(true)}
+                  >
+                    <Text style={styles.timeInputText}>
+                      {fromTime || "From"}
+                    </Text>
+                  </TouchableOpacity>
+
                   <Text style={styles.arrow}>→</Text>
-                  <TextInput
-                    style={styles.timeInput}
-                    value={untilTime}
-                    onChangeText={(text) => setUntilTime(formatTimeInput(text))}
-                    keyboardType="numeric"
-                    placeholder="Until"
-                    placeholderTextColor="#D2D2D2"
-                  />
+
+                  <TouchableOpacity
+                    style={styles.timeInputButton}
+                    onPress={() => setUntilPickerVisible(true)}
+                  >
+                    <Text style={styles.timeInputText}>
+                      {untilTime || "Until"}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </KeyboardAvoidingView>
 
@@ -180,10 +275,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   Payment method
                 </Text>
                 <TouchableOpacity onPress={onClose}>
-                  <Image
-                    source={require("../../assets/icons/Cancel.png")}
-                    style={styles.cancelIcon2}
-                  />
+                  <CancelIcon size={25} color="#fff" />
                 </TouchableOpacity>
               </View>
 
@@ -274,18 +366,13 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
             <>
               {/* STEP 3: Final Payment (accept terms) */}
               <>
-                {/* STEP 3: Payment Confirmation Screen */}
                 <>
-                  {/* STEP 3: Payment Confirmation Screen */}
                   <View style={styles.header}>
                     <Text style={[styles.title, { marginBottom: 5 }]}>
                       Payment method
                     </Text>
                     <TouchableOpacity onPress={onClose}>
-                      <Image
-                        source={require("../../assets/icons/Cancel.png")}
-                        style={styles.cancelIcon2}
-                      />
+                      <CancelIcon size={25} color="#fff" />
                     </TouchableOpacity>
                   </View>
 
@@ -355,32 +442,34 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     </TouchableOpacity>
 
                     {/* Accept Terms */}
-                    <TouchableOpacity
-                      onPress={() => setAcceptTerms(!acceptTerms)}
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginTop: 20,
-                        marginHorizontal: 10,
-                      }}
-                    >
-                      <View
+                    {!showCardPicker && (
+                      <TouchableOpacity
+                        onPress={() => setAcceptTerms(!acceptTerms)}
                         style={{
-                          width: 22,
-                          height: 22,
-                          borderRadius: 6,
-                          borderWidth: 2,
-                          borderColor: "#fff",
-                          backgroundColor: acceptTerms
-                            ? "#0195F5"
-                            : "transparent",
-                          marginRight: 10,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginTop: 20,
+                          marginHorizontal: 10,
                         }}
-                      />
-                      <Text style={{ color: "#fff" }}>
-                        I accept the terms and conditions
-                      </Text>
-                    </TouchableOpacity>
+                      >
+                        <View
+                          style={{
+                            width: 22,
+                            height: 22,
+                            borderRadius: 6,
+                            borderWidth: 2,
+                            borderColor: "#fff",
+                            backgroundColor: acceptTerms
+                              ? "#0195F5"
+                              : "transparent",
+                            marginRight: 10,
+                          }}
+                        />
+                        <Text style={{ color: "#fff" }}>
+                          I accept the terms and conditions
+                        </Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
 
                   {/* Pay Now Button */}
@@ -388,12 +477,23 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     style={[
                       styles.reserveButton,
                       {
-                        backgroundColor: acceptTerms ? "#0195F5" : "#8AD1FF",
+                        backgroundColor:
+                          acceptTerms && selectedCard ? "#0195F5" : "#8AD1FF",
+
                         marginTop: 30,
                       },
                     ]}
-                    disabled={!acceptTerms}
+                    disabled={!(acceptTerms && selectedCard)}
                     onPress={() => {
+                      setActiveParking({
+                        location: location?.name || "Unknown location",
+                        price: `${calculatedPrice}KM`,
+                        carModel: selectedCar || "Unknown car",
+                        registration:
+                          selectedCar?.match(/\(([^)]+)\)/)?.[1] ||
+                          "Unknown plate", // extract registration inside ( )
+                        duration: `${fromTime}-${untilTime}`,
+                      });
                       onClose();
                       setStep(1);
                       setAcceptTerms(false);
@@ -410,13 +510,34 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
           )}
         </View>
       </TouchableWithoutFeedback>
+      <DateTimePickerModal
+        isVisible={isFromPickerVisible}
+        mode="time"
+        onConfirm={handleConfirmFrom}
+        onCancel={() => setFromPickerVisible(false)}
+        is24Hour={true}
+        pickerContainerStyleIOS={{ alignSelf: "center" }}
+      />
+
+      <DateTimePickerModal
+        isVisible={isUntilPickerVisible}
+        mode="time"
+        onConfirm={handleConfirmUntil}
+        onCancel={() => setUntilPickerVisible(false)}
+        is24Hour={true}
+        pickerContainerStyleIOS={{ alignSelf: "center" }}
+      />
     </Modal>
   );
 }
 
-const ActionButton = ({ image, label }) => (
-  <TouchableOpacity style={styles.actionButton}>
-    <Image source={image} style={styles.iconImage} resizeMode="contain" />
+const ActionButton = ({ icon, image, label, onPress }) => (
+  <TouchableOpacity style={styles.actionButton} onPress={onPress}>
+    {icon ? (
+      icon
+    ) : (
+      <Image source={image} style={styles.iconImage} resizeMode="contain" />
+    )}
     <Text style={styles.actionLabel}>{label}</Text>
   </TouchableOpacity>
 );
@@ -461,17 +582,10 @@ const styles = StyleSheet.create({
   },
 
   heartIcon: {
-    width: 27,
-    height: 27,
+    width: 25,
+    height: 25,
     marginRight: 12,
     tintColor: "#fff", // example: red heart
-  },
-
-  shareIcon: {
-    width: 28,
-    height: 28,
-    marginRight: 12,
-    tintColor: "#fff",
   },
 
   cancelIcon: {
@@ -531,6 +645,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
+  timeInputButton: {
+    backgroundColor: "#9C9C9C",
+    height: 45,
+    paddingHorizontal: 15,
+    borderRadius: 15,
+    width: "41.5%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  timeInputText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+  },
+
   timeInput: {
     backgroundColor: "#9C9C9C",
     height: 45,

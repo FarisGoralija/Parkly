@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import NearMeScreen from "../../screen/NearMeScreen";
 import MyCarScreen from "../../screen/MyCar/MyCarScreen";
 import BookingsScreen from "../../screen/Bookings/BookingsScreen";
-import ProfileScreen from "../../screen/ProfileScreen";
+import ProfileScreen from "../../screen/Profile/ProfileScreen";
 import CustomBottomTab from "./CustomBottomTab"; // Import your custom bottom tab component
 import MyCarNavigator from "../../MyCarNavigator";
 
@@ -21,6 +21,7 @@ export default function BottomTabs() {
 
       <Tab.Screen name="Bookings" component={BookingsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      
       
     </Tab.Navigator>
   );
