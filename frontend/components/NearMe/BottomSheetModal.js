@@ -29,7 +29,6 @@ import * as Location from "expo-location";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import dayjs from "dayjs";
 
-
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
   const { cars } = useCar();
@@ -37,7 +36,6 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [step, setStep] = useState(1);
   const [fromTime, setFromTime] = React.useState("");
   const [untilTime, setUntilTime] = React.useState("");
-  const [liked, setLiked] = React.useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -47,6 +45,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [walkingDuration, setWalkingDuration] = useState("...");
   const [isFromPickerVisible, setFromPickerVisible] = useState(false);
   const [isUntilPickerVisible, setUntilPickerVisible] = useState(false);
+  const { toggleFavorite, isFavorited } = useParking();
 
   useEffect(() => {
     if (isVisible) {
@@ -178,15 +177,18 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 </View>
                 <View style={styles.headerIcons}>
                   <TouchableOpacity
-                    onPress={() => setLiked(!liked)}
-                    style={{ marginRight: 12 }}
+                    onPress={() => {
+                      if (location && location.id) {
+                        toggleFavorite(location);
+                      }
+                    }}
+                    style={{ marginRight: 16 }} // ✅ shift heart icon left
                   >
-                    <HeartIcon liked={liked} />
+                    <HeartIcon liked={isFavorited(location)} />
                   </TouchableOpacity>
 
-          
                   <TouchableOpacity onPress={onClose}>
-                    <CancelIcon size={25} color="#fff" />
+                    <CancelIcon size={27} color="#fff" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -514,7 +516,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
         onConfirm={handleConfirmFrom}
         onCancel={() => setFromPickerVisible(false)}
         is24Hour={true}
-        pickerContainerStyleIOS={{ alignSelf: 'center' }}
+        pickerContainerStyleIOS={{ alignSelf: "center" }}
       />
 
       <DateTimePickerModal
@@ -523,7 +525,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
         onConfirm={handleConfirmUntil}
         onCancel={() => setUntilPickerVisible(false)}
         is24Hour={true}
-        pickerContainerStyleIOS={{ alignSelf: 'center' }}
+        pickerContainerStyleIOS={{ alignSelf: "center" }}
       />
     </Modal>
   );
@@ -580,12 +582,11 @@ const styles = StyleSheet.create({
   },
 
   heartIcon: {
-    width: 27,
-    height: 27,
+    width: 25,
+    height: 25,
     marginRight: 12,
     tintColor: "#fff", // example: red heart
   },
-
 
   cancelIcon: {
     width: 25,
@@ -654,13 +655,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   timeInputText: {
     color: "#fff",
     fontSize: 16,
     textAlign: "center",
   },
-  
+
   timeInput: {
     backgroundColor: "#9C9C9C",
     height: 45,

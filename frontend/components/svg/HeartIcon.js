@@ -3,7 +3,7 @@ import Svg, { Path } from "react-native-svg";
 
 const HeartIcon = ({ liked = false, ...props }) => (
   <Svg
-    width={25}
+    width={24}
     height={24}
     viewBox="0 0 28 24"
     fill="none"

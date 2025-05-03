@@ -1,23 +1,35 @@
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import FavouriteParkingCard from "../../components/MyProfile/FavouriteParkingCard";
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from "react-native";
+import { useParking } from "../../context/ParkingContext";
+import HeartIcon from "../../components/svg/HeartIcon";
 import GrayHeader from "../../components/common/GrayHeader";
 
-export default function FavouriteScreen() {
-  const [liked, setLiked] = useState(true);
+export default function FavouriteParkingScreen() {
+  const { favoriteParkings, toggleFavorite } = useParking(); // ✅ fixed the key name
 
   return (
     <View style={styles.container}>
-      <GrayHeader title="Favourites" />
-      <View style={styles.content}>
-        <FavouriteParkingCard
-          name="Parking Centar"
-          price="2 KM / h"
-          liked={liked}
-          onToggleLike={() => setLiked(!liked)}
-        />
-        {/* You can render more cards here dynamically from a list */}
-      </View>
+      <GrayHeader title="Favourite Parkings" />
+      <FlatList
+        data={favoriteParkings} // ✅ using correct context state
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => toggleFavorite(item)}
+          >
+            <View>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.price}>2 KM / per h</Text>
+            </View>
+            <HeartIcon liked={true} />
+          </TouchableOpacity>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.empty}>No favorite parkings yet.</Text>
+        }
+      />
     </View>
   );
 }
@@ -25,10 +37,35 @@ export default function FavouriteScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#3A3A3C", // same as other screens
+    backgroundColor: "#3A3A3C",
   },
-  content: {
-    marginTop: 60,
-    paddingHorizontal: 16,
+  list: {
+    padding: 22,
+  },
+  item: {
+    height: 60,
+    paddingHorizontal: 22,
+    backgroundColor: "#4A4A4A",
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 14,
+  },
+  name: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  price: {
+    color: "#bbb",
+    fontSize: 14,
+    marginTop: 4,
+  },
+  empty: {
+    color: "#fff",
+    textAlign: "center",
+    marginTop: 50,
+    fontSize: 16,
   },
 });
