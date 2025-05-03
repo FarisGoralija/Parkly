@@ -38,7 +38,7 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <GrayHeader title="Profile" />
       <View style={styles.content}>
-        <ProfileOptionCard text="Profile details" icon={<User />} />
+        <ProfileOptionCard text="Profile details" icon={<User />} onPress={() => navigation.navigate("ProfileDetailsScreen")} />
         <ProfileOptionCard text="Payment methods" icon={<Card />} />
         <ProfileOptionCard
           text="Favourite parkings"
