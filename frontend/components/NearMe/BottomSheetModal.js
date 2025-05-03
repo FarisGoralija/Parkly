@@ -517,6 +517,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
         onCancel={() => setFromPickerVisible(false)}
         is24Hour={true}
         pickerContainerStyleIOS={{ alignSelf: "center" }}
+        themeVariant="light" 
       />
 
       <DateTimePickerModal
@@ -526,6 +527,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
         onCancel={() => setUntilPickerVisible(false)}
         is24Hour={true}
         pickerContainerStyleIOS={{ alignSelf: "center" }}
+        themeVariant="light" 
       />
     </Modal>
   );
