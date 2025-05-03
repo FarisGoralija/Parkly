@@ -1,13 +1,23 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
 import GrayHeader from "../../components/common/GrayHeader";
+import AddCarButton from "../../components/MyCar/AddCarButton";
 
-export default function MyCardScreen() {
+export default function MyCardScreen({ navigation }) {
+  const handleAddCard = () => {
+    navigation.navigate("CardDetails");
+  };
+
   return (
     <View style={styles.container}>
       <GrayHeader title="My cards" />
-      <View style={styles.content}>
-        <Text style={styles.text}>No cards added yet.</Text>
+
+    
+      <View style={styles.buttonContainer}>
+        <AddCarButton
+          onPress={handleAddCard}
+          buttonText="Add card"
+        />
       </View>
     </View>
   );
@@ -16,14 +26,12 @@ export default function MyCardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#3A3A3C", // dark background like others
+    backgroundColor: "#3A3A3C",
   },
-  content: {
-    padding: 16,
-    marginTop: 60,
-  },
-  text: {
-    color: "#fff",
-    fontSize: 16,
+  buttonContainer: {
+    position: "absolute",
+    bottom: 80,
+    width: "100%",
+    alignItems: "center",
   },
 });
