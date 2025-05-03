@@ -21,10 +21,11 @@ import { useParking } from "../../context/ParkingContext";
 import HeartIcon from "../../components/svg/HeartIcon";
 import ShareIcon from "../../components/svg/ShareIcon";
 import CancelIcon from "../../components/svg/CancelIcon";
-import NavigateIcon from "../../components/svg/navigate";
+import NavigateIcon from "../../components/svg/Navigate";
 import Compass from "../svg/Compass";
 import Call from "../svg/Call";
 import Walking from "../svg/Walking";
+import { Linking } from "react-native";
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -53,6 +54,37 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
     }
     return `${digitsOnly.slice(0, 2)}:${digitsOnly.slice(2)}`;
   };
+
+  
+  const openNavigation = async () => {
+    if (!location?.latitude || !location?.longitude) return;
+  
+    const lat = location.latitude;
+    const lng = location.longitude;
+    const label = encodeURIComponent(location.name || "Destination");
+  
+    const url =
+      Platform.OS === "ios"
+        ? `http://maps.apple.com/?daddr=${lat},${lng}&dirflg=d`
+        : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+  
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert("Error", "Maps app is not supported on this device.");
+      }
+    } catch (err) {
+      if (!__DEV__) {
+        Alert.alert("Error", "Failed to open maps.");
+      } else {
+        console.warn("Maps warning (non-blocking):", err.message);
+      }
+    }
+  };
+  
+
   const isValidTime = (time) => {
     const timeRegex = /^([01]?\d|2[0-3]):([0-5]\d)$/; // Matches HH:MM from 00:00 to 23:59
     return timeRegex.test(time);
@@ -73,7 +105,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
       onBackdropPress={onClose}
       propagateSwipe
       avoidKeyboard
-      useNativeDriver={true}
+      useNativeDriver={false}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
@@ -111,6 +143,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 <ActionButton
                   icon={<NavigateIcon size={22} color="#fff" />}
                   label="Navigate"
+                  onPress={openNavigation}
                 />
 
                 <ActionButton
@@ -424,8 +457,8 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   );
 }
 
-const ActionButton = ({ icon, image, label }) => (
-  <TouchableOpacity style={styles.actionButton}>
+const ActionButton = ({ icon, image, label, onPress }) => (
+  <TouchableOpacity style={styles.actionButton} onPress={onPress}>
     {icon ? (
       icon
     ) : (
