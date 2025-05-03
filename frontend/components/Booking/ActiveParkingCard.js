@@ -38,9 +38,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 20,
     width: "90%",
-    height: 75, // ✅ fixed height
+    height: 75, 
     alignSelf: "center",
-    justifyContent: "center", // ✅ center everything vertically
+    justifyContent: "center", 
   },
   topRow: {
     flexDirection: "row",

@@ -38,8 +38,8 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <GrayHeader title="Profile" />
       <View style={styles.content}>
-        <ProfileOptionCard text="Profile details" icon={<User />} />
-        <ProfileOptionCard text="Payment methods" icon={<Card />} />
+        <ProfileOptionCard text="Profile details" icon={<User />} onPress={() => navigation.navigate("ProfileDetailsScreen")} />
+        <ProfileOptionCard text="My Cards" icon={<Card />} onPress={() => navigation.navigate("MyCardScreen")} />
         <ProfileOptionCard
           text="Favourite parkings"
           icon={<BlueHeart />}

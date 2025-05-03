@@ -26,7 +26,7 @@ import Call from "../svg/Call";
 import Walking from "../svg/Walking";
 import { Linking } from "react-native";
 import * as Location from "expo-location";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import CustomTimePicker from "../common/CustomTimePicker";
 import dayjs from "dayjs";
 
 const { height } = Dimensions.get("window");
@@ -510,23 +510,21 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
           )}
         </View>
       </TouchableWithoutFeedback>
-      <DateTimePickerModal
-        isVisible={isFromPickerVisible}
-        mode="time"
-        onConfirm={handleConfirmFrom}
-        onCancel={() => setFromPickerVisible(false)}
-        is24Hour={true}
-        pickerContainerStyleIOS={{ alignSelf: "center" }}
-      />
+      <CustomTimePicker
+  isVisible={isFromPickerVisible}
+  onClose={() => setFromPickerVisible(false)}
+  onConfirm={handleConfirmFrom}
+  selectedTime={new Date()} // you can pass parsed time here if needed
+  theme="light"
+/>
 
-      <DateTimePickerModal
-        isVisible={isUntilPickerVisible}
-        mode="time"
-        onConfirm={handleConfirmUntil}
-        onCancel={() => setUntilPickerVisible(false)}
-        is24Hour={true}
-        pickerContainerStyleIOS={{ alignSelf: "center" }}
-      />
+<CustomTimePicker
+  isVisible={isUntilPickerVisible}
+  onClose={() => setUntilPickerVisible(false)}
+  onConfirm={handleConfirmUntil}
+  selectedTime={new Date()}
+  theme="light"
+/>
     </Modal>
   );
 }

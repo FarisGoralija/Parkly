@@ -12,6 +12,9 @@ import { ParkingProvider } from "./context/ParkingContext";
 import ProfileScreen from "./screen/Profile/ProfileScreen";
 import FavouriteScreen from "./screen/Profile/FavouriteScreen";
 import AboutUsScreen from "./screen/Profile/AboutUsScreen";
+import ProfileDetailsScreen from "./screen/Profile/ProfileDetailsScreen";
+import MyCardScreen from "./screen/Profile/MyCardScreen";
+import CardDetails from "./screen/Profile/CardDetailsScreen";
 
 
 
@@ -33,6 +36,9 @@ export default function Navigation() {
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="FavouriteScreen" component={FavouriteScreen} />
         <Stack.Screen name="AboutUsScreen" component={AboutUsScreen} />
+        <Stack.Screen name="ProfileDetailsScreen" component={ProfileDetailsScreen} />
+        <Stack.Screen name="MyCardScreen" component={MyCardScreen} />
+        <Stack.Screen name="CardDetails" component={CardDetails} />
       </Stack.Navigator>
       </CarProvider>
       </ParkingProvider>
