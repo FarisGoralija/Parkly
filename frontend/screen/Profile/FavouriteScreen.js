@@ -1,8 +1,15 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+} from "react-native";
 import { useParking } from "../../context/ParkingContext";
 import HeartIcon from "../../components/svg/HeartIcon";
 import GrayHeader from "../../components/common/GrayHeader";
+import FavouriteParkingCard from "../../components/MyProfile/FavouriteParkingCard";
 
 export default function FavouriteParkingScreen() {
   const { favoriteParkings, toggleFavorite } = useParking(); // ✅ fixed the key name
@@ -15,16 +22,12 @@ export default function FavouriteParkingScreen() {
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => toggleFavorite(item)}
-          >
-            <View>
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.price}>2 KM / per h</Text>
-            </View>
-            <HeartIcon liked={true} />
-          </TouchableOpacity>
+          <FavouriteParkingCard
+            name={item.name}
+            price="2 KM / per h"
+            liked={true}
+            onToggleLike={() => toggleFavorite(item)}
+          />
         )}
         ListEmptyComponent={
           <Text style={styles.empty}>No favorite parkings yet.</Text>

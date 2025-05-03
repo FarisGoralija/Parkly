@@ -11,6 +11,7 @@ import { CarProvider } from "./context/CarContext";
 import { ParkingProvider } from "./context/ParkingContext";
 import ProfileScreen from "./screen/Profile/ProfileScreen";
 import FavouriteScreen from "./screen/Profile/FavouriteScreen";
+import AboutUsScreen from "./screen/Profile/AboutUsScreen";
 
 
 
@@ -31,6 +32,7 @@ export default function Navigation() {
         <Stack.Screen name="CarDetailsScreen" component={CarDetailsScreen} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="FavouriteScreen" component={FavouriteScreen} />
+        <Stack.Screen name="AboutUsScreen" component={AboutUsScreen} />
       </Stack.Navigator>
       </CarProvider>
       </ParkingProvider>

@@ -45,7 +45,12 @@ export default function ProfileScreen() {
           icon={<BlueHeart />}
           onPress={() => navigation.navigate("FavouriteScreen")}
         />
-        <ProfileOptionCard text="About us" icon={<AboutUs />} />
+        <ProfileOptionCard
+          text="About us"
+          icon={<AboutUs />}
+          onPress={() => navigation.navigate("AboutUsScreen")}
+        />
+
         <ProfileOptionCard
           text="Log out"
           icon={<LogOut />}
