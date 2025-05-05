@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-import BottomTabs from "./components/common/BottomTabs"; // Use BottomTabs instead of CustomBottomTab
+import BottomTabs from "./components/common/BottomTabs"; 
 import LoginScreen from "./screen/LoginScreen";
 import ForgotPasswordScreen from "./screen/ForgotPassword/ForgotPasswordScreen";
 import ForgotVerifyCodeScreen from "./screen/ForgotPassword/ForgotVerifyCodeScreen";
@@ -15,7 +15,7 @@ import AboutUsScreen from "./screen/Profile/AboutUsScreen";
 import ProfileDetailsScreen from "./screen/Profile/ProfileDetailsScreen";
 import MyCardScreen from "./screen/Profile/MyCardScreen";
 import CardDetails from "./screen/Profile/CardDetailsScreen";
-
+import { CardProvider } from "./context/CardContext";
 
 
 const Stack = createStackNavigator();
@@ -24,6 +24,7 @@ export default function Navigation() {
   return (
     <NavigationContainer>
        <ParkingProvider>
+       <CardProvider> 
        <CarProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}
       initialRouteName="Home">
@@ -41,6 +42,7 @@ export default function Navigation() {
         <Stack.Screen name="CardDetails" component={CardDetails} />
       </Stack.Navigator>
       </CarProvider>
+      </CardProvider>
       </ParkingProvider>
     </NavigationContainer>
   );
