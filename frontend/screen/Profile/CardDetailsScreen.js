@@ -16,14 +16,19 @@ import Visa from "../../components/svg/Visa";
 import ChipCard from "../../components/svg/ChipCard";
 import CardBackground from "../../components/svg/CardBackground";
 import Cancel from "../../components/svg/Cancel";
+import { useCard } from "../../context/CardContext";
+
 
 export default function CardDetails({ navigation }) {
   const [cardholderName, setCardholderName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
+  const { addCard } = useCard();
 
   const handleAddCard = () => {
+    const newCard = { cardholderName, cardNumber, expiry, cvv };
+    addCard(newCard); // ✅ add to context
     navigation.goBack();
   };
 
