@@ -638,7 +638,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 Linking.openURL(`tel:${location?.phone ?? "+38761111222"}`);
               }}
               style={{
-                backgroundColor: "#007AFF",
+                backgroundColor: "#0195F5",
                 paddingVertical: 10,
                 paddingHorizontal: 30,
                 borderRadius: 10,
