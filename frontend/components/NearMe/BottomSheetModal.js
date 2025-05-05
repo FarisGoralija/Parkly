@@ -421,14 +421,15 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   {/* STEP 3: Final Payment (accept terms) */}
                   <>
                     <>
-                      <View style={styles.header}>
-                        <Text style={[styles.title, { marginBottom: 5 }]}>
-                          Payment method
-                        </Text>
-                        <TouchableOpacity onPress={onClose}>
-                          <CancelIcon size={25} color="#fff" />
-                        </TouchableOpacity>
-                      </View>
+                    <View style={styles.header}>
+  <Text style={[styles.title, { marginBottom: 5 }]}>Payment method</Text>
+  <View style={styles.headerIcons}>
+    <TouchableOpacity onPress={onClose}>
+      <CancelIcon size={27} color="#fff" />
+    </TouchableOpacity>
+  </View>
+</View>
+
 
                       {/* Price */}
                       <Text style={styles.price2}>
