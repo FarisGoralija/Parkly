@@ -49,6 +49,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [isUntilPickerVisible, setUntilPickerVisible] = useState(false);
   const { toggleFavorite, isFavorited } = useParking();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isCallModalVisible, setIsCallModalVisible] = useState(false);
 
   useEffect(() => {
     if (isVisible) {
@@ -240,11 +241,17 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     <ActionButton
                       icon={<Compass size={22} color="#fff" />}
                       label="Website"
+                      onPress={() => {
+                        Linking.openURL("https://parking-sarajevo.ba/");
+                      }}
                     />
+
                     <ActionButton
                       icon={<Call size={22} color="#fff" />}
                       label="Call"
+                      onPress={() => setIsCallModalVisible(true)}
                     />
+
                     <ActionButton
                       icon={<Walking size={22} color="#fff" />}
                       label={walkingDuration}
@@ -590,6 +597,58 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
         selectedTime={new Date()}
         theme="light"
       />
+
+      <Modal
+        isVisible={isCallModalVisible}
+        backdropOpacity={0.4}
+        onBackdropPress={() => setIsCallModalVisible(false)}
+        useNativeDriver
+      >
+        <View
+          style={{
+            backgroundColor: "#F9F9F9",
+            borderRadius: 20,
+            padding: 25,
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 8 }}>
+            Call this number?
+          </Text>
+          <Text style={{ fontSize: 16, color: "#333", marginBottom: 20 }}>
+            {location?.phone ?? "+38761111222"}
+          </Text>
+
+          <View style={{ flexDirection: "row", gap: 12 }}>
+            <TouchableOpacity
+              onPress={() => setIsCallModalVisible(false)}
+              style={{
+                backgroundColor: "#E5E5EA",
+                paddingVertical: 10,
+                paddingHorizontal: 30,
+                borderRadius: 10,
+              }}
+            >
+              <Text style={{ color: "#000", fontWeight: "600" }}>Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                setIsCallModalVisible(false);
+                Linking.openURL(`tel:${location?.phone ?? "+38761111222"}`);
+              }}
+              style={{
+                backgroundColor: "#007AFF",
+                paddingVertical: 10,
+                paddingHorizontal: 30,
+                borderRadius: 10,
+              }}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600" }}>Call</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </Modal>
   );
 }
