@@ -422,7 +422,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   <>
                     <>
                     <View style={styles.header}>
-  <Text style={[styles.title, { marginBottom: 5 }]}>Payment method</Text>
+  <Text style={[styles.title, { marginBottom: 30 }]}>Payment method</Text>
   <View style={styles.headerIcons}>
     <TouchableOpacity onPress={onClose}>
       <CancelIcon size={27} color="#fff" />
