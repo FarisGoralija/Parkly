@@ -29,7 +29,7 @@ const ForgotPasswordVerifyCodeScreen = () => {
 
       navigation.navigate("ForgotNewPasswordScreen", { email });
     } else {
-      setError("Code is incorrect, please try again.");
+      setError("Code is incorrect, Please try again.");
       setBorderColor("#E92440"); 
     }
   };
