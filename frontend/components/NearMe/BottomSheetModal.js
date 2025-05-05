@@ -320,18 +320,21 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 <>
                   {/* STEP 2: Payment Screen */}
                   <View style={styles.header}>
-                    <Text style={[styles.title, { marginBottom: 30 }]}>
-                      Payment method
-                    </Text>
+                    <View>
+                      <Text style={styles.title}>Payment method</Text>
+                      <Text style={styles.price2}>
+                        Price: {calculatedPrice}KM
+                      </Text>
+                    </View>
                     <View style={styles.headerIcons}>
-                      <TouchableOpacity onPress={onClose}>
+                      <TouchableOpacity
+                        onPress={onClose}
+                        style={{ marginTop: 10 }}
+                      >
                         <CancelIcon size={27} color="#fff" />
                       </TouchableOpacity>
                     </View>
                   </View>
-
-                  {/* Price */}
-                  <Text style={styles.price2}>Price: {calculatedPrice}KM</Text>
 
                   <View style={{ flex: 1, marginTop: 20 }}>
                     {/* Choose Car Button */}
@@ -422,20 +425,21 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   <>
                     <>
                       <View style={styles.header}>
-                        <Text style={[styles.title, { marginBottom: 30 }]}>
-                          Payment method
-                        </Text>
+                        <View>
+                          <Text style={styles.title}>Payment method</Text>
+                          <Text style={styles.price2}>
+                            Price: {calculatedPrice}KM
+                          </Text>
+                        </View>
                         <View style={styles.headerIcons}>
-                          <TouchableOpacity onPress={onClose}>
+                          <TouchableOpacity
+                            onPress={onClose}
+                            style={{ marginTop: 10 }}
+                          >
                             <CancelIcon size={27} color="#fff" />
                           </TouchableOpacity>
                         </View>
                       </View>
-
-                      {/* Price */}
-                      <Text style={styles.price2}>
-                        Price: {calculatedPrice}KM
-                      </Text>
 
                       <View style={{ flex: 1, marginTop: 20 }}>
                         {/* Choose Card Button */}
