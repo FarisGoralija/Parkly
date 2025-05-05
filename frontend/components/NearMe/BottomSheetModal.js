@@ -28,7 +28,7 @@ import { Linking } from "react-native";
 import * as Location from "expo-location";
 import CustomTimePicker from "../common/CustomTimePicker";
 import Payment from "../../components/svg/Payment";
-
+import { useCard } from "../../context/CardContext";
 import dayjs from "dayjs";
 
 const { height } = Dimensions.get("window");
@@ -50,6 +50,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const { toggleFavorite, isFavorited } = useParking();
   const [showSuccess, setShowSuccess] = useState(false);
   const [isCallModalVisible, setIsCallModalVisible] = useState(false);
+  const { cards } = useCard();
 
   useEffect(() => {
     if (isVisible) {
@@ -447,39 +448,40 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                           />
                         </TouchableOpacity>
 
-                        {/* Dropdown */}
                         {showCardPicker && (
                           <View style={styles.pickerDropdown}>
-                            {/* Fake card options */}
-                            <TouchableOpacity
-                              style={{
-                                paddingVertical: 10,
-                                paddingHorizontal: 16,
-                              }}
-                              onPress={() => {
-                                setSelectedCard("Visa •••• 1234");
-
-                                setShowCardPicker(false);
-                              }}
-                            >
-                              <Text style={{ color: "#fff" }}>
-                                Visa •••• 1234
+                            {cards.length === 0 ? (
+                              <Text
+                                style={{
+                                  color: "#fff",
+                                  textAlign: "center",
+                                  paddingVertical: 10,
+                                }}
+                              >
+                                No cards added
                               </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              style={{
-                                paddingVertical: 10,
-                                paddingHorizontal: 16,
-                              }}
-                              onPress={() => {
-                                setSelectedCard("Mastercard •••• 5678");
-                                setShowCardPicker(false);
-                              }}
-                            >
-                              <Text style={{ color: "#fff" }}>
-                                Mastercard •••• 5678
-                              </Text>
-                            </TouchableOpacity>
+                            ) : (
+                              cards.map((card, index) => (
+                                <TouchableOpacity
+                                  key={index}
+                                  style={{
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 16,
+                                  }}
+                                  onPress={() => {
+                                    setSelectedCard(
+                                      `•••• ${card.cardNumber.slice(-4)}`
+                                    );
+                                    setShowCardPicker(false);
+                                  }}
+                                >
+                                  <Text style={{ color: "#fff" }}>
+                                    {card.cardholderName} ••••{" "}
+                                    {card.cardNumber.slice(-4)}
+                                  </Text>
+                                </TouchableOpacity>
+                              ))
+                            )}
                           </View>
                         )}
 
