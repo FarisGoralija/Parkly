@@ -103,7 +103,7 @@ const customMapStyle = [
   },
 ];
 
-export default function CustomMap({ onSelectLocation }) {
+export default function CustomMap({ parkings = [], onSelectLocation }) {
   const mapRef = useRef(null);
   const [location, setLocation] = useState(null);
   // Request location and update map
@@ -135,38 +135,38 @@ export default function CustomMap({ onSelectLocation }) {
     })();
   }, []);
 
-  const locations = [
-    { id: 1, name: "SCC", latitude: 43.8554, longitude: 18.4078 },
-    { id: 2, name: "BBI", latitude: 43.8587, longitude: 18.4186 },
-    { id: 3, name: "Stara Cesta", latitude: 43.8599, longitude: 18.425 },
-    { id: 4, name: "Random Location 2", latitude: 43.853, longitude: 18.4115 },
-  ];
+
 
   return (
     <View style={styles.container}>
       <MapView
-        ref={mapRef}
-        style={styles.map}
-        customMapStyle={customMapStyle}
-        initialRegion={{
-          latitude: 43.8563,
-          longitude: 18.4131,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
-        }}
-        showsUserLocation={true}
-        followsUserLocation={false}
-      >
-        {locations.map((loc) => (
-          <Marker
-            key={loc.id}
-            coordinate={{ latitude: loc.latitude, longitude: loc.longitude }}
-            title={loc.name}
-            pinColor="green"
-            onPress={() => onSelectLocation(loc)} // 👈 Trigger parent handler
-          />
-        ))}
-      </MapView>
+  ref={mapRef}
+  style={styles.map}
+  customMapStyle={customMapStyle}
+  initialRegion={{
+    latitude: 43.8563,
+    longitude: 18.4131,
+    latitudeDelta: 0.02,
+    longitudeDelta: 0.02,
+  }}
+  showsUserLocation={true}
+  followsUserLocation={false}
+>
+  {parkings.map((parking) => (
+    <Marker
+      key={parking.id}
+      coordinate={{
+        latitude: parking.latitude,
+        longitude: parking.longitude,
+      }}
+      title={parking.name}
+      description={`Cijena: ${parking.price_per_hour} KM/h\nSlobodno: ${parking.available_slots}/${parking.total_slots}`}
+      pinColor="green"
+      onPress={() => onSelectLocation(parking)}
+    />
+  ))}
+</MapView>
+
     </View>
   );
 }

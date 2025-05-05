@@ -20,5 +20,5 @@ export const calculateDurationInHours = (from, until) => {
 
 export const calculatePrice = (from, until, ratePerHour = 2) => {
   const duration = calculateDurationInHours(from, until);
-  return Math.ceil(duration * ratePerHour);
+  return parseFloat((duration * ratePerHour).toFixed(2)); // round to 2 decimal places
 };

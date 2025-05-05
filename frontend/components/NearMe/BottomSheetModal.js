@@ -147,7 +147,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
 
   const calculatedPrice =
     isValidTime(fromTime) && isValidTime(untilTime)
-      ? calculatePrice(fromTime, untilTime)
+      ? calculatePrice(fromTime, untilTime, location?.price_per_hour || 2)
       : 0;
 
   return (
@@ -173,7 +173,9 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   <Text style={styles.title}>
                     {location?.name || "Location name"}
                   </Text>
-                  <Text style={styles.subtitle}>2 KM / per h</Text>
+                  <Text style={styles.subtitle}>
+                    {location?.price_per_hour ?? 2} KM / per h
+                  </Text>
                 </View>
                 <View style={styles.headerIcons}>
                   <TouchableOpacity
@@ -247,7 +249,9 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
               {/* Price */}
               <View style={styles.priceRow}>
                 <Text style={styles.price}>Price: {calculatedPrice}KM</Text>
-                <Text style={styles.available}>18/50</Text>
+                <Text style={styles.available}>
+                  {location?.available_slots ?? 0}/{location?.total_slots ?? 0}
+                </Text>
               </View>
 
               {/* Reserve Now Button */}
@@ -511,20 +515,20 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
         </View>
       </TouchableWithoutFeedback>
       <CustomTimePicker
-  isVisible={isFromPickerVisible}
-  onClose={() => setFromPickerVisible(false)}
-  onConfirm={handleConfirmFrom}
-  selectedTime={new Date()} // you can pass parsed time here if needed
-  theme="light"
-/>
+        isVisible={isFromPickerVisible}
+        onClose={() => setFromPickerVisible(false)}
+        onConfirm={handleConfirmFrom}
+        selectedTime={new Date()} // you can pass parsed time here if needed
+        theme="light"
+      />
 
-<CustomTimePicker
-  isVisible={isUntilPickerVisible}
-  onClose={() => setUntilPickerVisible(false)}
-  onConfirm={handleConfirmUntil}
-  selectedTime={new Date()}
-  theme="light"
-/>
+      <CustomTimePicker
+        isVisible={isUntilPickerVisible}
+        onClose={() => setUntilPickerVisible(false)}
+        onConfirm={handleConfirmUntil}
+        selectedTime={new Date()}
+        theme="light"
+      />
     </Modal>
   );
 }
