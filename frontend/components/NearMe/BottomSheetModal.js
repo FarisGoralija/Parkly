@@ -320,7 +320,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                 <>
                   {/* STEP 2: Payment Screen */}
                   <View style={styles.header}>
-                    <Text style={[styles.title, { marginBottom: 5 }]}>
+                    <Text style={[styles.title, { marginBottom: 30 }]}>
                       Payment method
                     </Text>
                     <View style={styles.headerIcons}>
