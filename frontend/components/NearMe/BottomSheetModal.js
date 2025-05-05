@@ -322,15 +322,12 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   <View style={styles.header}>
                     <View>
                       <Text style={styles.title}>Payment method</Text>
-                      <Text style={styles.price2}>
+                      <Text style={styles.subtitle}>
                         Price: {calculatedPrice}KM
                       </Text>
                     </View>
                     <View style={styles.headerIcons}>
-                      <TouchableOpacity
-                        onPress={onClose}
-                        style={{ marginTop: 10 }}
-                      >
+                      <TouchableOpacity onPress={onClose}>
                         <CancelIcon size={27} color="#fff" />
                       </TouchableOpacity>
                     </View>
@@ -427,15 +424,12 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                       <View style={styles.header}>
                         <View>
                           <Text style={styles.title}>Payment method</Text>
-                          <Text style={styles.price2}>
+                          <Text style={styles.subtitle}>
                             Price: {calculatedPrice}KM
                           </Text>
                         </View>
                         <View style={styles.headerIcons}>
-                          <TouchableOpacity
-                            onPress={onClose}
-                            style={{ marginTop: 10 }}
-                          >
+                          <TouchableOpacity onPress={onClose}>
                             <CancelIcon size={27} color="#fff" />
                           </TouchableOpacity>
                         </View>
