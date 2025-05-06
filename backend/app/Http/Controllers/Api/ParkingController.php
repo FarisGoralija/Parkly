@@ -12,16 +12,12 @@ class ParkingController extends Controller
 {
     use CanLoadRelationships;
 
-    private array $relations = ['user', 'attendees', 'attendees.user'];
-
     public function index()
     {
 
-        $query = $this->loadRelationships(Parking::query());
+        $parkings = Parking::all();
 
-        return ParkingResource::collection(
-            $query->latest()
-        );
+        return ParkingResource::collection($parkings);
     }
 
     /**
@@ -29,15 +25,22 @@ class ParkingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $parking = Parking::create($request->validate([
+            'name' => 'required|string|max:125',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'total_spots' => 'required|integer|min:1',
+            'website_url' => 'nullable|url|max:255',
+            'phone_number' => 'nullable|string|max:20',
+            'price' => 'nullable|numeric|min:0'
+            ]));
+
+        return new ParkingResource($this->loadRelationships($parking));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Parking $parking)
     {
-        //
+        return new ParkingResource($parking);
     }
 
     /**
