@@ -116,7 +116,9 @@ const LoginScreen = () => {
         <View style={styles.footerContainer}>
           <View style={styles.registerContainer}>
             <Text style={styles.registerText}>Don't have an account?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate(" ")}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("RegistrationNameScreen")}
+            >
               <Text style={styles.registerLink}> Register now</Text>
             </TouchableOpacity>
           </View>
@@ -131,7 +133,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#46474D",
     padding: 20,
   },
   content: {
@@ -187,7 +189,7 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     position: "relative",
-    right: 40,
+    right: 58,
     top: 2,
   },
   footerContainer: {

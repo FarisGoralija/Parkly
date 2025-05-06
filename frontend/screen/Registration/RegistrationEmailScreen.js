@@ -14,7 +14,7 @@ import BlueUniversalButton from "../../components/common/BlueUniversalButton.js"
 import TitleText from "../../components/common/TitleText.js";
 import { isValidEmail } from "../../utils/Validation.js";
 
-const ForgotPasswordScreen = () => {
+const RegistrationEmailScreen = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(true);
@@ -26,7 +26,7 @@ const ForgotPasswordScreen = () => {
     if (isValidEmail(email)) {
       setErrorMessage("");
       setIsEmailValid(true);
-      navigation.navigate("ForgotVerifyCodeScreen", { email }); // Navigate only if email is valid
+      
     } else {
       setErrorMessage("Please enter a valid email address.");
       setIsEmailValid(false);
@@ -44,7 +44,7 @@ const ForgotPasswordScreen = () => {
       <View style={styles.container}>
         <View style={styles.titleText}>
           <TitleText
-            title="Forgot password"
+            title="Add E-mail"
             subtitle="Please enter your email to reset the password"
           />
         </View>
@@ -128,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPasswordScreen;
+export default RegistrationEmailScreen;

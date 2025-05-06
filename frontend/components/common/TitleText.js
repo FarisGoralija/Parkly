@@ -18,7 +18,7 @@ const TitleText = ({
         onPress={() => navigation.goBack()}
         style={styles.backButton}
       >
-        <BackButton style={backIconStyle} /> 
+        <BackButton color= "white" style={backIconStyle} /> 
       </TouchableOpacity>
 
       <View style={styles.textContainer}>
@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    left: 0,
-    top: 5,
+    left: 20,
+    top: 14,
   },
   textContainer: {
     flex: 1,
@@ -51,11 +51,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 20,
     textAlign: "center",
-    color: "black", 
+    color: "white", 
   },
   subtitle: {
     fontSize: 15,
-    color: "#9C9C9C", 
+    color: "white", 
     textAlign: "center",
     fontWeight: "400",
     alignSelf: "center",
