@@ -105,9 +105,6 @@ const styles = StyleSheet.create({
     paddingTop: 80,
     backgroundColor: "#46474D",
   },
-  titleText: {
-    marginBottom: 2,
-  },
   
   inputWrapper: {
     position: "relative",

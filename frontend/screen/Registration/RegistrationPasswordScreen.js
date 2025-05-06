@@ -6,18 +6,21 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  
 } from "react-native";
 import TitleText from "../../components/common/TitleText";
 import InputField from "../../components/common/InputField";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
 import { passwordRegex } from "../../utils/Validation";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const RegistrationPasswordScreen = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [secureText, setSecureText] = useState(true);
+  const navigation = useNavigation();
 
   const isSubmitDisabled = password.trim() === "";
 
@@ -42,6 +45,7 @@ const RegistrationPasswordScreen = () => {
     console.log("Password saved:", password);
     setErrorMessage("");
     setIsPasswordValid(true);
+    navigation.navigate("RegistrationEmailScreen");
   };
 
   return (
@@ -105,10 +109,7 @@ const styles = StyleSheet.create({
     paddingTop: 80,
     backgroundColor: "#46474D",
   },
-  titleText: {
-    marginBottom: 2,
-  },
-  
+
   inputWrapper: {
     position: "relative",
     justifyContent: "center",
@@ -127,8 +128,8 @@ const styles = StyleSheet.create({
   errorText: {
     color: "#E92440",
     fontSize: 13,
-    marginTop: 4,
-    marginBottom: 4,
+    marginTop: 2,
+    marginBottom: 2,
     minHeight: 12,
   },
   savePasswordButton: {
