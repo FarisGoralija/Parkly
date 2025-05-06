@@ -3,16 +3,25 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ParkingResource;
+use App\Http\Traits\CanLoadRelationships;
+use App\Models\Parking;
 use Illuminate\Http\Request;
 
 class ParkingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use CanLoadRelationships;
+
+    private array $relations = ['user', 'attendees', 'attendees.user'];
+
     public function index()
     {
-        //
+
+        $query = $this->loadRelationships(Parking::query());
+
+        return ParkingResource::collection(
+            $query->latest()
+        );
     }
 
     /**
