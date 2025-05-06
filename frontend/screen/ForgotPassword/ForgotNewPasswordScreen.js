@@ -103,21 +103,19 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 80,
-    backgroundColor: "white",
+    backgroundColor: "#46474D",
   },
   titleText: {
     marginBottom: 2,
   },
-  inputBlock: {
-    marginBottom: 5,
-  },
+  
   inputWrapper: {
     position: "relative",
     justifyContent: "center",
   },
   eyeIconContainer: {
     position: "absolute",
-    right: 15,
+    right: 35,
     top: 11,
     zIndex: 1,
   },
@@ -130,7 +128,8 @@ const styles = StyleSheet.create({
     color: "#E92440",
     fontSize: 13,
     marginTop: 4,
-    minHeight: 17,
+    marginBottom: 4,
+    minHeight: 12,
   },
   savePasswordButton: {
     width: "100%",

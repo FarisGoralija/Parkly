@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 80,
-    backgroundColor: "#3D3E45",
+    backgroundColor: "#46474D",
   },
  
   inputError: {

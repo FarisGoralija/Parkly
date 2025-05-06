@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 80,
-    backgroundColor: "white",
+    backgroundColor: "#46474D",
   },
   titleText: {
     marginBottom: 20,
