@@ -30,6 +30,7 @@ import CustomTimePicker from "../common/CustomTimePicker";
 import Payment from "../../components/svg/Payment";
 import { useCard } from "../../context/CardContext";
 import dayjs from "dayjs";
+import { ScrollView } from "react-native";
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -364,25 +365,30 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                             No cars added
                           </Text>
                         ) : (
-                          cars.map((car, index) => (
-                            <TouchableOpacity
-                              key={index}
-                              style={{
-                                paddingVertical: 10,
-                                paddingHorizontal: 16,
-                              }}
-                              onPress={() => {
-                                setSelectedCar(
-                                  `${car.brand} ${car.model} (${car.registration})`
-                                );
-                                setShowPicker(false);
-                              }}
-                            >
-                              <Text style={{ color: "#fff" }}>
-                                {car.brand} {car.model} ({car.registration})
-                              </Text>
-                            </TouchableOpacity>
-                          ))
+                          <ScrollView
+                            nestedScrollEnabled
+                            style={{ maxHeight: 80 }}
+                          >
+                            {cars.map((car, index) => (
+                              <TouchableOpacity
+                                key={index}
+                                style={{
+                                  paddingVertical: 10,
+                                  paddingHorizontal: 16,
+                                }}
+                                onPress={() => {
+                                  setSelectedCar(
+                                    `${car.brand} ${car.model} (${car.registration})`
+                                  );
+                                  setShowPicker(false);
+                                }}
+                              >
+                                <Text style={{ color: "#fff" }}>
+                                  {car.brand} {car.model} ({car.registration})
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                          </ScrollView>
                         )}
                       </View>
                     )}
@@ -465,26 +471,31 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                                 No cards added
                               </Text>
                             ) : (
-                              cards.map((card, index) => (
-                                <TouchableOpacity
-                                  key={index}
-                                  style={{
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 16,
-                                  }}
-                                  onPress={() => {
-                                    setSelectedCard(
-                                      `•••• ${card.cardNumber.slice(-4)}`
-                                    );
-                                    setShowCardPicker(false);
-                                  }}
-                                >
-                                  <Text style={{ color: "#fff" }}>
-                                    {card.cardholderName} ••••{" "}
-                                    {card.cardNumber.slice(-4)}
-                                  </Text>
-                                </TouchableOpacity>
-                              ))
+                              <ScrollView
+                                nestedScrollEnabled
+                                style={{ maxHeight: 80 }}
+                              >
+                                {cards.map((card, index) => (
+                                  <TouchableOpacity
+                                    key={index}
+                                    style={{
+                                      paddingVertical: 10,
+                                      paddingHorizontal: 16,
+                                    }}
+                                    onPress={() => {
+                                      setSelectedCard(
+                                        `•••• ${card.cardNumber.slice(-4)}`
+                                      );
+                                      setShowCardPicker(false);
+                                    }}
+                                  >
+                                    <Text style={{ color: "#fff" }}>
+                                      {card.cardholderName} ••••{" "}
+                                      {card.cardNumber.slice(-4)}
+                                    </Text>
+                                  </TouchableOpacity>
+                                ))}
+                              </ScrollView>
                             )}
                           </View>
                         )}
