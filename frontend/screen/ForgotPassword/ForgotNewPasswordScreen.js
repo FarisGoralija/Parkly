@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 80,
-    backgroundColor: "white",
+    backgroundColor: "#3D3E45",
   },
   titleText: {
     marginBottom: 2,

@@ -35,11 +35,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     top: 5, // Adjust for proper alignment
-    // padding: 10, // Give more tap area
+  
   },
   backIcon: {
     width: 63,
-    height: 42, // Adjusted for better scaling
+    height: 42,
+    color: "white" // Adjusted for better scaling
   },
   textContainer: {
     flex: 1, // Takes available space
@@ -51,10 +52,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 20,
     textAlign: "center",
+    color: "white"
   },
   subtitle: {
     fontSize: 15,
-    color: "#9C9C9C",
+    color: "white",
     textAlign: "center",
     fontWeight: "400",
     textAlign: 'center',
