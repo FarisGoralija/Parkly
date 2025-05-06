@@ -1,49 +1,48 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-const TitleText = ({ title, subtitle, subtitleStyle, backIconStyle }) => {
+import BackButton from "../svg/backButton";
+ 
+const TitleText = ({
+  title,
+  subtitle,
+  subtitleStyle,
+  backIconStyle,
+  titleStyle,
+}) => {
   const navigation = useNavigation();
-
+ 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={styles.backButton}
       >
-        <Image
-          source={require("../../assets/icons/back.png")}
-          style={[styles.backIcon, backIconStyle]}
-        />
+        <BackButton style={backIconStyle} />
       </TouchableOpacity>
+ 
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, titleStyle]}>{title}</Text>
         <Text style={[styles.subtitle, subtitleStyle]}>{subtitle}</Text>
       </View>
     </View>
   );
 };
-
+ 
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
     marginBottom: 20,
-    paddingTop: 20, // Ensure spacing consistency
+    paddingTop: 20,
   },
   backButton: {
     position: "absolute",
     left: 0,
-    top: 5, // Adjust for proper alignment
-  
-  },
-  backIcon: {
-    width: 63,
-    height: 42,
-    color: "white" // Adjusted for better scaling
+    top: 5,
   },
   textContainer: {
-    flex: 1, // Takes available space
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -52,17 +51,15 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 20,
     textAlign: "center",
-    color: "white"
+    color: "black",
   },
   subtitle: {
     fontSize: 15,
-    color: "white",
+    color: "#9C9C9C",
     textAlign: "center",
     fontWeight: "400",
-    textAlign: 'center',
-    alignSelf: 'center',
-    
+    alignSelf: "center",
   },
 });
-
+ 
 export default TitleText;
