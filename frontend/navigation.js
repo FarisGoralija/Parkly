@@ -16,6 +16,8 @@ import ProfileDetailsScreen from "./screen/Profile/ProfileDetailsScreen";
 import MyCardScreen from "./screen/Profile/MyCardScreen";
 import CardDetails from "./screen/Profile/CardDetailsScreen";
 import { CardProvider } from "./context/CardContext";
+import RegistrationPasswordScreen from "./screen/Registration/RegistrationPasswordScreen";
+import RegistrationUsernameScreen from "./screen/Registration/RegistrationUsernameScreen";
 
 
 const Stack = createStackNavigator();
@@ -27,7 +29,7 @@ export default function Navigation() {
        <CardProvider> 
        <CarProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-      initialRouteName="Home">
+      initialRouteName="LoginScreen">
         <Stack.Screen name="Home" component={BottomTabs} /> 
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} /> 
@@ -40,6 +42,9 @@ export default function Navigation() {
         <Stack.Screen name="ProfileDetailsScreen" component={ProfileDetailsScreen} />
         <Stack.Screen name="MyCardScreen" component={MyCardScreen} />
         <Stack.Screen name="CardDetails" component={CardDetails} />
+        <Stack.Screen name="RegistrationPasswordScreen" component={RegistrationPasswordScreen} />
+        <Stack.Screen name="RegistrationUsernameScreen" component={RegistrationUsernameScreen} />
+
       </Stack.Navigator>
       </CarProvider>
       </CardProvider>
