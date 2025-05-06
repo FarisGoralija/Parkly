@@ -294,8 +294,8 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   <View style={styles.priceRow}>
                     <Text style={styles.price}>Price: {calculatedPrice}KM</Text>
                     <Text style={styles.available}>
-                      {location?.available_slots ?? 0}/
-                      {location?.total_slots ?? 0}
+                      {location?.available_slots ?? "–"}/
+                      {location?.total_spots ?? "?"}
                     </Text>
                   </View>
 
