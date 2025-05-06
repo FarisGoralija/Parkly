@@ -20,9 +20,6 @@ class ParkingController extends Controller
         return ParkingResource::collection($parkings);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $parking = Parking::create($request->validate([
@@ -43,19 +40,15 @@ class ParkingController extends Controller
         return new ParkingResource($parking);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Parking $parking)
     {
-        //
+        $parking->delete();
+
+        return response(status: 204);
     }
 }
