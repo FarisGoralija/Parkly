@@ -1,0 +1,11 @@
+[phases.setup]
+nixpkgs = ["php", "composer", "phpPackages.composer", "phpPackages.pdo", "phpPackages.pdo_mysql", "phpPackages.openssl", "phpPackages.tokenizer"]
+
+[phases.install]
+cmds = ["cd backend && composer install --no-dev --optimize-autoloader"]
+
+[phases.build]
+cmds = ["cd backend && php artisan config:cache"]
+
+[start]
+cmd = "cd backend && php artisan serve --host=0.0.0.0 --port=8000"
