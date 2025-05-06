@@ -1,20 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  Text,
+  TouchableOpacity,
 } from "react-native";
-import { useMemo } from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import endpoints from "../api/endpoints";
 import CustomMap from "../components/NearMe/Map";
 import SearchBar from "../components/NearMe/SearchBar";
-import BottomSheetModal from "../components/NearMe/BottomSheetModal"; // 👈 import modal
+import BottomSheetModal from "../components/NearMe/BottomSheetModal";
 
 export default function NearMeScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [parkings, setParkings] = useState([]);
+
+  const { data: parkings = [], isLoading, isError } = useQuery({
+    queryKey: ["parkings"],
+    queryFn: async () => {
+      const response = await axios.get(endpoints.parking);
+      console.log("Fetched response:", response.data);
+
+  
+      if (Array.isArray(response.data)) {
+        return response.data;
+      } else if (response.data?.data && Array.isArray(response.data.data)) {
+        return response.data.data;
+      } else {
+        throw new Error("Unexpected response format");
+      }
+    },
+  });
 
   const filteredResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -29,40 +48,20 @@ export default function NearMeScreen() {
 
   const closeModal = () => {
     setSelectedLocation(null);
-    setSearchQuery(""); // Optional: also clear input on close
+    setSearchQuery("");
   };
 
-  useEffect(() => {
-    setParkings([
-      {
-        id: 1,
-        name: "SCC Parking",
-        latitude: 43.8554,
-        longitude: 18.4078,
-        price_per_hour: 2.0,
-        total_slots: 50,
-        available_slots: 18,
-      },
-      {
-        id: 2,
-        name: "BBI Parking",
-        latitude: 43.8587,
-        longitude: 18.4186,
-        price_per_hour: 2.5,
-        total_slots: 60,
-        available_slots: 23,
-      },
-      {
-        id: 3,
-        name: "Stara Cesta",
-        latitude: 43.8599,
-        longitude: 18.425,
-        price_per_hour: 1.0,
-        total_slots: 40,
-        available_slots: 9,
-      },
-    ]);
-  }, []);
+  if (isLoading) {
+    return <Text style={{ padding: 20 }}>Učitavanje parkinga...</Text>;
+  }
+
+  if (isError) {
+    return (
+      <Text style={{ padding: 20, color: "red" }}>
+        Greška pri dohvaćanju parkinga.
+      </Text>
+    );
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -78,7 +77,7 @@ export default function NearMeScreen() {
                   style={styles.dropdownItem}
                   onPress={() => {
                     setSearchQuery("");
-                    setSelectedLocation(parking); // ✅ This triggers the bottom sheet
+                    setSelectedLocation(parking);
                   }}
                 >
                   <Text style={styles.dropdownText}>{parking.name}</Text>
@@ -87,10 +86,8 @@ export default function NearMeScreen() {
             </View>
           )}
         </View>
-        <CustomMap
-          parkings={parkings} // ✅ always show full list on map
-          onSelectLocation={handleMarkerPress}
-        />
+
+        <CustomMap parkings={parkings} onSelectLocation={handleMarkerPress} />
 
         <BottomSheetModal
           isVisible={!!selectedLocation}
@@ -125,14 +122,12 @@ const styles = StyleSheet.create({
     elevation: 6,
     zIndex: 20,
   },
-
   dropdownItem: {
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
   },
-
   dropdownText: {
     fontSize: 16,
     color: "#333",

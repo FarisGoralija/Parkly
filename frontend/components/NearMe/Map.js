@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Alert, StyleSheet, View } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Callout } from "react-native-maps";
+import { Text, TouchableOpacity } from "react-native";
 import * as Location from "expo-location";
 
 // Custom Google Maps Style
@@ -135,38 +136,54 @@ export default function CustomMap({ parkings = [], onSelectLocation }) {
     })();
   }, []);
 
-
-
   return (
     <View style={styles.container}>
       <MapView
-  ref={mapRef}
-  style={styles.map}
-  customMapStyle={customMapStyle}
-  initialRegion={{
-    latitude: 43.8563,
-    longitude: 18.4131,
-    latitudeDelta: 0.02,
-    longitudeDelta: 0.02,
-  }}
-  showsUserLocation={true}
-  followsUserLocation={false}
->
-  {parkings.map((parking) => (
-    <Marker
-      key={parking.id}
-      coordinate={{
-        latitude: parking.latitude,
-        longitude: parking.longitude,
-      }}
-      title={parking.name}
-      description={`Cijena: ${parking.price_per_hour} KM/h\nSlobodno: ${parking.available_slots}/${parking.total_slots}`}
-      pinColor="green"
-      onPress={() => onSelectLocation(parking)}
-    />
-  ))}
-</MapView>
-
+        ref={mapRef}
+        style={styles.map}
+        customMapStyle={customMapStyle}
+        initialRegion={{
+          latitude: 43.8563,
+          longitude: 18.4131,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        }}
+        showsUserLocation={true}
+        followsUserLocation={false}
+      >
+        {parkings.map((parking) => (
+          <Marker
+            key={parking.id}
+            coordinate={{
+              latitude: parking.latitude,
+              longitude: parking.longitude,
+            }}
+            pinColor="green"
+          >
+            <Callout tooltip onPress={() => onSelectLocation(parking)}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#fff",
+                  padding: 10,
+                  borderRadius: 8,
+                  maxWidth: 200,
+                }}
+              >
+                <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                  {parking.name}
+                </Text>
+                <Text style={{ marginTop: 4 }}>
+                  {parking.price_per_hour} KM/h - Slobodno:{" "}
+                  {parking.available_slots}/{parking.total_slots}
+                </Text>
+                <Text style={{ color: "#007AFF", marginTop: 6 }}>
+                  Tap for details
+                </Text>
+              </TouchableOpacity>
+            </Callout>
+          </Marker>
+        ))}
+      </MapView>
     </View>
   );
 }
