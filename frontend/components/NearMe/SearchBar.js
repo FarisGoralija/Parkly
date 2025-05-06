@@ -1,24 +1,42 @@
 import React from "react";
-import { View, TextInput, StyleSheet, Text } from "react-native";
+import { View, TextInput, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+
+
 const SearchBar = ({ placeholder, value, onChangeText }) => {
-
-
   return (
-    <View style={styles.shadowContainer}> 
+    <View style={styles.shadowContainer}>
       <View style={styles.container}>
-    
         <TextInput
           style={styles.input}
-          placeholder={placeholder && typeof placeholder === "string" ? placeholder : "Search..."}
+          placeholder={
+            placeholder && typeof placeholder === "string"
+              ? placeholder
+              : "Search..."
+          }
           placeholderTextColor="#888"
           value={value && typeof value === "string" ? value : ""}
           onChangeText={onChangeText}
         />
-        
-     
-        <Ionicons name="search" size={20} color="#727272" style={styles.icon} />
+
+        {value?.length > 0 ? (
+          <TouchableOpacity onPress={() => onChangeText("")}>
+            <Ionicons
+              name="close-circle"
+              size={20}
+              color="#727272"
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        ) : (
+          <Ionicons
+            name="search"
+            size={20}
+            color="#727272"
+            style={styles.icon}
+          />
+        )}
       </View>
     </View>
   );
@@ -26,12 +44,12 @@ const SearchBar = ({ placeholder, value, onChangeText }) => {
 
 const styles = StyleSheet.create({
   shadowContainer: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)", 
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
     borderRadius: 30,
     padding: 9,
     alignSelf: "center",
     width: "90%",
-    height:64,
+    height: 64,
   },
   container: {
     flexDirection: "row",
@@ -45,19 +63,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
-    height:46,
+    height: 46,
   },
   input: {
     flex: 1,
     fontSize: 16,
     color: "#333",
-    height: 40, 
-    lineHeight: 20, 
-    textAlignVertical: "center", 
-    paddingVertical: 5, 
-    includeFontPadding: false, 
+    height: 40,
+    lineHeight: 20,
+    textAlignVertical: "center",
+    paddingVertical: 5,
+    includeFontPadding: false,
   },
-  
+
   icon: {
     marginLeft: 10,
   },
