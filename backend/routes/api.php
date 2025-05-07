@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\Api\ParkingController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ParkingSpotController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,7 @@ Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logou
 
 //Parking routes
 Route::apiResource('parkings', ParkingController::class)->only(['index', 'show', 'store', 'destroy']);
+
+Route::apiResource('parkings.parking-spots', ParkingSpotController::class)
+    ->scoped();
+

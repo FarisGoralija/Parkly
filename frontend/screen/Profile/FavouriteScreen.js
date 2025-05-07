@@ -28,7 +28,7 @@ export default function FavouriteParkingScreen() {
         renderItem={({ item }) => (
           <FavouriteParkingCard
             name={item.name}
-            price="2 KM / per h"
+            price={`${parseFloat(item.price).toFixed(2)} KM / per h`}
             liked={true}
             onToggleLike={() => {
               setSelectedParkingToRemove(item);

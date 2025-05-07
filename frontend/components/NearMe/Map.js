@@ -169,13 +169,10 @@ export default function CustomMap({ parkings = [], onSelectLocation }) {
                   maxWidth: 200,
                 }}
               >
-                <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 14 }}>
                   {parking.name}
                 </Text>
-                <Text style={{ marginTop: 4 }}>
-                  {parking.price_per_hour} KM/h - Slobodno:{" "}
-                  {parking.available_slots}/{parking.total_slots}
-                </Text>
+              
                 <Text style={{ color: "#007AFF", marginTop: 6 }}>
                   Tap for details
                 </Text>
