@@ -37,7 +37,17 @@ class ParkingController extends Controller
 
     public function show(Parking $parking)
     {
-        return new ParkingResource($parking);
+        $occupied = $parking->parkingSpots()->where('is_available', false)->count();
+        $available = $parking->total_spots - $occupied;
+
+        return response()->json([
+            'name' => $parking->name,
+            'price' => $parking->price,
+            'website_url' => $parking->website_url,
+            'phone_number' => $parking->phone_number,
+            'total_spots' => $parking->total_spots,
+            'available_spots' => $available
+            ]);
     }
 
     public function update(Request $request, string $id)
