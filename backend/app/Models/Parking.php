@@ -15,4 +15,15 @@ class Parking extends Model
         'phone_number',
         'price',
     ];
+
+    public function parkingSpots()
+{
+    return $this->hasMany(ParkingSpot::class);
+}
+
+//public function availableParkingSpots()
+//{
+//    return $this->hasMany(ParkingSpot::class)->where('is_available', true);
+//}
+
 }
