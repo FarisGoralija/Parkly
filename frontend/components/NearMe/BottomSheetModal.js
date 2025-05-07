@@ -30,6 +30,7 @@ import CustomTimePicker from "../common/CustomTimePicker";
 import Payment from "../../components/svg/Payment";
 import { useCard } from "../../context/CardContext";
 import dayjs from "dayjs";
+import { ScrollView } from "react-native";
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -152,7 +153,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
 
   const calculatedPrice =
     isValidTime(fromTime) && isValidTime(untilTime)
-      ? calculatePrice(fromTime, untilTime, location?.price_per_hour || 2)
+      ? calculatePrice(fromTime, untilTime, parseFloat(location?.price ?? 2))
       : 0;
 
   return (
@@ -210,7 +211,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                         {location?.name || "Location name"}
                       </Text>
                       <Text style={styles.subtitle}>
-                        {location?.price_per_hour ?? 2} KM / per h
+                        {parseFloat(location?.price ?? 2)} KM / per h
                       </Text>
                     </View>
                     <View style={styles.headerIcons}>
@@ -243,7 +244,9 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                       icon={<Compass size={22} color="#fff" />}
                       label="Website"
                       onPress={() => {
-                        Linking.openURL("https://parking-sarajevo.ba/");
+                        if (location?.website_url) {
+                          Linking.openURL(location.website_url);
+                        }
                       }}
                     />
 
@@ -253,10 +256,10 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                       onPress={() => setIsCallModalVisible(true)}
                     />
 
-                    <ActionButton
-                      icon={<Walking size={22} color="#fff" />}
-                      label={walkingDuration}
-                    />
+                    <View style={styles.actionButton}>
+                      <Walking size={22} color="#fff" />
+                      <Text style={styles.actionLabel}>{walkingDuration}</Text>
+                    </View>
                   </View>
 
                   {/* Time Selection */}
@@ -292,8 +295,8 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   <View style={styles.priceRow}>
                     <Text style={styles.price}>Price: {calculatedPrice}KM</Text>
                     <Text style={styles.available}>
-                      {location?.available_slots ?? 0}/
-                      {location?.total_slots ?? 0}
+                      {location?.available_slots ?? "–"}/
+                      {location?.total_spots ?? "?"}
                     </Text>
                   </View>
 
@@ -362,25 +365,30 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                             No cars added
                           </Text>
                         ) : (
-                          cars.map((car, index) => (
-                            <TouchableOpacity
-                              key={index}
-                              style={{
-                                paddingVertical: 10,
-                                paddingHorizontal: 16,
-                              }}
-                              onPress={() => {
-                                setSelectedCar(
-                                  `${car.brand} ${car.model} (${car.registration})`
-                                );
-                                setShowPicker(false);
-                              }}
-                            >
-                              <Text style={{ color: "#fff" }}>
-                                {car.brand} {car.model} ({car.registration})
-                              </Text>
-                            </TouchableOpacity>
-                          ))
+                          <ScrollView
+                            nestedScrollEnabled
+                            style={{ maxHeight: 80 }}
+                          >
+                            {cars.map((car, index) => (
+                              <TouchableOpacity
+                                key={index}
+                                style={{
+                                  paddingVertical: 10,
+                                  paddingHorizontal: 16,
+                                }}
+                                onPress={() => {
+                                  setSelectedCar(
+                                    `${car.brand} ${car.model} (${car.registration})`
+                                  );
+                                  setShowPicker(false);
+                                }}
+                              >
+                                <Text style={{ color: "#fff" }}>
+                                  {car.brand} {car.model} ({car.registration})
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                          </ScrollView>
                         )}
                       </View>
                     )}
@@ -463,26 +471,31 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                                 No cards added
                               </Text>
                             ) : (
-                              cards.map((card, index) => (
-                                <TouchableOpacity
-                                  key={index}
-                                  style={{
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 16,
-                                  }}
-                                  onPress={() => {
-                                    setSelectedCard(
-                                      `•••• ${card.cardNumber.slice(-4)}`
-                                    );
-                                    setShowCardPicker(false);
-                                  }}
-                                >
-                                  <Text style={{ color: "#fff" }}>
-                                    {card.cardholderName} ••••{" "}
-                                    {card.cardNumber.slice(-4)}
-                                  </Text>
-                                </TouchableOpacity>
-                              ))
+                              <ScrollView
+                                nestedScrollEnabled
+                                style={{ maxHeight: 80 }}
+                              >
+                                {cards.map((card, index) => (
+                                  <TouchableOpacity
+                                    key={index}
+                                    style={{
+                                      paddingVertical: 10,
+                                      paddingHorizontal: 16,
+                                    }}
+                                    onPress={() => {
+                                      setSelectedCard(
+                                        `•••• ${card.cardNumber.slice(-4)}`
+                                      );
+                                      setShowCardPicker(false);
+                                    }}
+                                  >
+                                    <Text style={{ color: "#fff" }}>
+                                      {card.cardholderName} ••••{" "}
+                                      {card.cardNumber.slice(-4)}
+                                    </Text>
+                                  </TouchableOpacity>
+                                ))}
+                              </ScrollView>
                             )}
                           </View>
                         )}
@@ -620,7 +633,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
             Call this number?
           </Text>
           <Text style={{ fontSize: 16, color: "#333", marginBottom: 20 }}>
-            {location?.phone ?? "+38761111222"}
+            {location?.phone_number ?? "+38761111222"}
           </Text>
 
           <View style={{ flexDirection: "row", gap: 12 }}>
@@ -639,7 +652,9 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
             <TouchableOpacity
               onPress={() => {
                 setIsCallModalVisible(false);
-                Linking.openURL(`tel:${location?.phone ?? "+38761111222"}`);
+                Linking.openURL(
+                  `tel:${location?.phone_number ?? "+38761111222"}`
+                );
               }}
               style={{
                 backgroundColor: "#0195F5",

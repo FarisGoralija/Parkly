@@ -13,18 +13,23 @@ import endpoints from "../api/endpoints";
 import CustomMap from "../components/NearMe/Map";
 import SearchBar from "../components/NearMe/SearchBar";
 import BottomSheetModal from "../components/NearMe/BottomSheetModal";
+import { ActivityIndicator } from "react-native";
+
 
 export default function NearMeScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
 
-  const { data: parkings = [], isLoading, isError } = useQuery({
+  const {
+    data: parkings = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["parkings"],
     queryFn: async () => {
       const response = await axios.get(endpoints.parking);
       console.log("Fetched response:", response.data);
 
-  
       if (Array.isArray(response.data)) {
         return response.data;
       } else if (response.data?.data && Array.isArray(response.data.data)) {
@@ -52,7 +57,12 @@ export default function NearMeScreen() {
   };
 
   if (isLoading) {
-    return <Text style={{ padding: 20 }}>Učitavanje parkinga...</Text>;
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#0195F5" />
+        <Text style={styles.loaderText}>Loading map...</Text>
+      </View>
+    );
   }
 
   if (isError) {
@@ -132,4 +142,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff", // or "#3A3A3C" if you're in dark theme
+  },
+  loaderText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: "#333", // or "#fff" for dark theme
+    fontWeight: "600",
+  },
+  
 });
