@@ -1,3 +1,4 @@
+Bottom
 import React, { useState, useEffect } from "react";
 
 import {
@@ -12,6 +13,7 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from "react-native";
 import Modal from "react-native-modal";
 import { calculatePrice } from "../../utils/priceCalculator";
@@ -31,6 +33,10 @@ import Payment from "../../components/svg/Payment";
 import { useCard } from "../../context/CardContext";
 import dayjs from "dayjs";
 import { ScrollView } from "react-native";
+import axios from "axios";
+import endpoints from "../../api/endpoints"; // assuming you already have this
+
+
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -52,6 +58,27 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isCallModalVisible, setIsCallModalVisible] = useState(false);
   const { cards } = useCard();
+  const [availableSpots, setAvailableSpots] = useState(null);
+  const [isLoadingSpots, setIsLoadingSpots] = useState(false);
+
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      if (isVisible && location?.id) {
+        setIsLoadingSpots(true);
+        try {
+          const res = await axios.get(`${endpoints.parking}/${location.id}`);
+          setAvailableSpots(res.data.available_spots);
+        } catch (err) {
+          console.warn("Failed to fetch available spots:", err);
+          setAvailableSpots(null);
+        } finally {
+          setIsLoadingSpots(false);
+        }
+      }
+    };
+
+    fetchAvailability();
+  }, [isVisible, location?.id]);
 
   useEffect(() => {
     if (isVisible) {
@@ -294,10 +321,13 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   {/* Price */}
                   <View style={styles.priceRow}>
                     <Text style={styles.price}>Price: {calculatedPrice}KM</Text>
-                    <Text style={styles.available}>
-                      {location?.available_slots ?? "–"}/
-                      {location?.total_spots ?? "?"}
-                    </Text>
+                    {isLoadingSpots ? (
+                      <ActivityIndicator size="small" color="#1CD159" />
+                    ) : (
+                      <Text style={styles.available}>
+                        {availableSpots ?? "–"}/{location?.total_spots ?? "?"}
+                      </Text>
+                    )}
                   </View>
 
                   {/* Reserve Now Button */}
