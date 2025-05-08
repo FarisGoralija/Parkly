@@ -6,20 +6,21 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  
 } from "react-native";
 import TitleText from "../../components/common/TitleText";
 import InputField from "../../components/common/InputField";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
-import { passwordRegex } from "../../utils/Validation";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useRegistration } from "../../context/RegistrationContext"; // Import the context
+import endpoints from "../../api/endpoints"; // Import endpoints.js
 
 const RegistrationPasswordScreen = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [secureText, setSecureText] = useState(true);
+  const { updateRegistrationData, registrationData } = useRegistration(); // Access the context update function
   const navigation = useNavigation();
 
   const isSubmitDisabled = password.trim() === "";
@@ -34,18 +35,45 @@ const RegistrationPasswordScreen = () => {
   };
 
   const handleSavePassword = () => {
-    if (!passwordRegex.test(password)) {
-      setErrorMessage(
-        "Password must be 8+ characters, with an uppercase, number, and symbol."
-      );
-      setIsPasswordValid(false);
-      return;
-    }
+    // Save password in context
+    updateRegistrationData("password", password);
 
-    console.log("Password saved:", password);
-    setErrorMessage("");
-    setIsPasswordValid(true);
-    navigation.navigate("RegistrationEmailScreen");
+    // Merge data from context with the password
+    const userData = { ...registrationData, password };
+
+    // Send the registration data to the API
+    fetch(endpoints.registerUser, {  // Use the registerUser endpoint from endpoints.js
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+      redirect: "manual", // Disable automatic redirects
+    })
+      .then((response) => {
+        console.log("Response status:", response.status);
+        if (!response.ok) {
+          throw new Error("Registration failed");
+        }
+        return response.text(); // Get the raw response as text
+      })
+      .then((data) => {
+        console.log("Raw response data:", data); // Log the raw response to check if it's HTML
+        try {
+          const jsonResponse = JSON.parse(data); // Try parsing as JSON
+          console.log("Parsed JSON:", jsonResponse);
+
+          // After successful registration, navigate to the success screen
+          navigation.navigate("LoginScreen");
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+          setErrorMessage("An error occurred. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error occurred:", error);
+        setErrorMessage("An error occurred. Please try again.");
+      });
   };
 
   return (
