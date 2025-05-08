@@ -31,7 +31,7 @@ export default function Navigation() {
        <CardProvider> 
        <CarProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-      initialRouteName="Home">
+      initialRouteName="LoginScreen">
         <Stack.Screen name="Home" component={BottomTabs} /> 
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} /> 

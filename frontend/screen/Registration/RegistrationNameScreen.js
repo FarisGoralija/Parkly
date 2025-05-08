@@ -11,9 +11,11 @@ import { useNavigation } from "@react-navigation/native";
 import TitleText from "../../components/common/TitleText";
 import InputField from "../../components/common/InputField";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
+import { useRegistration } from "../../context/RegistrationContext"; // Import the context
 
 const RegistrationNameScreen = () => {
   const [name, setName] = useState("");
+  const { updateRegistrationData } = useRegistration(); // Access the update function
   const navigation = useNavigation();
 
   const isSubmitDisabled = name.trim() === "";
@@ -21,8 +23,8 @@ const RegistrationNameScreen = () => {
   const handleContinue = () => {
     if (isSubmitDisabled) return;
 
-    console.log("Name entered:", name);
-    navigation.navigate("RegistrationUsernameScreen", { name });
+    updateRegistrationData("name", name); // Update context with name
+    navigation.navigate("RegistrationUsernameScreen"); // Navigate to the next screen
   };
 
   const handleClearInput = () => {

@@ -12,21 +12,27 @@ import { useNavigation } from "@react-navigation/native"; // Import navigation h
 import InputField from "../../components/common/InputField.js";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton.js";
 import TitleText from "../../components/common/TitleText.js";
+import { useRegistration } from "../../context/RegistrationContext.js"; // Import the context
 import { isValidEmail } from "../../utils/Validation.js";
 
 const RegistrationEmailScreen = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(true);
+  const { updateRegistrationData } = useRegistration(); // Access the context update function
   const navigation = useNavigation(); // Initialize navigation
 
   const isSubmitDisabled = email.trim() === "";
 
+  // Handle email validation and updating context
   const handleResetPassword = () => {
     if (isValidEmail(email)) {
       setErrorMessage("");
       setIsEmailValid(true);
-      
+      updateRegistrationData("email", email); // Store email in context
+
+      // Navigate to the next screen (e.g., RegistrationPasswordScreen)
+      navigation.navigate("RegistrationPasswordScreen");
     } else {
       setErrorMessage("Please enter a valid email address.");
       setIsEmailValid(false);
