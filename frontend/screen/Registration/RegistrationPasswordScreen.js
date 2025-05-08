@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useRegistration } from "../../context/RegistrationContext"; // Import the context
 import endpoints from "../../api/endpoints"; // Import endpoints.js
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 const RegistrationPasswordScreen = () => {
   const [password, setPassword] = useState("");
@@ -63,8 +64,13 @@ const RegistrationPasswordScreen = () => {
           const jsonResponse = JSON.parse(data); // Try parsing as JSON
           console.log("Parsed JSON:", jsonResponse);
 
-          // After successful registration, navigate to the success screen
-          navigation.navigate("LoginScreen");
+          // Store the token in AsyncStorage
+          AsyncStorage.setItem("auth_token", jsonResponse.token).then(() => {
+            console.log("Token saved successfully.");
+          });
+
+          // After successful registration, navigate to the Home screen
+          navigation.navigate("Home");
         } catch (error) {
           console.error("Error parsing JSON:", error);
           setErrorMessage("An error occurred. Please try again.");
