@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#46474D",
   },
   titleText: {
-    marginBottom: 15,
+    marginBottom: 20,
   },
   inputWrapper: {
     marginBottom: 15,
@@ -129,11 +129,11 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: "absolute",
-    right: 35,
-    top: "50%",
-    transform: [{ translateY: -12 }],
+    right: 35, 
+    top: 11,
     zIndex: 10,
   },
+
   errorText: {
     color: "#E92440",
     fontSize: 13,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
   changePasswordButton: {
     width: "100%",
-    marginTop: 15,
+    marginTop: 10,
   },
 });
 
