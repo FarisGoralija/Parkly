@@ -38,9 +38,13 @@ const RegistrationPasswordScreen = () => {
   const handleSavePassword = () => {
     // Save password in context
     updateRegistrationData("password", password);
+    console.log("Password created:", password);
 
     // Merge data from context with the password
     const userData = { ...registrationData, password };
+
+    console.log("Sending user data to API:", userData);
+
 
     // Send the registration data to the API
     fetch(endpoints.registerUser, {  // Use the registerUser endpoint from endpoints.js
@@ -52,6 +56,7 @@ const RegistrationPasswordScreen = () => {
       redirect: "manual", // Disable automatic redirects
     })
       .then((response) => {
+        console.log("Full response:", response);
         console.log("Response status:", response.status);
         if (!response.ok) {
           throw new Error("Registration failed");

@@ -30,6 +30,8 @@ const RegistrationEmailScreen = () => {
       setErrorMessage("");
       setIsEmailValid(true);
       updateRegistrationData("email", email); // Store email in context
+      
+      console.log("Email created:", email);
 
       // Navigate to the next screen (e.g., RegistrationPasswordScreen)
       navigation.navigate("RegistrationPasswordScreen");

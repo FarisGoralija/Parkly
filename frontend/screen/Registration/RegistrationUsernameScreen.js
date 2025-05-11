@@ -24,7 +24,6 @@ const RegistrationUsernameScreen = () => {
 
   const isSubmitDisabled = username.trim() === "";
 
-  // Handle username creation and validation
   const handleCreateUsername = () => {
     const result = isValidUsername(username); // Check the validity only when button is pressed
 

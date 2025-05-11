@@ -25,6 +25,7 @@ const RegistrationNameScreen = () => {
 
     updateRegistrationData("name", name); // Update context with name
     navigation.navigate("RegistrationUsernameScreen"); // Navigate to the next screen
+    console.log("Name Created:", name);
   };
 
   const handleClearInput = () => {
