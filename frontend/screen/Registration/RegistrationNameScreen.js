@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 80,
-    backgroundColor: "#46474D",
+    backgroundColor: "#3A3A3C",
   },
   titleText: {},
   inputWrapper: {
