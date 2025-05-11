@@ -51,7 +51,7 @@ const RegistrationEmailScreen = () => {
         <View style={styles.titleText}>
           <TitleText
             title="Add E-mail"
-            subtitle="Please enter your email to reset the password"
+            subtitle="Please enter your email to create account."
           />
         </View>
 
@@ -87,7 +87,7 @@ const RegistrationEmailScreen = () => {
 
         <View style={styles.resetPasswordButton}>
           <BlueUniversalButton
-            text="Reset password"
+            text="Save email"
             onPress={handleResetPassword}
             disabled={isSubmitDisabled}
           />
