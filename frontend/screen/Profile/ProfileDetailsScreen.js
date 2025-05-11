@@ -25,7 +25,7 @@ export default function ProfileDetailsScreen() {
         <ProfileDetailRow icon={<LockIcon />} label="Password" value="•••••••••••" showEye />
 
         {/* 👇 Add clickable "Change password" text */}
-        <TouchableOpacity >
+        <TouchableOpacity onPress={() => navigation.navigate("ChangePasswordScreen")} >
           <Text style={styles.changePassword}>Change password</Text>
         </TouchableOpacity>
       </View>
