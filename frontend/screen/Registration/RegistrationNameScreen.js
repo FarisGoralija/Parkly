@@ -37,7 +37,7 @@ const RegistrationNameScreen = () => {
         <View style={styles.titleText}>
           <TitleText
             title="Add Name"
-            subtitle="Enter your Name and Surname to personalize your experience."
+            subtitle="Please enter your name and surname to personalize your experience."
           />
         </View>
 
