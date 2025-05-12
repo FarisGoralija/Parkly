@@ -14,7 +14,12 @@ const takenUsernames = [
   "ekilover",
   "username",
   "guest",
+  "guest0000000000000"
 ];
+
+export const isUsernameTaken = (username) => {
+  return takenUsernames.includes(username.toLowerCase());
+};
 
 export const isValidUsername = (username) => {
   const trimmed = username.trim();
