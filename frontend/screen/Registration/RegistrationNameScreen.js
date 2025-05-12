@@ -48,6 +48,7 @@ const RegistrationNameScreen = () => {
             placeholderColor="#D2D2D2"
             value={name}
             onChangeText={setName}
+            autoCapitalize="words"
           />
           {name.length > 0 && (
             <TouchableOpacity
