@@ -14,6 +14,7 @@ import InputField from "../../components/common/InputField";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
 import { useRegistration } from "../../context/RegistrationContext"; // Import the context
 import { isValidUsername } from "../../utils/Validation"; // Import the validation utility
+import { Ionicons } from "@expo/vector-icons";
 
 const RegistrationUsernameScreen = () => {
   const [username, setUsername] = useState("");
@@ -79,10 +80,7 @@ const RegistrationUsernameScreen = () => {
               onPress={handleClearInput}
               style={styles.clearIconContainer}
             >
-              <Image
-                source={require("../../assets/icons/clear.png")}
-                style={styles.clearIcon}
-              />
+              <Ionicons name="close-circle" size={24} color="#D2D2D2" />
             </TouchableOpacity>
           )}
         </View>
@@ -124,10 +122,6 @@ const styles = StyleSheet.create({
     right: 10,
     top: 22,
     transform: [{ translateY: -12 }],
-  },
-  clearIcon: {
-    width: 31,
-    height: 26,
   },
   errorText: {
     color: "#E92440",

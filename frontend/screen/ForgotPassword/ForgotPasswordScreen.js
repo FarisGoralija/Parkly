@@ -13,6 +13,7 @@ import InputField from "../../components/common/InputField.js";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton.js";
 import TitleText from "../../components/common/TitleText.js";
 import { isValidEmail } from "../../utils/Validation.js";
+import { Ionicons } from "@expo/vector-icons";
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState("");
@@ -67,10 +68,7 @@ const ForgotPasswordScreen = () => {
               onPress={handleClearInput}
               style={styles.clearIconContainer}
             >
-              <Image
-                source={require("../../assets/icons/clear.png")}
-                style={styles.clearIcon}
-              />
+              <Ionicons name="close-circle" size={24} color="#D2D2D2" />
             </TouchableOpacity>
           )}
         </View>
