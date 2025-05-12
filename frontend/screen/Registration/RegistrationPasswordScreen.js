@@ -15,12 +15,16 @@ import { useNavigation } from "@react-navigation/native";
 import { useRegistration } from "../../context/RegistrationContext"; // Import the context
 import endpoints from "../../api/endpoints"; // Import endpoints.js
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import MiniSpinner from "../../components/Registration/MiniSpinner";
+
 
 const RegistrationPasswordScreen = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [secureText, setSecureText] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
   const { updateRegistrationData, registrationData } = useRegistration(); // Access the context update function
   const navigation = useNavigation();
 
@@ -36,54 +40,41 @@ const RegistrationPasswordScreen = () => {
   };
 
   const handleSavePassword = () => {
-    // Save password in context
-    updateRegistrationData("password", password);
-    console.log("Password created:", password);
+    setIsLoading(true); // Start loading
+    setErrorMessage(""); // Clear previous error
 
-    // Merge data from context with the password
+    updateRegistrationData("password", password);
     const userData = { ...registrationData, password };
 
-    console.log("Sending user data to API:", userData);
-
-
-    // Send the registration data to the API
-    fetch(endpoints.registerUser, {  // Use the registerUser endpoint from endpoints.js
-      method: "POST", 
+    fetch(endpoints.registerUser, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(userData),
-      redirect: "manual", // Disable automatic redirects
+      redirect: "manual",
     })
       .then((response) => {
-        console.log("Full response:", response);
-        console.log("Response status:", response.status);
-        if (!response.ok) {
-          throw new Error("Registration failed");
-        }
-        return response.text(); // Get the raw response as text
+        if (!response.ok) throw new Error("Registration failed");
+        return response.text();
       })
       .then((data) => {
-        console.log("Raw response data:", data); // Log the raw response to check if it's HTML
         try {
-          const jsonResponse = JSON.parse(data); // Try parsing as JSON
-          console.log("Parsed JSON:", jsonResponse);
-
-          // Store the token in AsyncStorage
+          const jsonResponse = JSON.parse(data);
           AsyncStorage.setItem("auth_token", jsonResponse.token).then(() => {
             console.log("Token saved successfully.");
           });
 
-          // After successful registration, navigate to the Home screen
           navigation.navigate("Home");
         } catch (error) {
-          console.error("Error parsing JSON:", error);
           setErrorMessage("An error occurred. Please try again.");
         }
       })
       .catch((error) => {
-        console.error("Error occurred:", error);
         setErrorMessage("An error occurred. Please try again.");
+      })
+      .finally(() => {
+        setIsLoading(false); // End loading
       });
   };
 
@@ -130,9 +121,15 @@ const RegistrationPasswordScreen = () => {
 
         <View style={styles.savePasswordButton}>
           <BlueUniversalButton
-            text="Save Password"
+            text={
+              isLoading ? (
+                <MiniSpinner size={22} color="white" />
+              ) : (
+                "Save Password"
+              )
+            }
             onPress={handleSavePassword}
-            disabled={isSubmitDisabled}
+            disabled={isSubmitDisabled || isLoading}
           />
         </View>
       </View>
