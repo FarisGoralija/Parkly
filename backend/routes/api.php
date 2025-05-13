@@ -33,3 +33,4 @@ Route::apiResource('users.cars', CarController::class)
     ->scoped()
     ->only(['index', 'store', 'show', 'destroy'])
     ->middleware('auth:sanctum');
+
