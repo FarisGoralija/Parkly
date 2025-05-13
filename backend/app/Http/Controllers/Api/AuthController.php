@@ -187,7 +187,7 @@ public function resetPassword(Request $request)
 
     return response()->json(['message' => 'Password reset successfully']);
 }
-
+//getting the logged user
 public function displayUser(Request $request){
     return response()->json([ "user" => $request->user()->makeHidden(['password'])], 200);
 }
