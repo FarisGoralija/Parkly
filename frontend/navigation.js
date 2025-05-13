@@ -20,6 +20,7 @@ import RegistrationPasswordScreen from "./screen/Registration/RegistrationPasswo
 import RegistrationUsernameScreen from "./screen/Registration/RegistrationUsernameScreen";
 import RegistrationEmailScreen from "./screen/Registration/RegistrationEmailScreen";
 import RegistrationNameScreen from "./screen/Registration/RegistrationNameScreen";
+import ChangePasswordScreen from "./screen/Profile/ChangePasswordScreen";
 
 
 const Stack = createStackNavigator();
@@ -48,6 +49,7 @@ export default function Navigation() {
         <Stack.Screen name="RegistrationUsernameScreen" component={RegistrationUsernameScreen} />
         <Stack.Screen name="RegistrationEmailScreen" component={RegistrationEmailScreen} />
         <Stack.Screen name="RegistrationNameScreen" component={RegistrationNameScreen} />
+        <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen}/>
 
       </Stack.Navigator>
       </CarProvider>
