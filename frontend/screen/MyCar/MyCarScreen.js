@@ -21,6 +21,8 @@ const MyCarScreen = ({ navigation }) => {
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [selectedDeleteIndex, setSelectedDeleteIndex] = useState(null);
+  const [loadingCars, setLoadingCars] = useState(true);
+
 
   const confirmDeleteCar = (index) => {
     setSelectedDeleteIndex(index);
@@ -59,36 +61,46 @@ const MyCarScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const token = await AsyncStorage.getItem("auth_token");
-        const user = JSON.parse(await AsyncStorage.getItem("user"));
-        if (!user?.id || !token) return;
+  const fetchCars = async () => {
+    try {
+      setLoadingCars(true); // start loading
 
-        const response = await fetch(endpoints.getUserCars(user.id), {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        });
+      const token = await AsyncStorage.getItem("auth_token");
+      const user = JSON.parse(await AsyncStorage.getItem("user"));
+      if (!user?.id || !token) return;
 
-        if (!response.ok) throw new Error("Failed to fetch cars");
+      const response = await fetch(endpoints.getUserCars(user.id), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
 
-        const carData = await response.json();
-        setCars(carData);
-      } catch (error) {
-        console.error("Error fetching cars:", error);
-      }
-    };
+      if (!response.ok) throw new Error("Failed to fetch cars");
 
-    fetchCars();
-  }, []);
+      const carData = await response.json();
+      setCars(carData);
+    } catch (error) {
+      console.error("Error fetching cars:", error);
+    } finally {
+      setLoadingCars(false); // end loading
+    }
+  };
+
+  fetchCars();
+}, []);
+
 
   return (
     <View style={styles.container}>
       <GrayHeader title="My cars" />
 
-      {cars.length === 0 ? (
+      {loadingCars ? (
+  <View style={styles.emptyContainer}>
+    <Text style={styles.emptyText}>Loading cars...</Text>
+  </View>
+) : cars.length === 0 ? (
+
         <View style={styles.emptyContainer}>
           <Car width={200} height={200} />
           <Text style={styles.emptyText}>
