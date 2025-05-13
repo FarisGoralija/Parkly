@@ -14,6 +14,8 @@ import BlueUniversalButton from "../../components/common/BlueUniversalButton.js"
 import TitleText from "../../components/common/TitleText.js";
 import { isValidEmail } from "../../utils/Validation.js";
 import { Ionicons } from "@expo/vector-icons";
+import endpoints from "../../api/endpoints.js";
+import axios from "axios";
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState("");
@@ -23,16 +25,28 @@ const ForgotPasswordScreen = () => {
 
   const isSubmitDisabled = email.trim() === "";
 
-  const handleResetPassword = () => {
-    if (isValidEmail(email)) {
+  const handleResetPassword = async () => {
+  if (!isValidEmail(email)) {
+    setErrorMessage("Please enter a valid email address.");
+    setIsEmailValid(false);
+    return;
+  }
+
+  try {
+    const response = await axios.post(endpoints.forgotPassword, { email });
+
+    if (response.status === 200) {
       setErrorMessage("");
       setIsEmailValid(true);
-      navigation.navigate("ForgotVerifyCodeScreen", { email }); // Navigate only if email is valid
-    } else {
-      setErrorMessage("Please enter a valid email address.");
-      setIsEmailValid(false);
+      navigation.navigate("ForgotVerifyCodeScreen", { email });
     }
-  };
+  } catch (error) {
+    setErrorMessage(
+      error.response?.data?.message || "Something went wrong. Please try again."
+    );
+    setIsEmailValid(false);
+  }
+};
 
   const handleClearInput = () => {
     setEmail("");

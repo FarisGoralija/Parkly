@@ -12,12 +12,20 @@ import InputField from "../../components/common/InputField";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
 import { passwordRegex } from "../../utils/Validation";
 import { Ionicons } from "@expo/vector-icons";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import endpoints from "../../api/endpoints";
 
 const ForgotNewPasswordScreen = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [secureText, setSecureText] = useState(true);
+
+  const route = useRoute();
+  const navigation = useNavigation();
+  const email = route.params?.email;
+  const code = route.params?.code;
 
   const isSubmitDisabled = password.trim() === "";
 
@@ -30,7 +38,7 @@ const ForgotNewPasswordScreen = () => {
     }
   };
 
-  const handleSavePassword = () => {
+  const handleSavePassword = async () => {
     if (!passwordRegex.test(password)) {
       setErrorMessage(
         "Password must be 8+ characters, with an uppercase, number, and symbol."
@@ -39,9 +47,24 @@ const ForgotNewPasswordScreen = () => {
       return;
     }
 
-    console.log("Password saved:", password);
-    setErrorMessage("");
-    setIsPasswordValid(true);
+    try {
+      const response = await axios.post(endpoints.resetPassword, {
+        email,
+        password,
+        code,
+      });
+
+      if (response.status === 200) {
+        setErrorMessage("");
+        setIsPasswordValid(true);
+        navigation.navigate("LoginScreen"); // or show a success message
+      }
+    } catch (error) {
+      setErrorMessage(
+        error.response?.data?.message || "Failed to reset password. Try again."
+      );
+      setIsPasswordValid(false);
+    }
   };
 
   return (
@@ -105,7 +128,7 @@ const styles = StyleSheet.create({
     paddingTop: 80,
     backgroundColor: "#3A3A3C",
   },
-  
+
   inputWrapper: {
     position: "relative",
     justifyContent: "center",

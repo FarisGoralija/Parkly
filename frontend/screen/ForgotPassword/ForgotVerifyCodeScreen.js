@@ -11,6 +11,8 @@ import VerifyInput from "../../components/ForgotPassword/VerifyInput";
 import TitleText from "../../components/common/TitleText";
 import TimerFooter from "../../components/ForgotPassword/TimerFooter";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
+import endpoints from "../../api/endpoints";
+import axios from "axios";
 
 const ForgotPasswordVerifyCodeScreen = () => {
   const [code, setCode] = useState("");
@@ -21,18 +23,29 @@ const ForgotPasswordVerifyCodeScreen = () => {
   const navigation = useNavigation();
   const email = route.params?.email || "your email";
 
-  const handleVerify = () => {
-    if (parseInt(code, 10) >= 50000) {
-      console.log("Entered Code:", code);
-      setError("");
-      setBorderColor("#00C851"); // Green border for success
+  const handleVerify = async () => {
+  if (!code.trim()) {
+    setError("Please enter the code.");
+    setBorderColor("#E92440");
+    return;
+  }
 
-      navigation.navigate("ForgotNewPasswordScreen", { email });
-    } else {
-      setError("Code is incorrect, please try again.");
-      setBorderColor("#E92440"); // Red border for error
+  try {
+    const response = await axios.post(endpoints.verifyCode, {
+      email,
+      code,
+    });
+
+    if (response.status === 200) {
+      setError("");
+      setBorderColor("#00C851");
+      navigation.navigate("ForgotNewPasswordScreen", { email, code });
     }
-  };
+  } catch (error) {
+    setError(error.response?.data?.message || "Invalid code, please try again.");
+    setBorderColor("#E92440");
+  }
+};
 
   const handleResend = () => {
     console.log("Resending code...");
