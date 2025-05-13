@@ -12,12 +12,22 @@ import InputField from "../../components/common/InputField";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
 import { passwordRegex } from "../../utils/Validation";
 import { Ionicons } from "@expo/vector-icons";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import endpoints from "../../api/endpoints";
+import MiniSpinner from "../../components/Registration/MiniSpinner";
 
 const ForgotNewPasswordScreen = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [secureText, setSecureText] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const route = useRoute();
+  const navigation = useNavigation();
+  const email = route.params?.email;
+  const code = route.params?.code;
 
   const isSubmitDisabled = password.trim() === "";
 
@@ -30,7 +40,7 @@ const ForgotNewPasswordScreen = () => {
     }
   };
 
-  const handleSavePassword = () => {
+  const handleSavePassword = async () => {
     if (!passwordRegex.test(password)) {
       setErrorMessage(
         "Password must be 8+ characters, with an uppercase, number, and symbol."
@@ -39,9 +49,28 @@ const ForgotNewPasswordScreen = () => {
       return;
     }
 
-    console.log("Password saved:", password);
-    setErrorMessage("");
-    setIsPasswordValid(true);
+    setIsSubmitting(true);
+
+    try {
+      const response = await axios.post(endpoints.resetPassword, {
+        email,
+        password,
+        code,
+      });
+
+      if (response.status === 200) {
+        setErrorMessage("");
+        setIsPasswordValid(true);
+        navigation.navigate("LoginScreen");
+      }
+    } catch (error) {
+      setErrorMessage(
+        error.response?.data?.message || "Failed to reset password. Try again."
+      );
+      setIsPasswordValid(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -87,7 +116,7 @@ const ForgotNewPasswordScreen = () => {
 
         <View style={styles.savePasswordButton}>
           <BlueUniversalButton
-            text="Save Password"
+            text={isSubmitting ? <MiniSpinner size={18} color="white" /> : "Save Password"}
             onPress={handleSavePassword}
             disabled={isSubmitDisabled}
           />
@@ -105,7 +134,7 @@ const styles = StyleSheet.create({
     paddingTop: 80,
     backgroundColor: "#3A3A3C",
   },
-  
+
   inputWrapper: {
     position: "relative",
     justifyContent: "center",
