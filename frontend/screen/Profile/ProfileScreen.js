@@ -8,6 +8,7 @@ import User from "../../components/svg/User";
 import AboutUs from "../../components/svg/AboutUs";
 import Card from "../../components/svg/Card";
 import LogOut from "../../components/svg/LogOut";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -23,9 +24,17 @@ export default function ProfileScreen() {
         },
         {
           text: "Confirm",
-          onPress: () => {
-            console.log("Logged out");
-            // Add your logout logic here
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem("auth_token");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "LoginScreen" }],
+              });
+              console.log("Logged out, token removed")
+            } catch (error) {
+              console.error("Error logging out:", error);
+            }
           },
           style: "default",
         },
@@ -38,8 +47,16 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <GrayHeader title="Profile" />
       <View style={styles.content}>
-        <ProfileOptionCard text="Profile details" icon={<User />} onPress={() => navigation.navigate("ProfileDetailsScreen")} />
-        <ProfileOptionCard text="My Cards" icon={<Card />} onPress={() => navigation.navigate("MyCardScreen")} />
+        <ProfileOptionCard
+          text="Profile details"
+          icon={<User />}
+          onPress={() => navigation.navigate("ProfileDetailsScreen")}
+        />
+        <ProfileOptionCard
+          text="My Cards"
+          icon={<Card />}
+          onPress={() => navigation.navigate("MyCardScreen")}
+        />
         <ProfileOptionCard
           text="Favourite parkings"
           icon={<BlueHeart />}

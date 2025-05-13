@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Image,
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
@@ -11,9 +10,12 @@ import { useNavigation } from "@react-navigation/native";
 import TitleText from "../../components/common/TitleText";
 import InputField from "../../components/common/InputField";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
+import { useRegistration } from "../../context/RegistrationContext"; // Import the context
+import { Ionicons } from "@expo/vector-icons";
 
 const RegistrationNameScreen = () => {
   const [name, setName] = useState("");
+  const { updateRegistrationData } = useRegistration(); // Access the update function
   const navigation = useNavigation();
 
   const isSubmitDisabled = name.trim() === "";
@@ -21,8 +23,9 @@ const RegistrationNameScreen = () => {
   const handleContinue = () => {
     if (isSubmitDisabled) return;
 
-    console.log("Name entered:", name);
-    navigation.navigate("RegistrationUsernameScreen", { name });
+    updateRegistrationData("name", name); // Update context with name
+    navigation.navigate("RegistrationUsernameScreen"); // Navigate to the next screen
+    console.log("Name Created:", name);
   };
 
   const handleClearInput = () => {
@@ -35,7 +38,7 @@ const RegistrationNameScreen = () => {
         <View style={styles.titleText}>
           <TitleText
             title="Add Name"
-            subtitle="Enter your Name and Surname to personalize your experience."
+            subtitle="Please enter your name and surname to personalize your experience."
           />
         </View>
 
@@ -45,16 +48,14 @@ const RegistrationNameScreen = () => {
             placeholderColor="#D2D2D2"
             value={name}
             onChangeText={setName}
+            autoCapitalize="words"
           />
           {name.length > 0 && (
             <TouchableOpacity
               onPress={handleClearInput}
               style={styles.clearIconContainer}
             >
-              <Image
-                source={require("../../assets/icons/clear.png")}
-                style={styles.clearIcon}
-              />
+              <Ionicons name="close-circle" size={24} color="#D2D2D2" />
             </TouchableOpacity>
           )}
         </View>
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 80,
-    backgroundColor: "#46474D",
+    backgroundColor: "#3A3A3C",
   },
   titleText: {},
   inputWrapper: {
@@ -90,10 +91,6 @@ const styles = StyleSheet.create({
     right: 10,
     top: 22,
     transform: [{ translateY: -12 }],
-  },
-  clearIcon: {
-    width: 31,
-    height: 26,
   },
   continueButton: {
     width: "100%",

@@ -13,7 +13,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable,HasApiTokens;
 
-    /**
+    /**a
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -46,5 +46,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function cars()
+    {
+        return $this->hasMany(Car::class);
     }
 }

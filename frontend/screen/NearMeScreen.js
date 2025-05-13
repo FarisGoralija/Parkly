@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -15,37 +15,28 @@ import SearchBar from "../components/NearMe/SearchBar";
 import BottomSheetModal from "../components/NearMe/BottomSheetModal";
 import { ActivityIndicator } from "react-native";
 
-
 export default function NearMeScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
 
   const {
-    data: parkings = [],
+    data: baseParkings = [],
     isLoading,
     isError,
   } = useQuery({
     queryKey: ["parkings"],
     queryFn: async () => {
-      const response = await axios.get(endpoints.parking);
-      console.log("Fetched response:", response.data);
-
-      if (Array.isArray(response.data)) {
-        return response.data;
-      } else if (response.data?.data && Array.isArray(response.data.data)) {
-        return response.data.data;
-      } else {
-        throw new Error("Unexpected response format");
-      }
+      const res = await axios.get(endpoints.parking);
+      return Array.isArray(res.data) ? res.data : res.data?.data ?? [];
     },
   });
 
   const filteredResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
-    return parkings.filter((p) =>
+    return baseParkings.filter((p) =>
       p.name?.toLowerCase().includes(searchQuery.trim().toLowerCase())
     );
-  }, [searchQuery, parkings]);
+  }, [searchQuery, baseParkings]);
 
   const handleMarkerPress = (location) => {
     setSelectedLocation(location);
@@ -97,8 +88,10 @@ export default function NearMeScreen() {
           )}
         </View>
 
-        <CustomMap parkings={parkings} onSelectLocation={handleMarkerPress} />
-
+        <CustomMap
+          parkings={baseParkings}
+          onSelectLocation={handleMarkerPress}
+        />
         <BottomSheetModal
           isVisible={!!selectedLocation}
           onClose={closeModal}
@@ -154,5 +147,4 @@ const styles = StyleSheet.create({
     color: "#333", // or "#fff" for dark theme
     fontWeight: "600",
   },
-  
 });

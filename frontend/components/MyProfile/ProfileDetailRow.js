@@ -1,8 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 
-export default function ProfileDetailRow({ icon, label, value, showEye = false }) {
+export default function ProfileDetailRow({ icon, label, value, editable = false, onPressEdit }) {
   return (
     <View style={styles.row}>
       <View style={styles.left}>
@@ -12,9 +12,10 @@ export default function ProfileDetailRow({ icon, label, value, showEye = false }
           <Text style={styles.value}>{value}</Text>
         </View>
       </View>
-      {showEye && (
-        <TouchableOpacity>
-          <Feather name="eye-off" size={20} color="#ccc" />
+
+      {editable && (
+        <TouchableOpacity onPress={onPressEdit} style={styles.editIconContainer}>
+          <Feather name="edit" size={18} color="#ccc" />
         </TouchableOpacity>
       )}
     </View>
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
   left: {
     flexDirection: "row",
     alignItems: "center",
+    flex: 1,
   },
   label: {
     color: "#fff",
@@ -45,5 +47,11 @@ const styles = StyleSheet.create({
     color: "#C7C7C7",
     fontSize: 15,
     marginTop: 4,
+  },
+  editIconContainer: {
+    position: "absolute",
+    right: 12,
+    top: "50%",
+    transform: [{ translateY: -9 }],
   },
 });

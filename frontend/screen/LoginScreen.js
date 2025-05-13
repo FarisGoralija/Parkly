@@ -8,6 +8,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as Font from "expo-font";
@@ -16,27 +17,73 @@ import SocialButton from "../components/Login/SocialButton";
 import BlueUniversalButton from "../components/common/BlueUniversalButton";
 import MainLogo from "../components/Login/MainLogo";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import endpoints from "../api/endpoints";
 
 const LoginScreen = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
+  const [loading, setLoading] = useState(true); // Controls screen loading on mount
+  const [isLoggingIn, setIsLoggingIn] = useState(false); // Controls login button state
 
   const navigation = useNavigation();
 
-  const loadFonts = async () => {
-    await Font.loadAsync({
-      "Montserrat Alternates": require("../assets/fonts/MontserratAlternates-Bold.ttf"),
-    });
-    setFontsLoaded(true);
+  useEffect(() => {
+    const loadFontsAndCheckToken = async () => {
+      await Font.loadAsync({
+        "Montserrat Alternates": require("../assets/fonts/MontserratAlternates-Bold.ttf"),
+      });
+      setFontsLoaded(true);
+
+      const token = await AsyncStorage.getItem("auth_token");
+      if (token) {
+        navigation.navigate("Home"); // If token exists, redirect to Home screen
+      } else {
+        setLoading(false); // If no token, stop initial loading
+      }
+    };
+
+    loadFontsAndCheckToken();
+  }, [navigation]);
+
+  const handleLogin = async () => {
+    if (!username || !password) return;
+
+    setIsLoggingIn(true);
+
+    try {
+      const response = await fetch(endpoints.login, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const token = data.token;
+
+        await AsyncStorage.setItem("auth_token", token);
+        navigation.navigate("Home");
+      } else {
+        const errorData = await response.json();
+        Alert.alert("Login Failed", errorData.message || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      Alert.alert("Error", "Something went wrong. Please try again.");
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
-  useEffect(() => {
-    loadFonts();
-  }, []);
-
-  if (!fontsLoaded) {
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0195F5" />
@@ -44,7 +91,7 @@ const LoginScreen = () => {
     );
   }
 
-  const isLoginDisabled = !username || !password;
+  const isLoginDisabled = !username || !password || isLoggingIn;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -90,10 +137,11 @@ const LoginScreen = () => {
           <View style={styles.loginButton}>
             <BlueUniversalButton
               disabled={isLoginDisabled}
-              onPress={() => {}}
-              text="Log in"
+              onPress={handleLogin}
+              text={isLoggingIn ? "Logging in..." : "Log in"}
             />
           </View>
+
           <Text style={styles.orText}>OR LOGIN WITH</Text>
 
           <View style={styles.socialButtonContainer}>
@@ -133,7 +181,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#46474D",
+    backgroundColor: "#3A3A3C",
     padding: 20,
   },
   content: {
@@ -165,7 +213,6 @@ const styles = StyleSheet.create({
   registerLink: {
     color: "#3797EF",
     fontSize: 15,
-
     fontWeight: "400",
   },
   forgotPasswordContainer: {
@@ -223,10 +270,9 @@ const styles = StyleSheet.create({
     bottom: 7,
     zIndex: 1,
   },
-
   registerContainer: {
-    flexDirection: "row", // Ensures elements stay in one line
-    alignItems: "center", // Aligns text vertically
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 

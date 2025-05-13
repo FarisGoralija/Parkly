@@ -1,30 +1,111 @@
-import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import GrayHeader from "../../components/common/GrayHeader";
 import ProfileDetailRow from "../../components/MyProfile/ProfileDetailRow";
+import EditFieldModal from "../../components/MyProfile/EditFieldModal";
+
 import User from "../../components/svg/User";
 import MailIcon from "../../components/svg/MailIcon";
 import UsernameIcon from "../../components/svg/UsernameIcon";
 import LockIcon from "../../components/svg/LockIcon";
-import { useNavigation } from "@react-navigation/native";
+
+import { useRegistration } from "../../context/RegistrationContext";
+import { isUsernameTaken } from "../../utils/Validation";
 
 export default function ProfileDetailsScreen() {
   const navigation = useNavigation();
+  const { registrationData, updateRegistrationData } = useRegistration();
+  const { name, email, username, password } = registrationData;
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentField, setCurrentField] = useState("");
+  const [currentValue, setCurrentValue] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+
+  // Open modal with field name and value
+  const openEditModal = (field, value) => {
+    setCurrentField(field);
+    setCurrentValue(value);
+    setUsernameError("");
+    setModalVisible(true);
+  };
+
+  // Save logic
+  const handleSave = () => {
+    // Validate username if needed
+    if (currentField === "Username" && isUsernameTaken(currentValue)) {
+      setUsernameError("Username unavailable");
+      return;
+    }
+
+    // Map label to key used in registrationData
+    const fieldKeyMap = {
+      "Name & surname": "name",
+      "Username": "username",
+    };
+
+    const key = fieldKeyMap[currentField];
+    if (key) {
+      updateRegistrationData(key, currentValue);
+    }
+
+    setModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
       <GrayHeader title="Profile Details" />
       <View style={styles.content}>
-        <ProfileDetailRow icon={<User />} label="Name & surname" value="Erol Karisik" />
-        <ProfileDetailRow icon={<MailIcon />} label="Email address" value="erol.erca@gmail.com" />
-        <ProfileDetailRow icon={<UsernameIcon />} label="Username" value="erol_1946" />
-        <ProfileDetailRow icon={<LockIcon />} label="Password" value="•••••••••••" showEye />
+        <ProfileDetailRow
+          icon={<User />}
+          label="Name & surname"
+          value={name}
+          editable
+          onPressEdit={() => openEditModal("Name & surname", name)}
+        />
 
-        {/* 👇 Add clickable "Change password" text */}
-        <TouchableOpacity >
+        <ProfileDetailRow
+          icon={<MailIcon />}
+          label="Email address"
+          value={email}
+        />
+
+        <ProfileDetailRow
+          icon={<UsernameIcon />}
+          label="Username"
+          value={username}
+          editable
+          onPressEdit={() => openEditModal("Username", username)}
+        />
+
+        <ProfileDetailRow
+          icon={<LockIcon />}
+          label="Password"
+          value="•••••••••••"
+        />
+
+        <TouchableOpacity onPress={() => navigation.navigate("ChangePasswordScreen")}>
           <Text style={styles.changePassword}>Change password</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Edit Modal */}
+      <EditFieldModal
+        visible={modalVisible}
+        fieldLabel={currentField}
+        value={currentValue}
+        onChangeText={setCurrentValue}
+        onSave={handleSave}
+        onClose={() => setModalVisible(false)}
+        error={usernameError}
+      />
     </View>
   );
 }
