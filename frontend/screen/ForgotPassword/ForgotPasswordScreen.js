@@ -16,37 +16,44 @@ import { isValidEmail } from "../../utils/Validation.js";
 import { Ionicons } from "@expo/vector-icons";
 import endpoints from "../../api/endpoints.js";
 import axios from "axios";
+import MiniSpinner from "../../components/Registration/MiniSpinner.js";
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigation = useNavigation(); // Initialize navigation
 
   const isSubmitDisabled = email.trim() === "";
 
   const handleResetPassword = async () => {
-  if (!isValidEmail(email)) {
-    setErrorMessage("Please enter a valid email address.");
-    setIsEmailValid(false);
-    return;
-  }
-
-  try {
-    const response = await axios.post(endpoints.forgotPassword, { email });
-
-    if (response.status === 200) {
-      setErrorMessage("");
-      setIsEmailValid(true);
-      navigation.navigate("ForgotVerifyCodeScreen", { email });
+    if (!isValidEmail(email)) {
+      setErrorMessage("Please enter a valid email address.");
+      setIsEmailValid(false);
+      return;
     }
-  } catch (error) {
-    setErrorMessage(
-      error.response?.data?.message || "Something went wrong. Please try again."
-    );
-    setIsEmailValid(false);
-  }
-};
+
+    setIsSubmitting(true); // Start spinner
+
+    try {
+      const response = await axios.post(endpoints.forgotPassword, { email });
+
+      if (response.status === 200) {
+        setErrorMessage("");
+        setIsEmailValid(true);
+        navigation.navigate("ForgotVerifyCodeScreen", { email });
+      }
+    } catch (error) {
+      setErrorMessage(
+        error.response?.data?.message ||
+          "Something went wrong. Please try again."
+      );
+      setIsEmailValid(false);
+    } finally {
+      setIsSubmitting(false); // Stop spinner
+    }
+  };
 
   const handleClearInput = () => {
     setEmail("");
@@ -93,7 +100,7 @@ const ForgotPasswordScreen = () => {
 
         <View style={styles.resetPasswordButton}>
           <BlueUniversalButton
-            text="Reset password"
+            text={isSubmitting ? <MiniSpinner size={18} color="white" /> : "Reset password"}
             onPress={handleResetPassword}
             disabled={isSubmitDisabled}
           />

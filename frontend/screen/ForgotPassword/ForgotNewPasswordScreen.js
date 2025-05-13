@@ -15,12 +15,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import endpoints from "../../api/endpoints";
+import MiniSpinner from "../../components/Registration/MiniSpinner";
 
 const ForgotNewPasswordScreen = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [secureText, setSecureText] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -47,6 +49,8 @@ const ForgotNewPasswordScreen = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const response = await axios.post(endpoints.resetPassword, {
         email,
@@ -57,13 +61,15 @@ const ForgotNewPasswordScreen = () => {
       if (response.status === 200) {
         setErrorMessage("");
         setIsPasswordValid(true);
-        navigation.navigate("LoginScreen"); // or show a success message
+        navigation.navigate("LoginScreen");
       }
     } catch (error) {
       setErrorMessage(
         error.response?.data?.message || "Failed to reset password. Try again."
       );
       setIsPasswordValid(false);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -110,7 +116,7 @@ const ForgotNewPasswordScreen = () => {
 
         <View style={styles.savePasswordButton}>
           <BlueUniversalButton
-            text="Save Password"
+            text={isSubmitting ? <MiniSpinner size={18} color="white" /> : "Save Password"}
             onPress={handleSavePassword}
             disabled={isSubmitDisabled}
           />

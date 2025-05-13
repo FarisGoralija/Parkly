@@ -13,39 +13,47 @@ import TimerFooter from "../../components/ForgotPassword/TimerFooter";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
 import endpoints from "../../api/endpoints";
 import axios from "axios";
+import MiniSpinner from "../../components/Registration/MiniSpinner";
 
 const ForgotPasswordVerifyCodeScreen = () => {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [borderColor, setBorderColor] = useState("#9C9C9C");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const route = useRoute();
   const navigation = useNavigation();
   const email = route.params?.email || "your email";
 
   const handleVerify = async () => {
-  if (!code.trim()) {
-    setError("Please enter the code.");
-    setBorderColor("#E92440");
-    return;
-  }
-
-  try {
-    const response = await axios.post(endpoints.verifyCode, {
-      email,
-      code,
-    });
-
-    if (response.status === 200) {
-      setError("");
-      setBorderColor("#00C851");
-      navigation.navigate("ForgotNewPasswordScreen", { email, code });
+    if (!code.trim()) {
+      setError("Please enter the code.");
+      setBorderColor("#E92440");
+      return;
     }
-  } catch (error) {
-    setError(error.response?.data?.message || "Invalid code, please try again.");
-    setBorderColor("#E92440");
-  }
-};
+
+    setIsSubmitting(true); // Show the spinner
+
+    try {
+      const response = await axios.post(endpoints.verifyCode, {
+        email,
+        code,
+      });
+
+      if (response.status === 200) {
+        setError("");
+        setBorderColor("#00C851");
+        navigation.navigate("ForgotNewPasswordScreen", { email, code });
+      }
+    } catch (error) {
+      setError(
+        error.response?.data?.message || "Invalid code, please try again."
+      );
+      setBorderColor("#E92440");
+    } finally {
+      setIsSubmitting(false); // Hide the spinner once the request is completed
+    }
+  };
 
   const handleResend = () => {
     console.log("Resending code...");
@@ -80,7 +88,7 @@ const ForgotPasswordVerifyCodeScreen = () => {
 
         <View style={styles.verifyEmailButton}>
           <BlueUniversalButton
-            text="Verify Email"
+            text={isSubmitting ? <MiniSpinner size={18} color="white"/> : "Verify Email"}
             onPress={handleVerify}
             disabled={code.trim() === ""}
           />
