@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordResetCode;
 
 class AuthController extends Controller
 {
@@ -14,19 +17,38 @@ class AuthController extends Controller
     {
 
 
-    // Validation
-    $validator = Validator::make($request->all(), [
-        'name' => 'required|string|max:255',
-        'username' => 'required|string|max:255|unique:users',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|string|min:8|regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).+$/',
-    ]);
+        $rules = [
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users',
+            'email' => 'required|email|unique:users',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).+$/'
+            ],
+        ];
 
-    if ($validator->fails()) {
-        return response()->json([
-            'errors' => $validator->errors()
-        ], 422);
-    }
+        $messages = [
+            'name.required' => 'Name is required.',
+            'username.required' => 'Username is required.',
+            'username.unique' => 'This username is already taken.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email is already registered.',
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.regex' => 'Password must contain at least one uppercase letter, one number, and one special character.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
 
     // Create the user
     $user = User::create([
@@ -100,6 +122,75 @@ public function deleteUser($id)
     ],200);
 }
 
+public function sendResetCode(Request $request)
+{
+    $request->validate(["email" => "required|email|exists:users,email"]);
+    $code = random_int(10000,99999);
+
+    DB::table('password_resets')->updateOrInsert(
+        ['email' => $request->email],
+        ['token' => $code, 'created_at' => now()]
+    );
+
+    Mail::to($request->email)->send(new PasswordResetCode($code));
+
+    return response()->json(['message' => 'Verification code sent to your email.']);
+}
+
+public function verifyCode(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'code' => 'required|digits:5'
+    ]);
+
+    $reset = DB::table('password_resets')
+        ->where('email', $request->email)
+        ->where('token', $request->code)
+        ->first();
+
+    if (! $reset) {
+        return response()->json(['error' => 'Invalid code'], 400);
+    }
+
+    return response()->json(['message' => 'Code verified.']);
+}
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'code' => 'required|digits:5',
+        'password' => [
+            'required',
+            'string',
+            'min:8',
+            'regex:/[A-Z]/',
+            'regex:/[0-9]/',
+            'regex:/[@$!%*?&#]/',
+        ],
+    ]);
+
+    $reset = DB::table('password_resets')
+        ->where('email', $request->email)
+        ->where('token', $request->code)
+        ->first();
+
+    if (! $reset) {
+        return response()->json(['error' => 'Invalid code'], 400);
+    }
+
+    $user = User::where('email', $request->email)->first();
+    $user->password = Hash::make($request->password);
+    $user->save();
+
+    DB::table('password_resets')->where('email', $request->email)->delete();
+
+    return response()->json(['message' => 'Password reset successfully']);
+}
+
+public function displayUser(Request $request){
+    return response()->json([ "user" => $request->user()->makeHidden(['password'])], 200);
+}
 
 
  }
