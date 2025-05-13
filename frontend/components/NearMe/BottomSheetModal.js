@@ -35,8 +35,6 @@ import { ScrollView } from "react-native";
 import axios from "axios";
 import endpoints from "../../api/endpoints"; // assuming you already have this
 
-
-
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
   const { cars } = useCar();
@@ -407,13 +405,14 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                                 }}
                                 onPress={() => {
                                   setSelectedCar(
-                                    `${car.brand} ${car.model} (${car.registration})`
+                                    `${car.brand} ${car.model} (${car.license_plate})`
                                   );
+
                                   setShowPicker(false);
                                 }}
                               >
                                 <Text style={{ color: "#fff" }}>
-                                  {car.brand} {car.model} ({car.registration})
+                                  {car.brand} {car.model} ({car.license_plate})
                                 </Text>
                               </TouchableOpacity>
                             ))}
