@@ -19,6 +19,7 @@ import MainLogo from "../components/Login/MainLogo";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import endpoints from "../api/endpoints";
+import MiniSpinner from "../components/Registration/MiniSpinner";
 
 const LoginScreen = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -138,7 +139,7 @@ const LoginScreen = () => {
             <BlueUniversalButton
               disabled={isLoginDisabled}
               onPress={handleLogin}
-              text={isLoggingIn ? "Logging in..." : "Log in"}
+              text={isLoggingIn ? <MiniSpinner size={18} color="white" /> : "Log in"}
             />
           </View>
 
