@@ -4,7 +4,6 @@
 use App\Http\Controllers\Api\ParkingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CarController;
-use App\Http\Controllers\Api\ParkingSpotController;
 use App\Http\Controllers\Api\ReservationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
