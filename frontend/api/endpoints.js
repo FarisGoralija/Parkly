@@ -5,6 +5,10 @@ const endpoints = {
   getParkingById: (id) => `${BASE_URL}/parkings/${id}`, 
   registerUser: `${BASE_URL}/register`,
   login: `${BASE_URL}/login`,
+  getUserCars: (userId) => `${BASE_URL}/users/${userId}/cars`,            // GET all
+  addUserCar: (userId) => `${BASE_URL}/users/${userId}/cars`,             // POST
+  getSingleCar: (userId, carId) => `${BASE_URL}/users/${userId}/cars/${carId}`, // GET one
+  deleteUserCar: (userId, carId) => `${BASE_URL}/users/${userId}/cars/${carId}` // DELETE
 };
 
 export default endpoints;

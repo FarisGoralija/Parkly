@@ -68,6 +68,8 @@ const LoginScreen = () => {
       if (response.ok) {
         const data = await response.json();
         const token = data.token;
+        const user = data.user;
+        await AsyncStorage.setItem("user", JSON.stringify(user));
 
         await AsyncStorage.setItem("auth_token", token);
         navigation.navigate("Home");
