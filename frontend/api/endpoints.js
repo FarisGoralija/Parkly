@@ -4,6 +4,7 @@ const endpoints = {
   parking: `${BASE_URL}/parkings`,
   getParkingById: (id) => `${BASE_URL}/parkings/${id}`, 
   registerUser: `${BASE_URL}/register`,
+  login: `${BASE_URL}/login`,
 };
 
 export default endpoints;
