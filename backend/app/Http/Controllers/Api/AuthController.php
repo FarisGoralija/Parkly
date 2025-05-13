@@ -19,7 +19,7 @@ class AuthController extends Controller
         'name' => 'required|string|max:255',
         'username' => 'required|string|max:255|unique:users',
         'email' => 'required|email|unique:users',
-        'password' => 'required|string|min:8',
+        'password' => 'required|string|min:8|regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).+$/',
     ]);
 
     if ($validator->fails()) {
@@ -93,7 +93,7 @@ public function deleteUser($id)
             "message" => "User not found"
         ],404);
     }
-
+    $user->tokens()->delete();
     $user->delete();
     return response()->json([
         "message" => "User deleted successfully"
