@@ -1,9 +1,9 @@
-// api/endpoints.js
-
-const BASE_URL = "http://192.168.0.28:8000/api";
+const BASE_URL = "https://parkly-production.up.railway.app/api";
 
 const endpoints = {
   parking: `${BASE_URL}/parkings`,
+  getParkingById: (id) => `${BASE_URL}/parkings/${id}`, 
+  registerUser: `${BASE_URL}/register`,
 };
 
 export default endpoints;

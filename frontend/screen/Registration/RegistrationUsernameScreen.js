@@ -12,39 +12,43 @@ import { useNavigation } from "@react-navigation/native";
 import TitleText from "../../components/common/TitleText";
 import InputField from "../../components/common/InputField";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
+import { useRegistration } from "../../context/RegistrationContext"; // Import the context
 import { isValidUsername } from "../../utils/Validation"; // Import the validation utility
- 
+import { Ionicons } from "@expo/vector-icons";
+
 const RegistrationUsernameScreen = () => {
   const [username, setUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isValid, setIsValid] = useState(true);
+  const { updateRegistrationData } = useRegistration(); // Access the context update function
   const navigation = useNavigation();
- 
+
   const isSubmitDisabled = username.trim() === "";
- 
-  // Handle username creation and validation
+
   const handleCreateUsername = () => {
     const result = isValidUsername(username); // Check the validity only when button is pressed
- 
+
     if (result.valid) {
       setErrorMessage("");
       setIsValid(true);
       console.log("Username created:", username);
-      // Navigate to the next screen (RegistrationPasswordScreen)
-      navigation.navigate("RegistrationPasswordScreen", { username }); // Pass username to the next screen
+
+      // Update context with username and navigate to the next screen
+      updateRegistrationData("username", username); // Update context with username
+      navigation.navigate("RegistrationEmailScreen"); // Navigate to the next screen
     } else {
       setErrorMessage(result.message); // Display error message
       setIsValid(false);
     }
   };
- 
+
   // Clear input field
   const handleClearInput = () => {
     setUsername("");
     setErrorMessage("");
     setIsValid(true);
   };
- 
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -56,7 +60,7 @@ const RegistrationUsernameScreen = () => {
             }
           />
         </View>
- 
+
         <View style={[!isValid && styles.inputError]}>
           <InputField
             placeholder="Username"
@@ -76,18 +80,15 @@ const RegistrationUsernameScreen = () => {
               onPress={handleClearInput}
               style={styles.clearIconContainer}
             >
-              <Image
-                source={require("../../assets/icons/clear.png")}
-                style={styles.clearIcon}
-              />
+              <Ionicons name="close-circle" size={24} color="#D2D2D2" />
             </TouchableOpacity>
           )}
         </View>
- 
+
         {errorMessage ? (
           <Text style={styles.errorText}>{errorMessage}</Text>
         ) : null}
- 
+
         <View style={styles.createButton}>
           <BlueUniversalButton
             text="Create Username"
@@ -99,18 +100,18 @@ const RegistrationUsernameScreen = () => {
     </TouchableWithoutFeedback>
   );
 };
- 
+
 export default RegistrationUsernameScreen;
- 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 80,
-    backgroundColor: "#46474D",
+    backgroundColor: "#3A3A3C",
   },
- 
+
   inputError: {
     borderColor: "#E92440",
     borderRadius: 11,
@@ -121,10 +122,6 @@ const styles = StyleSheet.create({
     right: 10,
     top: 22,
     transform: [{ translateY: -12 }],
-  },
-  clearIcon: {
-    width: 31,
-    height: 26,
   },
   errorText: {
     color: "#E92440",

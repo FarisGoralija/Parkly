@@ -16,15 +16,18 @@ import SocialButton from "../components/Login/SocialButton";
 import BlueUniversalButton from "../components/common/BlueUniversalButton";
 import MainLogo from "../components/Login/MainLogo";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 const LoginScreen = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const navigation = useNavigation();
 
+  // Load fonts asynchronously
   const loadFonts = async () => {
     await Font.loadAsync({
       "Montserrat Alternates": require("../assets/fonts/MontserratAlternates-Bold.ttf"),
@@ -34,9 +37,21 @@ const LoginScreen = () => {
 
   useEffect(() => {
     loadFonts();
-  }, []);
 
-  if (!fontsLoaded) {
+    // Check for token when the screen loads
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem("auth_token");
+      if (token) {
+        navigation.navigate("Home"); // If token exists, redirect to Home screen
+      } else {
+        setLoading(false); // If no token, set loading to false and allow login attempt
+      }
+    };
+
+    checkToken();
+  }, [navigation]);
+
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0195F5" />
@@ -133,7 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#46474D",
+    backgroundColor: "#3A3A3C",
     padding: 20,
   },
   content: {
@@ -165,7 +180,6 @@ const styles = StyleSheet.create({
   registerLink: {
     color: "#3797EF",
     fontSize: 15,
-
     fontWeight: "400",
   },
   forgotPasswordContainer: {
@@ -223,7 +237,6 @@ const styles = StyleSheet.create({
     bottom: 7,
     zIndex: 1,
   },
-
   registerContainer: {
     flexDirection: "row", // Ensures elements stay in one line
     alignItems: "center", // Aligns text vertically

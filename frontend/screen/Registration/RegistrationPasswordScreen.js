@@ -6,20 +6,26 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  
 } from "react-native";
 import TitleText from "../../components/common/TitleText";
 import InputField from "../../components/common/InputField";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton";
-import { passwordRegex } from "../../utils/Validation";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useRegistration } from "../../context/RegistrationContext"; // Import the context
+import endpoints from "../../api/endpoints"; // Import endpoints.js
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import MiniSpinner from "../../components/Registration/MiniSpinner";
+
 
 const RegistrationPasswordScreen = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [secureText, setSecureText] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { updateRegistrationData, registrationData } = useRegistration(); // Access the context update function
   const navigation = useNavigation();
 
   const isSubmitDisabled = password.trim() === "";
@@ -34,18 +40,42 @@ const RegistrationPasswordScreen = () => {
   };
 
   const handleSavePassword = () => {
-    if (!passwordRegex.test(password)) {
-      setErrorMessage(
-        "Password must be 8+ characters, with an uppercase, number, and symbol."
-      );
-      setIsPasswordValid(false);
-      return;
-    }
+    setIsLoading(true); // Start loading
+    setErrorMessage(""); // Clear previous error
 
-    console.log("Password saved:", password);
-    setErrorMessage("");
-    setIsPasswordValid(true);
-    navigation.navigate("RegistrationEmailScreen");
+    updateRegistrationData("password", password);
+    const userData = { ...registrationData, password };
+
+    fetch(endpoints.registerUser, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+      redirect: "manual",
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Registration failed");
+        return response.text();
+      })
+      .then((data) => {
+        try {
+          const jsonResponse = JSON.parse(data);
+          AsyncStorage.setItem("auth_token", jsonResponse.token).then(() => {
+            console.log("Token saved successfully.");
+          });
+
+          navigation.navigate("Home");
+        } catch (error) {
+          setErrorMessage("An error occurred. Please try again.");
+        }
+      })
+      .catch((error) => {
+        setErrorMessage("An error occurred. Please try again.");
+      })
+      .finally(() => {
+        setIsLoading(false); // End loading
+      });
   };
 
   return (
@@ -91,9 +121,15 @@ const RegistrationPasswordScreen = () => {
 
         <View style={styles.savePasswordButton}>
           <BlueUniversalButton
-            text="Save Password"
+            text={
+              isLoading ? (
+                <MiniSpinner size={22} color="white" />
+              ) : (
+                "Save Password"
+              )
+            }
             onPress={handleSavePassword}
-            disabled={isSubmitDisabled}
+            disabled={isSubmitDisabled || isLoading}
           />
         </View>
       </View>
@@ -107,7 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 80,
-    backgroundColor: "#46474D",
+    backgroundColor: "#3A3A3C",
   },
 
   inputWrapper: {
