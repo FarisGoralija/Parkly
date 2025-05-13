@@ -59,7 +59,6 @@ export default function ProfileDetailsScreen() {
           icon={<LockIcon />}
           label="Password"
           value="•••••••••••"
-          showEye
         />
 
         <TouchableOpacity
