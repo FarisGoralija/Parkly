@@ -37,17 +37,17 @@ class ParkingSpotController extends Controller
 
     public function update(Request $request, Parking $parking, ParkingSpot $parkingSpot)
     {
-        $validated = $request->validate([
-            'spot_number' => 'sometimes|integer|min:1',
-            'is_available' => 'sometimes|boolean',
-        ]);
+        //$validated = $request->validate([
+        //    'spot_number' => 'sometimes|integer|min:1',
+        //    'is_available' => 'sometimes|boolean',
+        //]);
 
-        $parkingSpot->update($validated);
+        //$parkingSpot->update($validated);
 
-        return response()->json([
-            'message' => 'Parking spot updated.',
-            'data' => $parkingSpot
-        ]);
+        //return response()->json([
+        //    'message' => 'Parking spot updated.',
+        //    'data' => $parkingSpot
+        //]);
     }
 
     public function destroy(Parking $parking, ParkingSpot $parkingSpot)
