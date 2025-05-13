@@ -1,6 +1,11 @@
+const BASE_URL = "https://parkly-production.up.railway.app/api";
+
 const endpoints = {
+  // Parking API
   parking: `${BASE_URL}/parkings`,
   getParkingById: (id) => `${BASE_URL}/parkings/${id}`, 
+
+  // Auth
   registerUser: `${BASE_URL}/register`,
   login: `${BASE_URL}/login`,
 
@@ -10,8 +15,10 @@ const endpoints = {
   getSingleCar: (userId, carId) => `${BASE_URL}/users/${userId}/cars/${carId}`,
   deleteUserCar: (userId, carId) => `${BASE_URL}/users/${userId}/cars/${carId}`,
 
-  // Password reset
+  // Password Reset
   forgotPassword: `${BASE_URL}/forgot-password`,
   resetPassword: `${BASE_URL}/reset-password`,
   verifyCode: `${BASE_URL}/verify-reset-code`
 };
+
+export default endpoints;
