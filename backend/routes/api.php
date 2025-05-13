@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ParkingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\ParkingSpotController;
+use App\Http\Controllers\Api\ReservationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,13 +30,14 @@ Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'display
 Route::apiResource('parkings', ParkingController::class)
     ->only(['index', 'show', 'store', 'destroy']);
 
-//Parking spots routes
-Route::apiResource('parkings.parking-spots', ParkingSpotController::class)
-    ->scoped();
-
 //Car routes
 Route::apiResource('users.cars', CarController::class)
     ->scoped()
     ->only(['index', 'store', 'show', 'destroy'])
     ->middleware('auth:sanctum');
 
+//Reservation routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/reservations', [ReservationController::class, 'index']);
+    Route::post('/reservations', [ReservationController::class, 'store']);
+});
