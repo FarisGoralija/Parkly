@@ -1,21 +1,63 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import GrayHeader from "../../components/common/GrayHeader";
 import ProfileDetailRow from "../../components/MyProfile/ProfileDetailRow";
+import EditFieldModal from "../../components/MyProfile/EditFieldModal";
+
 import User from "../../components/svg/User";
 import MailIcon from "../../components/svg/MailIcon";
 import UsernameIcon from "../../components/svg/UsernameIcon";
 import LockIcon from "../../components/svg/LockIcon";
-import { useNavigation } from "@react-navigation/native";
+
 import { useRegistration } from "../../context/RegistrationContext";
 import { isUsernameTaken } from "../../utils/Validation";
 
 export default function ProfileDetailsScreen() {
   const navigation = useNavigation();
   const { registrationData, updateRegistrationData } = useRegistration();
-  const [usernameError, setUsernameError] = useState("");
-  const [isEditing, setIsEditing] = useState(null); // Track which field is being edited
   const { name, email, username, password } = registrationData;
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentField, setCurrentField] = useState("");
+  const [currentValue, setCurrentValue] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+
+  // Open modal with field name and value
+  const openEditModal = (field, value) => {
+    setCurrentField(field);
+    setCurrentValue(value);
+    setUsernameError("");
+    setModalVisible(true);
+  };
+
+  // Save logic
+  const handleSave = () => {
+    // Validate username if needed
+    if (currentField === "Username" && isUsernameTaken(currentValue)) {
+      setUsernameError("Username unavailable");
+      return;
+    }
+
+    // Map label to key used in registrationData
+    const fieldKeyMap = {
+      "Name & surname": "name",
+      "Username": "username",
+    };
+
+    const key = fieldKeyMap[currentField];
+    if (key) {
+      updateRegistrationData(key, currentValue);
+    }
+
+    setModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -26,9 +68,7 @@ export default function ProfileDetailsScreen() {
           label="Name & surname"
           value={name}
           editable
-          isEditing={isEditing} // Pass editing state
-          setIsEditing={setIsEditing} // Pass function to change editing state
-          onChangeText={(val) => updateRegistrationData("name", val)}
+          onPressEdit={() => openEditModal("Name & surname", name)}
         />
 
         <ProfileDetailRow
@@ -42,32 +82,30 @@ export default function ProfileDetailsScreen() {
           label="Username"
           value={username}
           editable
-          error={usernameError}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          onChangeText={(val) => {
-            if (!isUsernameTaken(val)) {
-              setUsernameError("");
-              updateRegistrationData("username", val);
-            } else {
-              setUsernameError("Username unavailable");
-            }
-          }}
+          onPressEdit={() => openEditModal("Username", username)}
         />
-        
+
         <ProfileDetailRow
           icon={<LockIcon />}
           label="Password"
           value="•••••••••••"
-          showEye
         />
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ChangePasswordScreen")}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate("ChangePasswordScreen")}>
           <Text style={styles.changePassword}>Change password</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Edit Modal */}
+      <EditFieldModal
+        visible={modalVisible}
+        fieldLabel={currentField}
+        value={currentValue}
+        onChangeText={setCurrentValue}
+        onSave={handleSave}
+        onClose={() => setModalVisible(false)}
+        error={usernameError}
+      />
     </View>
   );
 }

@@ -123,7 +123,7 @@ const RegistrationPasswordScreen = () => {
           <BlueUniversalButton
             text={
               isLoading ? (
-                <MiniSpinner size={22} color="white" />
+                <MiniSpinner size={18} color="white" />
               ) : (
                 "Save Password"
               )
