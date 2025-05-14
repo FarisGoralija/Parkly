@@ -20,9 +20,9 @@ const endpoints = {
   resetPassword: `${BASE_URL}/reset-password`,
   verifyCode: `${BASE_URL}/verify-reset-code`,
 
-  getUserReservations: (userId) => `${BASE_URL}/users/${userId}/reservations`, // GET
-  addReservation: (userId) => `${BASE_URL}/users/${userId}/reservations`,
-  addReservation: `${BASE_URL}/reservations`
+  addReservation: `${BASE_URL}/reservations`,
+  getReservations: `${BASE_URL}/reservations`,
+
 
 };
 
