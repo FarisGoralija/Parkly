@@ -19,6 +19,7 @@ import MainLogo from "../components/Login/MainLogo";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import endpoints from "../api/endpoints";
+import { useCar } from "../context/CarContext"; // ✅ add this
 
 const LoginScreen = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -27,6 +28,7 @@ const LoginScreen = () => {
   const [secureText, setSecureText] = useState(true);
   const [loading, setLoading] = useState(true); // Controls screen loading on mount
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Controls login button state
+  const { clearCars } = useCar(); // ✅ add this line inside the component
 
   const navigation = useNavigation();
 
@@ -69,6 +71,9 @@ const LoginScreen = () => {
         const data = await response.json();
         const token = data.token;
         const user = data.user;
+
+        clearCars(); // ✅ Clear old cars on login
+
         await AsyncStorage.setItem("user", JSON.stringify(user));
 
         await AsyncStorage.setItem("auth_token", token);

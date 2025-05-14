@@ -16,7 +16,7 @@ import { useRegistration } from "../../context/RegistrationContext"; // Import t
 import endpoints from "../../api/endpoints"; // Import endpoints.js
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import MiniSpinner from "../../components/Registration/MiniSpinner";
-
+import { useCar } from "../../context/CarContext"; // ✅ Adjust path if needed
 
 const RegistrationPasswordScreen = () => {
   const [password, setPassword] = useState("");
@@ -24,6 +24,7 @@ const RegistrationPasswordScreen = () => {
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [secureText, setSecureText] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const { clearCars } = useCar(); // ✅ Get clear function
 
   const { updateRegistrationData, registrationData } = useRegistration(); // Access the context update function
   const navigation = useNavigation();
@@ -61,11 +62,19 @@ const RegistrationPasswordScreen = () => {
       .then((data) => {
         try {
           const jsonResponse = JSON.parse(data);
-          AsyncStorage.setItem("auth_token", jsonResponse.token).then(() => {
-            console.log("Token saved successfully.");
-          });
+          clearCars(); // ✅ Clear cars first
+          clearCars(); // 🔁 First reset car context
 
-          navigation.navigate("Home");
+          AsyncStorage.multiSet([
+            ["auth_token", jsonResponse.token],
+            ["user", JSON.stringify(jsonResponse.user)],
+          ]).then(() => {
+            console.log("✅ Token & user saved");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Home" }],
+            });
+          });
         } catch (error) {
           setErrorMessage("An error occurred. Please try again.");
         }
