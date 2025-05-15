@@ -5,8 +5,10 @@ use App\Http\Controllers\Api\ParkingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\ReservationController;
+use App\Http\Controllers\Api\GoogleLogInController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\UpdateProfileController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,6 +24,8 @@ Route::post('/forgot-password', [AuthController::class, 'sendResetCode']);
 Route::post('/verify-reset-code', [AuthController::class, 'verifyCode']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'displayUser']);
+Route::patch('/profile', [UpdateProfileController::class, 'updateProfile'])->middleware('auth:sanctum');
+Route::post('/auth/google', [GoogleLogInController::class, 'handleGoogleLogin']);
 //kera
 
 
