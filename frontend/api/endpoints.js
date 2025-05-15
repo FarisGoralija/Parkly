@@ -9,17 +9,7 @@ const endpoints = {
   registerUser: `${BASE_URL}/register`,
   login: `${BASE_URL}/login`,
 
-  // Car API
-  getUserCars: (userId) => `${BASE_URL}/users/${userId}/cars`,
-  addUserCar: (userId) => `${BASE_URL}/users/${userId}/cars`,
-  getSingleCar: (userId, carId) => `${BASE_URL}/users/${userId}/cars/${carId}`,
-  deleteUserCar: (userId, carId) => `${BASE_URL}/users/${userId}/cars/${carId}`,
-
-  // Password Reset
-  forgotPassword: `${BASE_URL}/forgot-password`,
-  resetPassword: `${BASE_URL}/reset-password`,
-  verifyCode: `${BASE_URL}/verify-reset-code`,
-
+ 
   addReservation: `${BASE_URL}/reservations`,
   getReservations: `${BASE_URL}/reservations`,
 
