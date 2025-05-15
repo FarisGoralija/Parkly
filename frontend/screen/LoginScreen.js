@@ -20,6 +20,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import endpoints from "../api/endpoints";
 import MiniSpinner from "../components/Registration/MiniSpinner";
+import { useCar } from "../context/CarContext";
 
 
 const LoginScreen = () => {
@@ -30,6 +31,7 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(true); // Controls screen loading on mount
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Controls login button state
   const { clearCars } = useCar(); // ✅ add this line inside the component
+  
 
   const navigation = useNavigation();
 
