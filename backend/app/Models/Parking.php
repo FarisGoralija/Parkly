@@ -22,4 +22,9 @@ class Parking extends Model
         return $this->hasMany(Reservation::class);
     }
 
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'favorite_parkings')->withTimestamps();
+    }
+
 }

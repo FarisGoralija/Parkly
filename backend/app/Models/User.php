@@ -63,5 +63,10 @@ class User extends Authenticatable
         return $this->hasMany(Card::class);
     }
 
+    public function favoriteParkings()
+    {
+        return $this->belongsToMany(Parking::class, 'favorite_parkings')->withTimestamps();
+    }
+
 
 }
