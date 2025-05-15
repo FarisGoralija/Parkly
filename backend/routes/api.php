@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ParkingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\CardController;
+use App\Http\Controllers\Api\FavoriteParkingController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\GoogleLogInController;
 use Illuminate\Http\Request;
@@ -32,7 +33,8 @@ Route::post('/auth/google', [GoogleLogInController::class, 'handleGoogleLogin'])
 
 //Parking routes
 Route::apiResource('parkings', ParkingController::class)
-    ->only(['index', 'show', 'store', 'destroy']);
+    ->only(['index', 'show', 'store', 'destroy'])
+    ->middleware('auth:sanctum');
 
 //Car routes
 Route::apiResource('users.cars', CarController::class)
@@ -51,3 +53,10 @@ Route::apiResource('users.cards', CardController::class)
     ->scoped()
     ->only(['index', 'store', 'destroy'])
     ->middleware('auth:sanctum');
+
+//Favorite parking routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/favorites/toggle', [FavoriteParkingController::class, 'toggle']);
+    Route::get('/favorites', [FavoriteParkingController::class, 'getFavorites']);
+    Route::get('/favorites/{parkingId}', [FavoriteParkingController::class, 'isFavorited']);
+});
