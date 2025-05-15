@@ -11,13 +11,16 @@ import AddCarButton from "../../components/MyCar/AddCarButton";
 import CarBrandDropdown from "../../components/MyCar/CarBrandDropdown";
 import CarModelDropdown from "../../components/MyCar/CarModelDropdown";
 import RegistrationInput from "../../components/MyCar/RegistrationInput";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import endpoints from "../../api/endpoints";
 
 const CarDetailsScreen = ({ navigation }) => {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const [registrationPlate, setRegistrationPlate] = useState("");
-  const { addCar } = navigation.getState()?.routes?.find(r => r.name === "CarDetailsScreen")?.params || {};
-
+  const { addCar } =
+    navigation.getState()?.routes?.find((r) => r.name === "CarDetailsScreen")
+      ?.params || {};
 
   // ✅ Check if registration plate format is valid
   const isValidPlate = (plate) => {
@@ -29,17 +32,55 @@ const CarDetailsScreen = ({ navigation }) => {
   const isFormValid =
     selectedBrand && selectedModel && isValidPlate(registrationPlate);
 
-    const handleAddCar = () => {
-      if (addCar) {
-        addCar({
-          brand: selectedBrand,
-          model: selectedModel,
-          registration: registrationPlate,
-        });
+  const handleAddCar = async () => {
+    console.log("🟡 Add Car button clicked");
+
+    try {
+      const token = await AsyncStorage.getItem("auth_token");
+      const user = JSON.parse(await AsyncStorage.getItem("user"));
+
+      if (!user?.id || !token) {
+        console.warn("🚫 Missing user or token");
+        return;
       }
-      navigation.goBack(); // ✅ After adding, go back to MyCarScreen
-    };
-    
+
+      const carData = {
+        brand: selectedBrand,
+        model: selectedModel,
+        license_plate: registrationPlate,
+      };
+
+      console.log("📦 Sending car data:", carData);
+
+      const response = await fetch(endpoints.addUserCar(user.id), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(carData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("❌ Failed to add car:", errorData);
+        return;
+      }
+
+      const newCar = await response.json();
+      console.log("✅ Car added:", newCar);
+
+      // Update global car context (optional)
+      if (addCar) {
+        addCar(newCar);
+      }
+
+      navigation.goBack();
+    } catch (err) {
+      console.error("🔥 Error adding car:", err);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -84,9 +125,8 @@ const CarDetailsScreen = ({ navigation }) => {
               backgroundColor: isFormValid ? "#0195F5" : "#8AD1FF", // ✅ Correct colors
             }}
             textStyle={{
-              color: "white", 
+              color: "white",
             }}
-            
           />
         </View>
       </View>

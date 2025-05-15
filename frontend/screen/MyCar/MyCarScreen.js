@@ -12,30 +12,95 @@ import CarCard from "../../components/MyCar/CarCard";
 import AddCarButton from "../../components/MyCar/AddCarButton";
 import Car from "../../components/svg/Car";
 import { useCar } from "../../context/CarContext";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import endpoints from "../../api/endpoints";
 
 const MyCarScreen = ({ navigation }) => {
   const { cars, setCars } = useCar();
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [selectedDeleteIndex, setSelectedDeleteIndex] = useState(null);
+  const [loadingCars, setLoadingCars] = useState(true);
+
 
   const confirmDeleteCar = (index) => {
     setSelectedDeleteIndex(index);
     setIsDeleteModalVisible(true);
   };
 
-  const handleConfirmedDelete = () => {
+  const deleteCarFromApi = async (carId) => {
+    try {
+      const token = await AsyncStorage.getItem("auth_token");
+      const user = JSON.parse(await AsyncStorage.getItem("user"));
+
+      const response = await fetch(endpoints.deleteUserCar(user.id, carId), {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        console.warn("Failed to delete car");
+      }
+    } catch (error) {
+      console.error("Error deleting car:", error);
+    }
+  };
+
+  const handleConfirmedDelete = async () => {
+    const carId = cars[selectedDeleteIndex]?.id;
+    await deleteCarFromApi(carId);
+
     const updatedCars = [...cars];
     updatedCars.splice(selectedDeleteIndex, 1);
     setCars(updatedCars);
     setIsDeleteModalVisible(false);
   };
 
+  useEffect(() => {
+  const fetchCars = async () => {
+    try {
+      setLoadingCars(true); // start loading
+
+      const token = await AsyncStorage.getItem("auth_token");
+      const user = JSON.parse(await AsyncStorage.getItem("user"));
+      if (!user?.id || !token) return;
+
+      const response = await fetch(endpoints.getUserCars(user.id), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch cars");
+
+      const carData = await response.json();
+      setCars(carData);
+    } catch (error) {
+      console.error("Error fetching cars:", error);
+    } finally {
+      setLoadingCars(false); // end loading
+    }
+  };
+
+  fetchCars();
+}, []);
+
+
   return (
     <View style={styles.container}>
       <GrayHeader title="My cars" />
 
-      {cars.length === 0 ? (
+      {loadingCars ? (
+  <View style={styles.emptyContainer}>
+    <Text style={styles.emptyText}>Loading cars...</Text>
+  </View>
+) : cars.length === 0 ? (
+
         <View style={styles.emptyContainer}>
           <Car width={200} height={200} />
           <Text style={styles.emptyText}>
@@ -50,7 +115,7 @@ const MyCarScreen = ({ navigation }) => {
             <CarCard
               brand={item.brand}
               model={item.model}
-              registration={item.registration}
+              registration={item.license_plate}
               onDelete={() => confirmDeleteCar(index)}
             />
           )}
