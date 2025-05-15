@@ -10,8 +10,7 @@ const endpoints = {
   login: `${BASE_URL}/login`,
 
  
-  addReservation: `${BASE_URL}/reservations`,
-  getReservations: `${BASE_URL}/reservations`,
+  
 
 
 };
