@@ -4,6 +4,7 @@
 use App\Http\Controllers\Api\ParkingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CarController;
+use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\GoogleLogInController;
 use Illuminate\Http\Request;
@@ -44,3 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reservations', [ReservationController::class, 'index']);
     Route::post('/reservations', [ReservationController::class, 'store']);
 });
+
+//Card routes
+Route::apiResource('users.cards', CardController::class)
+    ->scoped()
+    ->only(['index', 'store', 'destroy'])
+    ->middleware('auth:sanctum');
