@@ -32,12 +32,12 @@ class UpdateProfileController extends Controller
 
         $validator = Validator::make($request->all(), $rules, $messages);
 
-        // ❌ You had everything below this line INSIDE the "if fails" block
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // ✅ This code should run only if validation PASSES
+
         if ($request->has('name')) {
             $user->name = $request->name;
         }
