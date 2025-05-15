@@ -34,8 +34,7 @@ import dayjs from "dayjs";
 import { ScrollView } from "react-native";
 import axios from "axios";
 import endpoints from "../../api/endpoints"; // assuming you already have this
-
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { height } = Dimensions.get("window");
 export default function BottomSheetModal({ isVisible, onClose, location }) {
@@ -407,13 +406,14 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                                 }}
                                 onPress={() => {
                                   setSelectedCar(
-                                    `${car.brand} ${car.model} (${car.registration})`
+                                    `${car.brand} ${car.model} (${car.license_plate})`
                                   );
+
                                   setShowPicker(false);
                                 }}
                               >
                                 <Text style={{ color: "#fff" }}>
-                                  {car.brand} {car.model} ({car.registration})
+                                  {car.brand} {car.model} ({car.license_plate})
                                 </Text>
                               </TouchableOpacity>
                             ))}
@@ -593,29 +593,118 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                           },
                         ]}
                         disabled={!(acceptTerms && selectedCard)}
-                        onPress={() => {
-                          setActiveParking({
-                            location: location?.name || "Unknown location",
-                            price: `${calculatedPrice}KM`,
-                            carModel: selectedCar || "Unknown car",
-                            registration:
-                              selectedCar?.match(/\(([^)]+)\)/)?.[1] ||
-                              "Unknown plate",
-                            duration: `${fromTime}-${untilTime}`,
-                          });
+                        onPress={async () => {
+                          try {
+                            const token = await AsyncStorage.getItem(
+                              "auth_token"
+                            );
+                            const user = JSON.parse(
+                              await AsyncStorage.getItem("user")
+                            );
 
-                          setShowSuccess(true); // ✅ show success screen
+                            if (!token || !user?.id) {
+                              console.warn("Missing user or token");
+                              return;
+                            }
 
-                          setTimeout(() => {
-                            setShowSuccess(false);
-                            setStep(1);
-                            setAcceptTerms(false);
-                            setSelectedCar(null);
-                            setSelectedCard(null);
-                            setFromTime("");
-                            setUntilTime("");
-                            onClose(); // ✅ close modal after 2.5 sec
-                          }, 2500);
+                            // Extract plate (e.g. "A23-B-123") from string like "Toyota Corolla (A23-B-123)"
+                            const plateMatch =
+                              selectedCar?.match(/\(([^)]+)\)/);
+                            const licensePlate = plateMatch?.[1];
+
+                            const car = cars.find(
+                              (c) => c.license_plate === licensePlate
+                            );
+                            const carId = car?.id;
+                            const parkingId = location?.id;
+
+                            if (
+                              !carId ||
+                              !parkingId ||
+                              !fromTime ||
+                              !untilTime
+                            ) {
+                              console.warn("Missing reservation info");
+                              return;
+                            }
+
+                            const today = dayjs().format("YYYY-MM-DD");
+
+                            const adjustedStart = dayjs(
+                              `${today} ${fromTime}:00`
+                            ).add(1, "minute"); 
+                            const selectedEnd = dayjs(
+                              `${today} ${untilTime}:00`
+                            );
+
+                            const start_time = adjustedStart.format(
+                              "YYYY-MM-DD HH:mm:ss"
+                            );
+                            const end_time = selectedEnd.format(
+                              "YYYY-MM-DD HH:mm:ss"
+                            );
+
+                            const reservationData = {
+                              car_id: carId,
+                              parking_id: parkingId,
+                              start_time,
+                              end_time,
+                            };
+
+                            console.log(
+                              "📦 Sending reservation:",
+                              reservationData
+                            );
+
+                            const res = await axios.post(
+                              endpoints.addReservation,
+                              reservationData,
+                              {
+                                headers: {
+                                  Authorization: `Bearer ${token}`,
+                                  "Content-Type": "application/json",
+                                  Accept: "application/json",
+                                },
+                              }
+                            );
+
+                            if (res.status === 201 || res.status === 200) {
+                              setActiveParking({
+                                location: location?.name || "Unknown location",
+                                price: `${calculatedPrice}KM`,
+                                carModel: selectedCar || "Unknown car",
+                                registration: licensePlate || "Unknown plate",
+                                duration: `${fromTime}-${untilTime}`,
+                              });
+
+                              setShowSuccess(true);
+
+                              setTimeout(() => {
+                                setShowSuccess(false);
+                                setStep(1);
+                                setAcceptTerms(false);
+                                setSelectedCar(null);
+                                setSelectedCard(null);
+                                setFromTime("");
+                                setUntilTime("");
+                                onClose();
+                              }, 2500);
+                            } else {
+                              console.error("❌ Reservation failed:", res.data);
+                            }
+                          } catch (err) {
+                            if (err.response) {
+                              console.log(
+                                "❌ Backend validation error:",
+                                err.response.data
+                              );
+                            } else {
+                              console.error(
+                                "🔥 Unexpected error:",
+                                err.message
+                              );
+                            }
+                          }
                         }}
                       >
                         <Text style={styles.reserveText}>Pay Now</Text>

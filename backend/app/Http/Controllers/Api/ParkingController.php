@@ -8,6 +8,8 @@ use App\Http\Traits\CanLoadRelationships;
 use App\Models\Parking;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class ParkingController extends Controller
 {
@@ -37,33 +39,44 @@ class ParkingController extends Controller
     }
 
     public function show(Request $request, Parking $parking)
-    {
-        $now = now();
-        $start = $request->query('start_time', $now);
-        $end = $request->query('end_time', $now->copy()->addHour());
+{
+    $now = now();
+    $start = $request->query('start_time', $now);
+    $end = $request->query('end_time', $now->copy()->addHour());
 
-        // Count reservations that overlap with the given time period for this parking
-        $overlappingReservationsCount = Reservation::where('parking_id', $parking->id)
-            ->where(function ($q) use ($start, $end) {
-                $q->whereBetween('start_time', [$start, $end])
-                  ->orWhereBetween('end_time', [$start, $end])
-                  ->orWhere(function ($q) use ($start, $end) {
-                      $q->where('start_time', '<', $start)
-                        ->where('end_time', '>', $end);
-                  });
-            })->count();
+    // Count overlapping reservations
+    $overlappingReservationsCount = Reservation::where('parking_id', $parking->id)
+        ->where(function ($q) use ($start, $end) {
+            $q->whereBetween('start_time', [$start, $end])
+              ->orWhereBetween('end_time', [$start, $end])
+              ->orWhere(function ($q) use ($start, $end) {
+                  $q->where('start_time', '<', $start)
+                    ->where('end_time', '>', $end);
+              });
+        })->count();
 
-        $availableSpots = $parking->total_spots - $overlappingReservationsCount;
+    $availableSpots = $parking->total_spots - $overlappingReservationsCount;
 
-        return response()->json([
-            'name' => $parking->name,
-            'price' => $parking->price,
-            'website_url' => $parking->website_url,
-            'phone_number' => $parking->phone_number,
-            'total_spots' => $parking->total_spots,
-            'available_spots' => max($availableSpots, 0),
-        ]);
+    // Check if authenticated user has favorited this parking
+    $user = Auth::user();
+    $isFavorited = false;
+
+    if ($user) {
+        $isFavorited = $user->favoriteParkings()
+            ->where('parking_id', $parking->id)
+            ->exists();
     }
+
+    return response()->json([
+        'name' => $parking->name,
+        'price' => $parking->price,
+        'website_url' => $parking->website_url,
+        'phone_number' => $parking->phone_number,
+        'total_spots' => $parking->total_spots,
+        'available_spots' => max($availableSpots, 0),
+        'is_favorited' => $isFavorited,
+    ]);
+}
 
 
 

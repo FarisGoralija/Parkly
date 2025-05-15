@@ -5,8 +5,13 @@ const CarContext = createContext();
 export const CarProvider = ({ children }) => {
   const [cars, setCars] = useState([]);
 
+  const clearCars = () => {
+    console.log("🚿 Clearing cars");
+    setCars([]);
+  };
+
   return (
-    <CarContext.Provider value={{ cars, setCars }}>
+    <CarContext.Provider value={{ cars, setCars, clearCars }}>
       {children}
     </CarContext.Provider>
   );
