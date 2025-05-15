@@ -19,7 +19,7 @@ import MainLogo from "../components/Login/MainLogo";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import endpoints from "../api/endpoints";
-import { useCar } from "../context/CarContext"; // ✅ add this
+
 
 const LoginScreen = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
