@@ -23,6 +23,9 @@ const endpoints = {
   addReservation: `${BASE_URL}/reservations`,
   getReservations: `${BASE_URL}/reservations`,
 
+    toggleFavorite: `${BASE_URL}/favorites/toggle`,
+    getFavorites: `${BASE_URL}/favorites`,
+
 
 };
 

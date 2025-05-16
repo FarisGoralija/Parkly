@@ -250,15 +250,15 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     </View>
                     <View style={styles.headerIcons}>
                       <TouchableOpacity
-                        onPress={() => {
-                          if (location && location.id) {
-                            toggleFavorite(location);
-                          }
-                        }}
-                        style={{ marginRight: 16 }} // ✅ shift heart icon left
-                      >
-                        <HeartIcon liked={isFavorited(location)} />
-                      </TouchableOpacity>
+  onPress={() => {
+    if (location && location.id) {
+      toggleFavorite(location);
+    }
+  }}
+  style={{ marginRight: 16 }}
+>
+<HeartIcon liked={isFavorited(location)} />
+</TouchableOpacity>
 
                       <TouchableOpacity onPress={onClose}>
                         <CancelIcon size={27} color="#fff" />
