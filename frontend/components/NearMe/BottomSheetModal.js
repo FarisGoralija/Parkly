@@ -61,19 +61,28 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
 
   useEffect(() => {
     const fetchAvailability = async () => {
-      if (isVisible && location?.id) {
-        setIsLoadingSpots(true);
-        try {
-          const res = await axios.get(`${endpoints.parking}/${location.id}`);
-          setAvailableSpots(res.data.available_spots);
-        } catch (err) {
-          console.warn("Failed to fetch available spots:", err);
-          setAvailableSpots(null);
-        } finally {
-          setIsLoadingSpots(false);
-        }
-      }
-    };
+  if (isVisible && location?.id) {
+    setIsLoadingSpots(true);
+    try {
+      const token = await AsyncStorage.getItem("auth_token");
+      
+
+      const res = await axios.get(`${endpoints.parking}/${location.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setAvailableSpots(res.data.available_spots);
+    } catch (err) {
+      console.warn("Failed to fetch available spots:", err.response?.data || err.message);
+      setAvailableSpots(null);
+    } finally {
+      setIsLoadingSpots(false);
+    }
+  }
+};
+
 
     fetchAvailability();
   }, [isVisible, location?.id]);
