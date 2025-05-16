@@ -14,6 +14,8 @@ import CustomMap from "../components/NearMe/Map";
 import SearchBar from "../components/NearMe/SearchBar";
 import BottomSheetModal from "../components/NearMe/BottomSheetModal";
 import { ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function NearMeScreen() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,9 +28,17 @@ export default function NearMeScreen() {
   } = useQuery({
     queryKey: ["parkings"],
     queryFn: async () => {
-      const res = await axios.get(endpoints.parking);
-      return Array.isArray(res.data) ? res.data : res.data?.data ?? [];
+  const token = await AsyncStorage.getItem("auth_token");
+  if (!token) throw new Error("No auth token found");
+
+  const res = await axios.get(endpoints.parking, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
+  });
+  return Array.isArray(res.data) ? res.data : res.data?.data ?? [];
+},
+
   });
 
   const filteredResults = useMemo(() => {
