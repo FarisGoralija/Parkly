@@ -496,47 +496,69 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                           />
                         </TouchableOpacity>
 
-                        {showCardPicker && (
-                          <View style={styles.pickerDropdown}>
-                            {cards.length === 0 ? (
-                              <Text
-                                style={{
-                                  color: "#fff",
-                                  textAlign: "center",
-                                  paddingVertical: 10,
-                                }}
-                              >
-                                No cards added
-                              </Text>
-                            ) : (
-                              <ScrollView
-                                nestedScrollEnabled
-                                style={{ maxHeight: 80 }}
-                              >
-                                {cards.map((card, index) => (
-                                  <TouchableOpacity
-                                    key={index}
-                                    style={{
-                                      paddingVertical: 10,
-                                      paddingHorizontal: 16,
-                                    }}
-                                    onPress={() => {
-                                      setSelectedCard(
-                                        `•••• ${card.cardNumber.slice(-4)}`
-                                      );
-                                      setShowCardPicker(false);
-                                    }}
-                                  >
-                                    <Text style={{ color: "#fff" }}>
-                                      {card.cardholderName} ••••{" "}
-                                      {card.cardNumber.slice(-4)}
-                                    </Text>
-                                  </TouchableOpacity>
-                                ))}
-                              </ScrollView>
-                            )}
-                          </View>
-                        )}
+                     {showCardPicker && (
+<View style={styles.pickerDropdown}>
+
+    {cards.length === 0 ? (
+<Text
+
+        style={{
+
+          color: "#fff",
+
+          textAlign: "center",
+
+          paddingVertical: 10,
+
+        }}
+>
+
+        No cards added
+</Text>
+
+    ) : (
+<ScrollView nestedScrollEnabled style={{ maxHeight: 80 }}>
+
+        {cards.map((card, index) => (
+<TouchableOpacity
+
+            key={index}
+
+            style={{
+
+              paddingVertical: 10,
+
+              paddingHorizontal: 16,
+
+            }}
+
+            onPress={() => {
+
+              setSelectedCard(
+
+                `•••• ${card.card_number.slice(-4)}`
+
+              );
+
+              setShowCardPicker(false);
+
+            }}
+>
+<Text style={{ color: "#fff" }}>
+
+              {card.cardholder_name} •••• {card.card_number.slice(-4)}
+</Text>
+</TouchableOpacity>
+
+        ))}
+</ScrollView>
+
+    )}
+</View>
+
+)}
+
+ 
 
                         {/* Add a card */}
                         <TouchableOpacity
