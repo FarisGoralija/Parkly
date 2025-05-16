@@ -10,6 +10,7 @@ import Modal from "react-native-modal";
 import { useParking } from "../../context/ParkingContext";
 import GrayHeader from "../../components/common/GrayHeader";
 import FavouriteParkingCard from "../../components/MyProfile/FavouriteParkingCard";
+import MiniSpinner from "../../components/Registration/MiniSpinner";
  
 export default function FavouriteParkingScreen() {
   const {
@@ -20,34 +21,46 @@ export default function FavouriteParkingScreen() {
  
   const [selectedParkingToRemove, setSelectedParkingToRemove] = useState(null);
   const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
- 
+ const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    loadFavorites(); // ✅ Load favorites from API when screen mounts
-  }, []);
+  const fetchFavorites = async () => {
+    setIsLoading(true);
+    await loadFavorites();
+    setIsLoading(false);
+  };
+ 
+  fetchFavorites();
+}, []);
  
   return (
 <View style={styles.container}>
 <GrayHeader title="Favourite Parkings" />
+{isLoading ? (
+<View style={styles.spinnerContainer}>
+<MiniSpinner size={40} color="#ffffff" />
+<Text style={styles.loadingText}>Loading favorites...</Text>
+</View>
+) : (
 <FlatList
-        data={favoriteParkings}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
+    data={favoriteParkings}
+    keyExtractor={(item) => item.id.toString()}
+    contentContainerStyle={styles.list}
+    renderItem={({ item }) => (
 <FavouriteParkingCard
-            name={item.name}
-            price={`${parseFloat(item.price).toFixed(2)} KM / per h`}
-            liked={true}
-            onToggleLike={() => {
-              setSelectedParkingToRemove(item);
-              setIsRemoveModalVisible(true);
-            }}
-          />
-        )}
-        ListEmptyComponent={
-<Text style={styles.empty}>No favorite parkings yet.</Text>
-        }
+        name={item.name}
+        price={`${parseFloat(item.price).toFixed(2)} KM / per h`}
+        liked={true}
+        onToggleLike={() => {
+          setSelectedParkingToRemove(item);
+          setIsRemoveModalVisible(true);
+        }}
       />
- 
+    )}
+    ListEmptyComponent={
+<Text style={styles.empty}>No favorite parkings yet.</Text>
+    }
+  />
+)}
       <Modal
         isVisible={isRemoveModalVisible}
         backdropOpacity={0.4}
@@ -138,5 +151,17 @@ const styles = StyleSheet.create({
   confirmText: {
     color: "#fff",
     fontWeight: "600",
-  },
+  }, 
+  spinnerContainer: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: -200, // match the other screen
+},
+loadingText: {
+  marginTop: 10,
+  fontSize: 16,
+  color: "white",
+  textAlign: "center",
+},
 });
