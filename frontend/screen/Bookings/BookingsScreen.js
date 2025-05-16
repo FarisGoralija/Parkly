@@ -21,34 +21,42 @@ export default function BookingsScreen({ navigation }) {
   const { activeParking } = useParking();
   const [activeReservations, setActiveReservations] = useState([]);
   const [expiredReservations, setExpiredReservations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
 
   const fetchReservations = async () => {
-    try {
-      const token = await AsyncStorage.getItem("auth_token");
-      const response = await axios.get(endpoints.getReservations, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  try {
+    setLoading(true); // ⬅️ Start loading
 
-      const sortByDateDesc = (arr) =>
-        arr
-          ?.slice()
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const token = await AsyncStorage.getItem("auth_token");
+    const response = await axios.get(endpoints.getReservations, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      setActiveReservations(
-        sortByDateDesc(response.data.active_reservations || [])
-      );
-      setExpiredReservations(
-        sortByDateDesc(response.data.expired_reservations || [])
-      );
-    } catch (err) {
-      console.error(
-        "❌ Failed to fetch reservations:",
-        err.response?.data || err.message
-      );
-    }
-  };
+    const sortByDateDesc = (arr) =>
+      arr
+        ?.slice()
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    setActiveReservations(
+      sortByDateDesc(response.data.active_reservations || [])
+    );
+    setExpiredReservations(
+      sortByDateDesc(response.data.expired_reservations || [])
+    );
+  } catch (err) {
+    console.error(
+      "Failed to fetch reservations:",
+      err.response?.data || err.message
+    );
+  } finally {
+    setLoading(false); // ⬅️ End loading
+  }
+};
+
+
 
   useEffect(() => {
     fetchReservations();
@@ -67,51 +75,56 @@ export default function BookingsScreen({ navigation }) {
       {/* Tabs at top */}
       <TabsSwitcher activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Content under tabs */}
       <View style={styles.content}>
-        {activeTab === "Active" ? (
-          activeReservations.length > 0 ? (
-            <FlatList
-              data={activeReservations} // or expiredReservations
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <ActiveParkingCard
-                  location={item.parking.name}
-                  price={`${item.parking.price} KM`}
-                  carModel={`${item.car.brand} ${item.car.model}`}
-                  registration={item.car.license_plate}
-                  duration={`${item.start_time.slice(
-                    11,
-                    16
-                  )} - ${item.end_time.slice(11, 16)}`}
-                />
-              )}
-              contentContainerStyle={{ paddingBottom: 50}} // 👈 prevents overlap
-            />
-          ) : (
-            <Text style={styles.noParkingText}>No active reservations</Text>
-          )
-        ) : expiredReservations.length > 0 ? (
-          <FlatList
-            data={expiredReservations}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <ActiveParkingCard
-                location={item.parking.name}
-                price={`${item.parking.price} KM`}
-                carModel={`${item.car.brand} ${item.car.model}`}
-                registration={item.car.license_plate}
-                duration={`${item.start_time.slice(
-                  11,
-                  16
-                )} - ${item.end_time.slice(11, 16)}`}
-              />
-            )}
+  {loading ? (
+    <View style={styles.spinnerContainer}>
+      <MiniSpinner size={40} color="#ffffff" />
+      <Text style={styles.loadingText}>Loading reservations...</Text>
+    </View>
+  ) : activeTab === "Active" ? (
+    activeReservations.length > 0 ? (
+      <FlatList
+        data={activeReservations}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <ActiveParkingCard
+            location={item.parking.name}
+            price={`${item.parking.price} KM`}
+            carModel={`${item.car.brand} ${item.car.model}`}
+            registration={item.car.license_plate}
+            duration={`${item.start_time.slice(11, 16)} - ${item.end_time.slice(
+              11,
+              16
+            )}`}
           />
-        ) : (
-          <Text style={styles.noParkingText}>No expired reservations</Text>
         )}
-      </View>
+        contentContainerStyle={{ paddingBottom: 50 }}
+      />
+    ) : (
+      <Text style={styles.noParkingText}>No active reservations</Text>
+    )
+  ) : expiredReservations.length > 0 ? (
+    <FlatList
+      data={expiredReservations}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <ActiveParkingCard
+          location={item.parking.name}
+          price={`${item.parking.price} KM`}
+          carModel={`${item.car.brand} ${item.car.model}`}
+          registration={item.car.license_plate}
+          duration={`${item.start_time.slice(11, 16)} - ${item.end_time.slice(
+            11,
+            16
+          )}`}
+        />
+      )}
+    />
+  ) : (
+    <Text style={styles.noParkingText}>No expired reservations</Text>
+  )}
+</View>
+
 
       {/* Find parking button */}
       <View style={styles.buttonContainer}>
@@ -150,5 +163,19 @@ const styles = StyleSheet.create({
     bottom: 140,
     width: "100%",
     alignItems: "center",
-  },
+  }, 
+  spinnerContainer: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: -200, // 👈 lifts it up
+},
+
+loadingText: {
+  marginTop: 10,
+  fontSize: 16,
+  color: "white",
+  textAlign: "center",
+},
+
 });
