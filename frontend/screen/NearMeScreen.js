@@ -15,6 +15,7 @@ import SearchBar from "../components/NearMe/SearchBar";
 import BottomSheetModal from "../components/NearMe/BottomSheetModal";
 import { ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MiniSpinner from "../components/Registration/MiniSpinner";
 
 
 export default function NearMeScreen() {
@@ -57,15 +58,14 @@ export default function NearMeScreen() {
     setSearchQuery("");
   };
 
-  if (isLoading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#0195F5" />
-        <Text style={styles.loaderText}>Loading map...</Text>
-      </View>
-    );
-  }
-
+ if (isLoading) {
+  return (
+    <View style={styles.loaderContainer}>
+      <MiniSpinner size={40} color="#0195F5" />
+      <Text style={styles.loaderText}>Loading map...</Text>
+    </View>
+  );
+}
   if (isError) {
     return (
       <Text style={{ padding: 20, color: "red" }}>
