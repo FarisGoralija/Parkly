@@ -149,12 +149,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff", // or "#3A3A3C" if you're in dark theme
+    backgroundColor: "#fff", 
   },
   loaderText: {
     marginTop: 12,
     fontSize: 16,
-    color: "#333", // or "#fff" for dark theme
+    color: "#333", 
     fontWeight: "600",
   },
 });
