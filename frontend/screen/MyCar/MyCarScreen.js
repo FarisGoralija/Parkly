@@ -15,25 +15,25 @@ import { useCar } from "../../context/CarContext";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import endpoints from "../../api/endpoints";
-
+import MiniSpinner from "../../components/Registration/MiniSpinner";
+ 
 const MyCarScreen = ({ navigation }) => {
   const { cars, setCars } = useCar();
-
+ 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [selectedDeleteIndex, setSelectedDeleteIndex] = useState(null);
   const [loadingCars, setLoadingCars] = useState(true);
-
-
+ 
   const confirmDeleteCar = (index) => {
     setSelectedDeleteIndex(index);
     setIsDeleteModalVisible(true);
   };
-
+ 
   const deleteCarFromApi = async (carId) => {
     try {
       const token = await AsyncStorage.getItem("auth_token");
       const user = JSON.parse(await AsyncStorage.getItem("user"));
-
+ 
       const response = await fetch(endpoints.deleteUserCar(user.id, carId), {
         method: "DELETE",
         headers: {
@@ -41,7 +41,7 @@ const MyCarScreen = ({ navigation }) => {
           Accept: "application/json",
         },
       });
-
+ 
       if (!response.ok) {
         console.warn("Failed to delete car");
       }
@@ -49,58 +49,56 @@ const MyCarScreen = ({ navigation }) => {
       console.error("Error deleting car:", error);
     }
   };
-
+ 
   const handleConfirmedDelete = async () => {
     const carId = cars[selectedDeleteIndex]?.id;
     await deleteCarFromApi(carId);
-
+ 
     const updatedCars = [...cars];
     updatedCars.splice(selectedDeleteIndex, 1);
     setCars(updatedCars);
     setIsDeleteModalVisible(false);
   };
-
+ 
   useEffect(() => {
-  const fetchCars = async () => {
-    try {
-      setLoadingCars(true); // start loading
-
-      const token = await AsyncStorage.getItem("auth_token");
-      const user = JSON.parse(await AsyncStorage.getItem("user"));
-      if (!user?.id || !token) return;
-
-      const response = await fetch(endpoints.getUserCars(user.id), {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch cars");
-
-      const carData = await response.json();
-      setCars(carData);
-    } catch (error) {
-      console.error("Error fetching cars:", error);
-    } finally {
-      setLoadingCars(false); // end loading
-    }
-  };
-
-  fetchCars();
-}, []);
-
-
+    const fetchCars = async () => {
+      try {
+        setLoadingCars(true); // start loading
+ 
+        const token = await AsyncStorage.getItem("auth_token");
+        const user = JSON.parse(await AsyncStorage.getItem("user"));
+        if (!user?.id || !token) return;
+ 
+        const response = await fetch(endpoints.getUserCars(user.id), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+ 
+        if (!response.ok) throw new Error("Failed to fetch cars");
+ 
+        const carData = await response.json();
+        setCars(carData);
+      } catch (error) {
+        console.error("Error fetching cars:", error);
+      } finally {
+        setLoadingCars(false); // end loading
+      }
+    };
+ 
+    fetchCars();
+  }, []);
+ 
   return (
     <View style={styles.container}>
       <GrayHeader title="My cars" />
-
       {loadingCars ? (
-  <View style={styles.emptyContainer}>
-    <Text style={styles.emptyText}>Loading cars...</Text>
-  </View>
-) : cars.length === 0 ? (
-
+        <View style={styles.emptyContainer}>
+          <MiniSpinner size={40} color="#ffffff" />
+          <Text style={styles.loadingText}>Loading cars...</Text>
+        </View>
+      ) : cars.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Car width={200} height={200} />
           <Text style={styles.emptyText}>
@@ -122,7 +120,7 @@ const MyCarScreen = ({ navigation }) => {
           contentContainerStyle={{ paddingTop: 20 }}
         />
       )}
-
+ 
       <View style={styles.buttonContainer}>
         <AddCarButton
           onPress={() =>
@@ -134,7 +132,7 @@ const MyCarScreen = ({ navigation }) => {
           textStyle={{ color: "white" }}
         />
       </View>
-
+ 
       {/* Delete Confirmation Modal */}
       <Modal
         isVisible={isDeleteModalVisible}
@@ -156,7 +154,7 @@ const MyCarScreen = ({ navigation }) => {
           <Text style={{ fontSize: 16, color: "#333", marginBottom: 20 }}>
             Are you sure you want to remove this car from your list?
           </Text>
-
+ 
           <View style={{ flexDirection: "row", gap: 12 }}>
             <TouchableOpacity
               onPress={() => setIsDeleteModalVisible(false)}
@@ -169,7 +167,7 @@ const MyCarScreen = ({ navigation }) => {
             >
               <Text style={{ color: "#000", fontWeight: "600" }}>No</Text>
             </TouchableOpacity>
-
+ 
             <TouchableOpacity
               onPress={handleConfirmedDelete}
               style={{
@@ -187,9 +185,9 @@ const MyCarScreen = ({ navigation }) => {
     </View>
   );
 };
-
+ 
 export default MyCarScreen;
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -212,4 +210,12 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "white",
+    textAlign: "center",
+  },
 });
+ 
+ 
