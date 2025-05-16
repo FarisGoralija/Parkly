@@ -27,10 +27,52 @@ export default function CardDetails({ navigation }) {
   const { addCard } = useCard();
 
   const handleAddCard = () => {
-    const newCard = { cardholderName, cardNumber, expiry, cvv };
-    addCard(newCard); // ✅ add to context
-    navigation.goBack();
+  // Strip spaces from card number for validation
+  const rawCardNumber = cardNumber.replace(/\s/g, "");
+
+  // Validate card number: exactly 16 digits
+  if (!/^\d{16}$/.test(rawCardNumber)) {
+    alert("Card number must be exactly 16 digits.");
+    return;
+  }
+
+  // Validate CVV: exactly 3 digits
+  if (!/^\d{3}$/.test(cvv)) {
+    alert("CVV must be exactly 3 digits.");
+    return;
+  }
+
+  // Validate expiry: MM/YY and date between 05/25 and 12/30
+  const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+  if (!expiryRegex.test(expiry)) {
+    alert("Expiration must be in MM/YY format.");
+    return;
+  }
+
+  const [expMonthStr, expYearStr] = expiry.split("/");
+  const expMonth = parseInt(expMonthStr, 10);
+  const expYear = parseInt(`20${expYearStr}`, 10);
+  const expiryDate = new Date(expYear, expMonth);
+  const minDate = new Date(2025, 4);  // May 2025 (months are 0-based)
+  const maxDate = new Date(2030, 11); // Dec 2030
+
+  if (expiryDate < minDate || expiryDate > maxDate) {
+    alert("Expiration must be between 05/25 and 12/30.");
+    return;
+  }
+
+  // All valid, proceed to save
+  const newCard = {
+    cardholderName,
+    cardNumber,
+    expiry,
+    cvv,
   };
+
+  addCard(newCard);
+  navigation.goBack();
+};
+
 
   const isFormValid = cardholderName && cardNumber && expiry && cvv;
 
