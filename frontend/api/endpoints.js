@@ -23,7 +23,11 @@ const endpoints = {
   addReservation: `${BASE_URL}/reservations`,
   getReservations: `${BASE_URL}/reservations`,
 
+  //Update Profile
+  updateProfile: `${BASE_URL}/profile`,
 
+  //google login
+  googleAuth: `${BASE_URL}/auth/google`,
 };
 
 export default endpoints;
