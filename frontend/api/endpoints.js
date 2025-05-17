@@ -30,6 +30,9 @@ const endpoints = {
   addUserCard: (userId) => `${BASE_URL}/users/${userId}/cards`,
   deleteUserCard: (userId, cardId) => `${BASE_URL}/users/${userId}/cards/${cardId}`,
 
+  getLoggedInUser: `${BASE_URL}/user`,
+
+
 
 };
 

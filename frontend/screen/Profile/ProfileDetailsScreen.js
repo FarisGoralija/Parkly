@@ -18,11 +18,30 @@ import LockIcon from "../../components/svg/LockIcon";
 
 import { useRegistration } from "../../context/RegistrationContext";
 import { isUsernameTaken } from "../../utils/Validation";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import endpoints from "../../api/endpoints";
+
 
 export default function ProfileDetailsScreen() {
   const navigation = useNavigation();
-  const { registrationData, updateRegistrationData } = useRegistration();
-  const { name, email, username, password } = registrationData;
+
+const { data: userData, isLoading, isError } = useQuery({
+  queryKey: ["userProfile"],
+  queryFn: async () => {
+    const token = await AsyncStorage.getItem("auth_token");
+    const res = await axios.get(endpoints.getLoggedInUser, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data.user;
+  },
+});
+
+  const name = userData?.name || "";
+const email = userData?.email || "";
+const username = userData?.username || "";
+
 
   const [modalVisible, setModalVisible] = useState(false);
   const [currentField, setCurrentField] = useState("");
