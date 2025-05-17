@@ -26,6 +26,10 @@ const endpoints = {
     toggleFavorite: `${BASE_URL}/favorites/toggle`,
     getFavorites: `${BASE_URL}/favorites`,
 
+    getUserCards: (userId) => `${BASE_URL}/users/${userId}/cards`,
+  addUserCard: (userId) => `${BASE_URL}/users/${userId}/cards`,
+  deleteUserCard: (userId, cardId) => `${BASE_URL}/users/${userId}/cards/${cardId}`,
+
 
 };
 

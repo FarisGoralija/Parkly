@@ -61,27 +61,27 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
 
   useEffect(() => {
     const fetchAvailability = async () => {
-  if (isVisible && location?.id) {
-    setIsLoadingSpots(true);
-    try {
-      const token = await AsyncStorage.getItem("auth_token");
-      
+      if (isVisible && location?.id) {
+        setIsLoadingSpots(true);
+        try {
+          const token = await AsyncStorage.getItem("auth_token");
 
-      const res = await axios.get(`${endpoints.parking}/${location.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
 
-      setAvailableSpots(res.data.available_spots);
-    } catch (err) {
-      console.warn("Failed to fetch available spots:", err.response?.data || err.message);
-      setAvailableSpots(null);
-    } finally {
-      setIsLoadingSpots(false);
-    }
-  }
-};
+          const res = await axios.get(`${endpoints.parking}/${location.id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          setAvailableSpots(res.data.available_spots);
+        } catch (err) {
+          console.warn("Failed to fetch available spots:", err.response?.data || err.message);
+          setAvailableSpots(null);
+        } finally {
+          setIsLoadingSpots(false);
+        }
+      }
+    };
 
 
     fetchAvailability();
@@ -161,9 +161,9 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -250,15 +250,15 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                     </View>
                     <View style={styles.headerIcons}>
                       <TouchableOpacity
-  onPress={() => {
-    if (location && location.id) {
-      toggleFavorite(location);
-    }
-  }}
-  style={{ marginRight: 16 }}
->
-<HeartIcon liked={isFavorited(location)} />
-</TouchableOpacity>
+                        onPress={() => {
+                          if (location && location.id) {
+                            toggleFavorite(location);
+                          }
+                        }}
+                        style={{ marginRight: 16 }}
+                      >
+                        <HeartIcon liked={isFavorited(location)} />
+                      </TouchableOpacity>
 
                       <TouchableOpacity onPress={onClose}>
                         <CancelIcon size={27} color="#fff" />
@@ -374,7 +374,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   </View>
 
                   <View style={{ flex: 1, marginTop: 20 }}>
-                    {/* Choose Car Button */}
+                    
                     <TouchableOpacity
                       style={styles.chooseCarButton}
                       onPress={() => setShowPicker(!showPicker)}
@@ -388,7 +388,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                       />
                     </TouchableOpacity>
 
-                    {/* Dropdown if opened */}
+                    
                     {showPicker && (
                       <View style={styles.pickerDropdown}>
                         {cars.length === 0 ? (
@@ -498,45 +498,67 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
 
                         {showCardPicker && (
                           <View style={styles.pickerDropdown}>
+
                             {cards.length === 0 ? (
                               <Text
+
                                 style={{
+
                                   color: "#fff",
+
                                   textAlign: "center",
+
                                   paddingVertical: 10,
+
                                 }}
                               >
+
                                 No cards added
                               </Text>
+
                             ) : (
-                              <ScrollView
-                                nestedScrollEnabled
-                                style={{ maxHeight: 80 }}
-                              >
+                              <ScrollView nestedScrollEnabled style={{ maxHeight: 80 }}>
+
                                 {cards.map((card, index) => (
                                   <TouchableOpacity
+
                                     key={index}
+
                                     style={{
+
                                       paddingVertical: 10,
+
                                       paddingHorizontal: 16,
+
                                     }}
+
                                     onPress={() => {
+
                                       setSelectedCard(
-                                        `•••• ${card.cardNumber.slice(-4)}`
+
+                                        `•••• ${card.card_number.slice(-4)}`
+
                                       );
+
                                       setShowCardPicker(false);
+
                                     }}
                                   >
                                     <Text style={{ color: "#fff" }}>
-                                      {card.cardholderName} ••••{" "}
-                                      {card.cardNumber.slice(-4)}
+
+                                      {card.cardholder_name} •••• {card.card_number.slice(-4)}
                                     </Text>
                                   </TouchableOpacity>
+
                                 ))}
                               </ScrollView>
+
                             )}
                           </View>
+
                         )}
+
+
 
                         {/* Add a card */}
                         <TouchableOpacity
@@ -641,7 +663,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
 
                             const adjustedStart = dayjs(
                               `${today} ${fromTime}:00`
-                            ).add(1, "minute"); 
+                            ).add(1, "minute");
                             const selectedEnd = dayjs(
                               `${today} ${untilTime}:00`
                             );

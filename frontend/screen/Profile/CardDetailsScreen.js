@@ -17,34 +17,102 @@ import ChipCard from "../../components/svg/ChipCard";
 import CardBackground from "../../components/svg/CardBackground";
 import Cancel from "../../components/svg/Cancel";
 import { useCard } from "../../context/CardContext";
-
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import endpoints from "../../api/endpoints";
+ 
+ 
 export default function CardDetails({ navigation }) {
   const [cardholderName, setCardholderName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
   const { addCard } = useCard();
+ 
+  const handleAddCard = async () => {
+  // Strip spaces from card number for validation
+  const rawCardNumber = cardNumber.replace(/\s/g, "");
 
-  const handleAddCard = () => {
-    const newCard = { cardholderName, cardNumber, expiry, cvv };
-    addCard(newCard); // ✅ add to context
+  // Validate card number: exactly 16 digits
+  if (!/^\d{16}$/.test(rawCardNumber)) {
+    alert("Card number must be exactly 16 digits.");
+    return;
+  }
+
+  // Validate CVV: exactly 3 digits
+  if (!/^\d{3}$/.test(cvv)) {
+    alert("CVV must be exactly 3 digits.");
+    return;
+  }
+
+  // Validate expiry: MM/YY and date between 05/25 and 12/30
+  const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+  if (!expiryRegex.test(expiry)) {
+    alert("Expiration must be in MM/YY format.");
+    return;
+  }
+
+  const [expMonthStr, expYearStr] = expiry.split("/");
+  const expMonth = parseInt(expMonthStr, 10);
+  const expYear = parseInt(`20${expYearStr}`, 10);
+  const expiryDate = new Date(expYear, expMonth);
+  const minDate = new Date(2025, 4);  // May 2025 (0-based index)
+  const maxDate = new Date(2030, 11); // Dec 2030
+
+  if (expiryDate < minDate || expiryDate > maxDate) {
+    alert("Expiration must be between 05/25 and 12/30.");
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem("auth_token");
+    const user = JSON.parse(await AsyncStorage.getItem("user"));
+
+    if (!token || !user?.id) {
+      console.warn("Missing token or user");
+      return;
+    }
+
+    const payload = {
+      cardholder_name: cardholderName,
+      card_number: rawCardNumber,
+      expiration_date: expiry,
+      cvv_code: cvv,
+    };
+
+    const res = await axios.post(endpoints.addUserCard(user.id), payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Optionally update local context for instant UI feedback
+    if (res.data) {
+      addCard(res.data);
+    }
+
     navigation.goBack();
-  };
+  } catch (err) {
+    console.error("❌ Failed to add card:", err.response?.data || err.message);
+  }
+};
 
+ 
   const isFormValid = cardholderName && cardNumber && expiry && cvv;
-
+ 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <GrayHeader title="Add card" />
-
+ 
         {/* Card Preview */}
         <View style={styles.cardPreview}>
           <View style={StyleSheet.absoluteFill}>
             <CardBackground width="100%" height="100%" />
           </View>
-
+ 
           <ChipCard style={styles.chip} />
           <Text style={styles.cardNumberText}>
             {cardNumber || "•••• •••• •••• ••••"}
@@ -57,7 +125,7 @@ export default function CardDetails({ navigation }) {
           </View>
           <Visa style={styles.visaLogo} />
         </View>
-
+ 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={styles.form}
@@ -80,7 +148,7 @@ export default function CardDetails({ navigation }) {
               </TouchableOpacity>
             )}
           </View>
-
+ 
           {/* Card Number */}
           <View style={styles.inputWrapper}>
             <TextInput
@@ -104,7 +172,7 @@ export default function CardDetails({ navigation }) {
               </TouchableOpacity>
             )}
           </View>
-
+ 
           {/* Expiry */}
           <View style={styles.row}>
             {/* Expiry */}
@@ -133,7 +201,7 @@ export default function CardDetails({ navigation }) {
                 </TouchableOpacity>
               )}
             </View>
-
+ 
             {/* CVV */}
             <View style={[styles.inputWrapper, styles.halfInput]}>
               <TextInput
@@ -159,7 +227,7 @@ export default function CardDetails({ navigation }) {
             </View>
           </View>
         </KeyboardAvoidingView>
-
+ 
         <View style={styles.buttonContainer}>
           <AddCarButton
             buttonText="Add card"
@@ -174,7 +242,7 @@ export default function CardDetails({ navigation }) {
     </TouchableWithoutFeedback>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -246,7 +314,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 16,
   },
-
+ 
   clearIcon: {
     position: "absolute",
     right: 15,

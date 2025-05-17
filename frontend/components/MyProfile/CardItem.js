@@ -3,60 +3,95 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import Visa from "../svg/Visa";
 import TrashIcon from "../svg/TrashIcon";
 
-const CardItem = ({ card, onDelete }) => {
+
+  const CardItem = ({ card, onDelete }) => {
+
   const [showModal, setShowModal] = useState(false);
-
+ 
   return (
-    <>
-      <View style={styles.card}>
+<>
+<View style={styles.card}>
+
         {/* Icon */}
-        <View style={styles.iconContainer}>
-          <Visa width={30} height={30} />
-        </View>
-
+<View style={styles.iconContainer}>
+<Visa width={30} height={30} />
+</View>
+ 
         {/* Info */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.title}>{card.cardholderName}</Text>
-          <Text style={styles.subtitle}>{card.cardNumber}</Text>
-          <Text style={styles.subtitle}>Exp: {card.expiry} | CVV: ***</Text>
-        </View>
+<View style={styles.infoContainer}>
+<Text style={styles.title}>{card.cardholder_name}</Text>
+<Text style={styles.subtitle}>{card.card_number}</Text>
+<Text style={styles.subtitle}>
 
+            Exp: {card.expiration_date} | CVV: ***
+</Text>
+</View>
+ 
         {/* Delete */}
-        <TouchableOpacity onPress={() => setShowModal(true)} style={styles.deleteButton}>
-          <TrashIcon width={24} height={24} />
-        </TouchableOpacity>
-      </View>
+<TouchableOpacity
 
+          onPress={() => setShowModal(true)}
+
+          style={styles.deleteButton}
+>
+<TrashIcon width={24} height={24} />
+</TouchableOpacity>
+</View>
+ 
       {/* Confirm Modal */}
-      <Modal
+<Modal
+
         transparent
+
         animationType="fade"
+
         visible={showModal}
+
         onRequestClose={() => setShowModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Delete this card?</Text>
-            <Text style={styles.modalText}>Are you sure you want to remove this card?</Text>
+>
+<View style={styles.modalOverlay}>
+<View style={styles.modalContent}>
+<Text style={styles.modalTitle}>Delete this card?</Text>
+<Text style={styles.modalText}>
 
+              Are you sure you want to remove this card?
+</Text>
+ 
             <View style={styles.modalButtons}>
-              <TouchableOpacity onPress={() => setShowModal(false)} style={styles.cancelButton}>
-                <Text style={{ color: "#000", fontWeight: "600" }}>No</Text>
-              </TouchableOpacity>
+<TouchableOpacity
 
-              <TouchableOpacity onPress={() => {
-                onDelete();
-                setShowModal(false);
-              }} style={styles.confirmButton}>
-                <Text style={{ color: "#fff", fontWeight: "600" }}>Yes</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </>
+                onPress={() => setShowModal(false)}
+
+                style={styles.cancelButton}
+>
+<Text style={{ color: "#000", fontWeight: "600" }}>No</Text>
+</TouchableOpacity>
+ 
+              <TouchableOpacity
+
+                onPress={() => {
+
+                  onDelete();
+
+                  setShowModal(false);
+
+                }}
+
+                style={styles.confirmButton}
+>
+<Text style={{ color: "#fff", fontWeight: "600" }}>Yes</Text>
+</TouchableOpacity>
+</View>
+</View>
+</View>
+</Modal>
+</>
+
   );
+
 };
+
+ 
 
 export default CardItem;
 
