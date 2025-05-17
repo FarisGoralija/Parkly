@@ -31,6 +31,8 @@ const endpoints = {
   deleteUserCard: (userId, cardId) => `${BASE_URL}/users/${userId}/cards/${cardId}`,
 
   getLoggedInUser: `${BASE_URL}/user`,
+  updateProfile: `${BASE_URL}/profile`,
+
 
 
 
