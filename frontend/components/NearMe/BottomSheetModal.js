@@ -374,7 +374,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                   </View>
 
                   <View style={{ flex: 1, marginTop: 20 }}>
-                    {/* Choose Car Button */}
+                    
                     <TouchableOpacity
                       style={styles.chooseCarButton}
                       onPress={() => setShowPicker(!showPicker)}
@@ -388,7 +388,7 @@ export default function BottomSheetModal({ isVisible, onClose, location }) {
                       />
                     </TouchableOpacity>
 
-                    {/* Dropdown if opened */}
+                    
                     {showPicker && (
                       <View style={styles.pickerDropdown}>
                         {cars.length === 0 ? (
