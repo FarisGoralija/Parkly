@@ -6,17 +6,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
 import GrayHeader from "../../components/common/GrayHeader";
 import ProfileDetailRow from "../../components/MyProfile/ProfileDetailRow";
 import EditFieldModal from "../../components/MyProfile/EditFieldModal";
-
 import User from "../../components/svg/User";
 import MailIcon from "../../components/svg/MailIcon";
 import UsernameIcon from "../../components/svg/UsernameIcon";
 import LockIcon from "../../components/svg/LockIcon";
-
-import { useRegistration } from "../../context/RegistrationContext";
 import { isUsernameTaken } from "../../utils/Validation";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
