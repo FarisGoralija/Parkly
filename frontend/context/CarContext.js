@@ -6,7 +6,7 @@ export const CarProvider = ({ children }) => {
   const [cars, setCars] = useState([]);
 
   const clearCars = () => {
-    console.log("🚿 Clearing cars");
+   
     setCars([]);
   };
 
