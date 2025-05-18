@@ -153,13 +153,14 @@ export default function CustomMap({ parkings = [], onSelectLocation }) {
       >
         {parkings.map((parking) => (
           <Marker
-            key={parking.id}
-            coordinate={{
-              latitude: parking.latitude,
-              longitude: parking.longitude,
-            }}
-            pinColor="green"
-          >
+  key={parking.id}
+  coordinate={{
+    latitude: Number(parking.latitude),
+    longitude: Number(parking.longitude),
+  }}
+  pinColor="green"
+>
+
             <Callout tooltip onPress={() => onSelectLocation(parking)}>
               <TouchableOpacity
                 style={{
