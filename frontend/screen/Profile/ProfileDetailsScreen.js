@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import GrayHeader from "../../components/common/GrayHeader";
 import ProfileDetailRow from "../../components/MyProfile/ProfileDetailRow";
@@ -20,25 +15,27 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import endpoints from "../../api/endpoints";
 import { useQueryClient } from "@tanstack/react-query";
 
-
 export default function ProfileDetailsScreen() {
   const navigation = useNavigation();
 
-const { data: userData, isLoading, isError } = useQuery({
-  queryKey: ["userProfile"],
-  queryFn: async () => {
-    const token = await AsyncStorage.getItem("auth_token");
-    const res = await axios.get(endpoints.getLoggedInUser, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return res.data.user;
-  },
-});
+  const {
+    data: userData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: async () => {
+      const token = await AsyncStorage.getItem("auth_token");
+      const res = await axios.get(endpoints.getLoggedInUser, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return res.data.user;
+    },
+  });
 
   const name = userData?.name || "";
-const email = userData?.email || "";
-const username = userData?.username || "";
-
+  const email = userData?.email || "";
+  const username = userData?.username || "";
 
   const [modalVisible, setModalVisible] = useState(false);
   const [currentField, setCurrentField] = useState("");
@@ -46,6 +43,29 @@ const username = userData?.username || "";
   const [usernameError, setUsernameError] = useState("");
 
   const queryClient = useQueryClient();
+
+  // Username validation function (returns error message or null)
+  const validateUsername = (name) => {
+    const trimmed = name.trim();
+
+    if (/\s/.test(trimmed)) return "Username cannot contain spaces";
+
+    if (trimmed.length < 3) return "Username must be at least 3 characters";
+
+    if (trimmed.length > 25) return "Username must be at most 25 characters";
+
+    if (!/^[a-zA-Z0-9_]+$/.test(trimmed))
+      return "Only letters, numbers, and underscores are allowed";
+
+    if (/^_+$/.test(trimmed)) return "Username cannot be only underscores";
+
+    if (/^\d+$/.test(trimmed)) return "Username cannot be only numbers";
+
+    if (/^[\d_]+$/.test(trimmed))
+      return "Username cannot contain only numbers and underscores";
+
+    return null;
+  };
 
   // Open modal with field name and value
   const openEditModal = (field, value) => {
@@ -56,44 +76,55 @@ const username = userData?.username || "";
   };
 
   const handleSave = async () => {
-  try {
-    if (currentField === "Username" && isUsernameTaken(currentValue)) {
-      setUsernameError("Username unavailable");
-      return;
+    try {
+      if (currentField === "Username") {
+        const error = validateUsername(currentValue);
+        if (error) {
+          setUsernameError(error);
+          return;
+        }
+        if (await isUsernameTaken(currentValue)) {
+          setUsernameError("Username unavailable");
+          return;
+        }
+      }
+
+      const fieldKeyMap = {
+        "Name & surname": "name",
+        Username: "username",
+      };
+
+      const key = fieldKeyMap[currentField];
+      if (!key) return;
+
+      const token = await AsyncStorage.getItem("auth_token");
+
+      const payload = { [key]: currentValue };
+
+      await axios.patch(endpoints.updateProfile, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Refresh user data after updating
+      await queryClient.invalidateQueries(["userProfile"]);
+
+      // Close modal
+      setModalVisible(false);
+    } catch (error) {
+      console.error(
+        "Failed to update profile:",
+        error.response?.data || error.message
+      );
+      if (error.response?.status === 422) {
+        const errors = error.response.data.errors;
+        if (errors?.username) setUsernameError(errors.username[0]);
+      }
     }
+  };
 
-    const fieldKeyMap = {
-      "Name & surname": "name",
-      "Username": "username",
-    };
-
-    const key = fieldKeyMap[currentField];
-    if (!key) return;
-
-    const token = await AsyncStorage.getItem("auth_token");
-
-    const payload = { [key]: currentValue };
-
-    await axios.patch(endpoints.updateProfile, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    // ✅ Refresh user data after updating
-    await queryClient.invalidateQueries(["userProfile"]);
-
-    // ✅ Close modal
-    setModalVisible(false);
-  } catch (error) {
-    console.error("Failed to update profile:", error.response?.data || error.message);
-    if (error.response?.status === 422) {
-      const errors = error.response.data.errors;
-      if (errors?.username) setUsernameError(errors.username[0]);
-    }
-  }
-};
   return (
     <View style={styles.container}>
       <GrayHeader title="Profile Details" />
@@ -126,7 +157,9 @@ const username = userData?.username || "";
           value="•••••••••••"
         />
 
-        <TouchableOpacity onPress={() => navigation.navigate("ChangePasswordScreen")}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ChangePasswordScreen")}
+        >
           <Text style={styles.changePassword}>Change password</Text>
         </TouchableOpacity>
       </View>
