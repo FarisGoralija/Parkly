@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Platform } from "react-native";
+
 
 const CustomBottomTab = ({ state, descriptors, navigation }) => {
   return (
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 10,
     position: "absolute",
-    bottom: 30,
+    bottom: Platform.OS === "android" ? 50 : 30,
     alignSelf: "center",
     width: "90%",
     justifyContent: "space-around",

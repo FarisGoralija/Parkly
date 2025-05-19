@@ -95,7 +95,7 @@ export default function CardDetails({ navigation }) {
 
     navigation.goBack();
   } catch (err) {
-    console.error("❌ Failed to add card:", err.response?.data || err.message);
+    console.error("Failed to add card:", err.response?.data || err.message);
   }
 };
 
