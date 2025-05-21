@@ -23,6 +23,18 @@ const endpoints = {
   addReservation: `${BASE_URL}/reservations`,
   getReservations: `${BASE_URL}/reservations`,
 
+    toggleFavorite: `${BASE_URL}/favorites/toggle`,
+    getFavorites: `${BASE_URL}/favorites`,
+
+    getUserCards: (userId) => `${BASE_URL}/users/${userId}/cards`,
+  addUserCard: (userId) => `${BASE_URL}/users/${userId}/cards`,
+  deleteUserCard: (userId, cardId) => `${BASE_URL}/users/${userId}/cards/${cardId}`,
+
+  getLoggedInUser: `${BASE_URL}/user`,
+  updateProfile: `${BASE_URL}/profile`,
+
+
+
 
 };
 

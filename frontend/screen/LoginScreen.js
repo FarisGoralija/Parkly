@@ -21,6 +21,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import endpoints from "../api/endpoints";
 import MiniSpinner from "../components/Registration/MiniSpinner";
 import { useCar } from "../context/CarContext";
+import { Platform } from "react-native";
+
 
 
 const LoginScreen = () => {
@@ -250,9 +252,10 @@ const styles = StyleSheet.create({
     top: 2,
   },
   footerContainer: {
-    alignItems: "center",
-    paddingBottom: 20,
-  },
+  alignItems: "center",
+  paddingBottom: Platform.OS === "android" ? 40 : 20, // 👈 increased bottom padding on Android
+},
+
   inputField: {
     width: "100%",
     marginBottom: 18,
@@ -264,22 +267,23 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 4,
   },
-  appleIcon: {
-    width: 17.33,
-    height: 21,
-    position: "relative",
-    left: 107,
-    bottom: 8,
-    zIndex: 1,
-  },
-  googleIcon: {
-    width: 16.5,
-    height: 19,
-    position: "relative",
-    left: 105,
-    bottom: 7,
-    zIndex: 1,
-  },
+ appleIcon: {
+  width: 17.33,
+  height: 21,
+  position: "relative",
+  bottom: 8,
+  zIndex: 1,
+  left: Platform.OS === "android" ? 90 : 107, // 👈 adjusted for Android
+},
+googleIcon: {
+  width: 16.5,
+  height: 19,
+  position: "relative",
+  bottom: 7,
+  zIndex: 1,
+  left: Platform.OS === "android" ? 85 : 105, // 👈 adjusted for Android
+},
+
   registerContainer: {
     flexDirection: "row",
     alignItems: "center",

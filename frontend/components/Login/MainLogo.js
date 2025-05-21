@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat Alternates',
     fontWeight: 'bold',
     color: '#4F7AB4',
-    height: 61,
+    lineHeight: 60, 
     marginBottom: 59,
   },
   bold: {

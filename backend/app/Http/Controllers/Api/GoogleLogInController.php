@@ -7,64 +7,60 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use Google\Client as Google_Client;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
+
+
 
 
 class GoogleLogInController extends Controller
 {
 
-    public function handleGoogleLogin(Request $request)
+    public function handleGoogleCallback()
     {
-        $request->validate([
-            'id_token' => 'required|string',
-        ]);
+        try {
+            /** @var \Laravel\Socialite\Two\AbstractProvider $googleDriver */
+            $googleDriver = Socialite::driver('google');
+            $googleUser = $googleDriver->stateless()->user();
 
-        $idToken = $request->input('id_token');
 
-        $response = Http::get('https://oauth2.googleapis.com/tokeninfo', [
-            'id_token' => $idToken,
-        ]);
+            $user = User::where('email', $googleUser->getEmail())->first();
 
-        if ($response->failed()) {
-            return response()->json(['error' => 'Invalid ID token.'], 401);
-        }
+            if (!$user) {
 
-        $payload = $response->json();
-
-        // Optional audience check
-        if ($payload['aud'] !== env('GOOGLE_CLIENT_ID')) {
-            return response()->json(['error' => 'Invalid audience.'], 401);
-        }
-
-        $email = $payload['email'];
-        $name = $payload['name'];
-
-        $user = User::where('email', $email)->first();
-
-        if (!$user) {
-            $usernameBase = explode('@', $email)[0];
-            $username = $usernameBase;
-            $i = 1;
-
-            while (User::where('username', $username)->exists()) {
-                $username = $usernameBase . $i;
-                $i++;
+                $user = User::create([
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'username' => $this->generateUsername($googleUser->getName()),
+                    'password' => Hash::make(Str::random(16)),
+                ]);
             }
 
-            $user = User::create([
-                'name' => $name,
-                'email' => $email,
-                'username' => $username,
-                'password' => Hash::make(uniqid()), // Placeholder password
-            ]);
+            $token = $user->createToken('api-token')->plainTextToken;
+
+            return response()->json([
+                'user' => $user->makeHidden(['password']),
+                'token' => $token,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Unable to login with Google',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    private function generateUsername($name)
+    {
+        $base = Str::slug($name, '_');
+        $username = $base;
+        $counter = 1;
+
+        while (User::where('username', $username)->exists()) {
+            $username = $base . '_' . $counter++;
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user->makeHidden(['password']),
-            'token' => $token,
-        ]);
+        return $username;
     }
 
 }

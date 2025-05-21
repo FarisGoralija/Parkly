@@ -20,7 +20,12 @@ export default function EditFieldModal({
   error,
 }) {
   return (
-    <Modal transparent animationType="slide" visible={visible} onRequestClose={onClose}>
+    <Modal
+      transparent
+      animationType="slide"
+      visible={visible}
+      onRequestClose={onClose}
+    >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           {/* Close Button */}
@@ -32,12 +37,21 @@ export default function EditFieldModal({
           <TextInput
             style={styles.modalInput}
             value={value}
-            onChangeText={onChangeText}
+            onChangeText={(text) => {
+              const formattedText =
+                fieldLabel === "Username" ? text.toLowerCase() : text;
+              onChangeText(formattedText);
+            }}
             placeholder={`Enter ${fieldLabel.toLowerCase()}`}
             placeholderTextColor="#aaa"
           />
+
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
-          <BlueUniversalButton style={styles.modalButton} onPress={onSave} text={"Save"} />
+          <BlueUniversalButton
+            style={styles.modalButton}
+            onPress={onSave}
+            text={"Save"}
+          />
         </View>
       </View>
     </Modal>

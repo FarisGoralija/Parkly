@@ -14,6 +14,9 @@ import CustomMap from "../components/NearMe/Map";
 import SearchBar from "../components/NearMe/SearchBar";
 import BottomSheetModal from "../components/NearMe/BottomSheetModal";
 import { ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import MiniSpinner from "../components/Registration/MiniSpinner";
+
 
 export default function NearMeScreen() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,9 +29,17 @@ export default function NearMeScreen() {
   } = useQuery({
     queryKey: ["parkings"],
     queryFn: async () => {
-      const res = await axios.get(endpoints.parking);
-      return Array.isArray(res.data) ? res.data : res.data?.data ?? [];
+  const token = await AsyncStorage.getItem("auth_token");
+  if (!token) throw new Error("No auth token found");
+
+  const res = await axios.get(endpoints.parking, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
+  });
+  return Array.isArray(res.data) ? res.data : res.data?.data ?? [];
+},
+
   });
 
   const filteredResults = useMemo(() => {
@@ -47,15 +58,14 @@ export default function NearMeScreen() {
     setSearchQuery("");
   };
 
-  if (isLoading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#0195F5" />
-        <Text style={styles.loaderText}>Loading map...</Text>
-      </View>
-    );
-  }
-
+ if (isLoading) {
+  return (
+    <View style={styles.loaderContainer}>
+      <MiniSpinner size={40} color="#0195F5" />
+      <Text style={styles.loaderText}>Loading map...</Text>
+    </View>
+  );
+}
   if (isError) {
     return (
       <Text style={{ padding: 20, color: "red" }}>
@@ -139,12 +149,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff", // or "#3A3A3C" if you're in dark theme
+    backgroundColor: "#fff", 
   },
   loaderText: {
     marginTop: 12,
     fontSize: 16,
-    color: "#333", // or "#fff" for dark theme
+    color: "#333", 
     fontWeight: "600",
   },
 });

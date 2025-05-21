@@ -3,6 +3,7 @@ import { Alert, StyleSheet, View } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import { Text, TouchableOpacity } from "react-native";
 import * as Location from "expo-location";
+import { Platform } from "react-native";
 
 // Custom Google Maps Style
 const customMapStyle = [
@@ -152,15 +153,23 @@ export default function CustomMap({ parkings = [], onSelectLocation }) {
         followsUserLocation={false}
       >
         {parkings.map((parking) => (
-          <Marker
+       <Marker
             key={parking.id}
             coordinate={{
-              latitude: parking.latitude,
-              longitude: parking.longitude,
+              latitude: Number(parking.latitude),
+              longitude: Number(parking.longitude),
             }}
             pinColor="green"
+            {...(Platform.OS === "android" && {
+              onPress: () => onSelectLocation(parking), // ✅ Only on Android
+            })}
           >
-            <Callout tooltip onPress={() => onSelectLocation(parking)}>
+            <Callout
+              tooltip
+              {...(Platform.OS === "ios" && {
+                onPress: () => onSelectLocation(parking), // ✅ Keep iOS behavior
+              })}
+            >
               <TouchableOpacity
                 style={{
                   backgroundColor: "#fff",
@@ -172,13 +181,13 @@ export default function CustomMap({ parkings = [], onSelectLocation }) {
                 <Text style={{ fontWeight: "bold", fontSize: 14 }}>
                   {parking.name}
                 </Text>
-              
                 <Text style={{ color: "#007AFF", marginTop: 6 }}>
                   Tap for details
                 </Text>
               </TouchableOpacity>
             </Callout>
           </Marker>
+ 
         ))}
       </MapView>
     </View>

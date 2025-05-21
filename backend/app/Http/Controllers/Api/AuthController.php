@@ -98,6 +98,32 @@ public function login(Request $request)
         'token' => $token,
     ], 200);
 }
+
+public function checkUsername(Request $request)
+{
+    $request->validate([
+        "username" => "required|string",
+    ]);
+
+    $exists = User::where('username', $request->username)->exists();
+
+    return response()->json([
+        "exists" => $exists
+    ]);
+}
+
+public function checkEmail(Request $request)
+{
+    $request->validate([
+        "email" => "required|email",
+    ]);
+
+    $exists = User::where('email', $request->email)->exists();
+
+    return response()->json([
+        "exists" => $exists
+    ]);
+}
 public function logout(Request $request)
 {
     $request->user()->currentAccessToken()->delete();
@@ -193,5 +219,5 @@ public function displayUser(Request $request){
     return response()->json([ "user" => $request->user()->makeHidden(['password'])], 200);
 }
 
-
+// auth finalized
  }

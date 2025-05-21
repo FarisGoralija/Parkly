@@ -33,22 +33,22 @@ export default function Navigation() {
        <CarProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}
       initialRouteName="LoginScreen">
-        <Stack.Screen name="Home" component={BottomTabs} /> 
-        <Stack.Screen name="LoginScreen" component={LoginScreen}/>
-        <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} /> 
+        <Stack.Screen name="Home" component={BottomTabs} options={{ gestureEnabled: false }} /> 
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ gestureEnabled: false }}/>
+        <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen}/> 
         <Stack.Screen name="ForgotVerifyCodeScreen" component={ForgotVerifyCodeScreen} /> 
         <Stack.Screen name="ForgotNewPasswordScreen" component={ForgotNewPasswordScreen} /> 
-        <Stack.Screen name="CarDetailsScreen" component={CarDetailsScreen} />
-        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-        <Stack.Screen name="FavouriteScreen" component={FavouriteScreen} />
-        <Stack.Screen name="AboutUsScreen" component={AboutUsScreen} />
-        <Stack.Screen name="ProfileDetailsScreen" component={ProfileDetailsScreen} />
-        <Stack.Screen name="MyCardScreen" component={MyCardScreen} />
-        <Stack.Screen name="CardDetails" component={CardDetails} />
-        <Stack.Screen name="RegistrationPasswordScreen" component={RegistrationPasswordScreen} />
-        <Stack.Screen name="RegistrationUsernameScreen" component={RegistrationUsernameScreen} />
-        <Stack.Screen name="RegistrationEmailScreen" component={RegistrationEmailScreen} />
-        <Stack.Screen name="RegistrationNameScreen" component={RegistrationNameScreen} />
+        <Stack.Screen name="CarDetailsScreen" component={CarDetailsScreen} options={{ gestureEnabled: false }}/>
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ gestureEnabled: false }}/>
+        <Stack.Screen name="FavouriteScreen" component={FavouriteScreen}/>
+        <Stack.Screen name="AboutUsScreen" component={AboutUsScreen}/>
+        <Stack.Screen name="ProfileDetailsScreen" component={ProfileDetailsScreen}/>
+        <Stack.Screen name="MyCardScreen" component={MyCardScreen}/>
+        <Stack.Screen name="CardDetails" component={CardDetails}/>
+        <Stack.Screen name="RegistrationPasswordScreen" component={RegistrationPasswordScreen}/>
+        <Stack.Screen name="RegistrationUsernameScreen" component={RegistrationUsernameScreen}/>
+        <Stack.Screen name="RegistrationEmailScreen" component={RegistrationEmailScreen}/>
+        <Stack.Screen name="RegistrationNameScreen" component={RegistrationNameScreen}/>
         <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen}/>
 
       </Stack.Navigator>
