@@ -219,5 +219,5 @@ public function displayUser(Request $request){
     return response()->json([ "user" => $request->user()->makeHidden(['password'])], 200);
 }
 
-
+// auth finalized
  }
