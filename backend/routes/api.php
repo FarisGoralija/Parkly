@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\GoogleLogInController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UpdateProfileController;
+use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -28,6 +29,12 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'displayUser']);
 Route::patch('/profile', [UpdateProfileController::class, 'updateProfile'])->middleware('auth:sanctum');
 Route::post('/auth/google', [GoogleLogInController::class, 'handleGoogleLogin']);
+Route::get('/auth/redirect/google', function () {
+    /** @var AbstractProvider $googleDriver */
+    $googleDriver = Socialite::driver('google');
+    return $googleDriver->stateless()->redirect();
+});
+Route::get('/auth/callback/google', [GoogleLoginController::class, 'handleGoogleCallback']);
 Route::get('/check-username', [AuthController::class, 'checkUsername']);
 Route::get('/check-email', [AuthController::class, 'checkEmail']);
 
