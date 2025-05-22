@@ -18,8 +18,10 @@ class PasswordResetCode extends Mailable
     }
 
     public function build()
-    {
-        return $this->subject('Your Password Reset Code')
-                    ->view('emails.password_reset_code');
-    }
+{
+    return $this->subject('Your Password Reset Code')
+                ->text('emails.password_reset_code_plain');
+}
+
+
 }

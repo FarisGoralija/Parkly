@@ -35,9 +35,14 @@ const ForgotPasswordScreen = () => {
     }
 
     setIsSubmitting(true); // Start spinner
+    console.log("Submitting email for reset:", email);
+
 
     try {
-      const response = await axios.post(endpoints.forgotPassword, { email });
+      const response = await axios.post(endpoints.forgotPassword, {
+  email: email.trim(),
+});
+
 
       if (response.status === 200) {
         setErrorMessage("");

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\PasswordResetCode;
 use Illuminate\Mail\Mailable;
 
+
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -151,8 +152,9 @@ public function deleteUser($id)
 
 public function sendResetCode(Request $request)
 {
-    $request->validate(["email" => "required|email|exists:users,email"]);
-    $code = random_int(10000,99999);
+    $request->validate(['email' => 'required|email|exists:users,email']);
+
+    $code = random_int(10000, 99999);
 
     DB::table('password_resets')->updateOrInsert(
         ['email' => $request->email],
