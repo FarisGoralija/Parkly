@@ -44,6 +44,7 @@ const LoginScreen = () => {
       "281629679014-eg9hsan1g883l6qoagjofeunj4tmepbp.apps.googleusercontent.com",
     webClientId:
       "281629679014-osf8g8r404ptna52escces0h1voun901.apps.googleusercontent.com",
+    redirectUri: "https://auth.expo.io/@erol19/Parkly",
   });
 
   const navigation = useNavigation();
@@ -65,17 +66,18 @@ const LoginScreen = () => {
 
     loadFontsAndCheckToken();
   }, [navigation]);
-
-  useEffect(() => {
+useEffect(() => {
   const handleGoogleLogin = async () => {
     if (response?.type === "success") {
-      const { authentication } = response;
+      const { code } = response.params; // <-- this is what Laravel expects
+
       try {
         const res = await fetch(endpoints.googleLogin, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${authentication.accessToken}`,
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify({ code }), // <-- send the code
         });
 
         const data = await res.json();

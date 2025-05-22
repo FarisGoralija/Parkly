@@ -14,8 +14,21 @@ class GoogleLogInController extends Controller
     public function handleGoogleLogin(Request $request)
     {
         try {
-            // ✅ Use the access token sent from frontend
-            $googleUser = Socialite::driver('google')->userFromToken($request->bearerToken());
+            $code = $request->input('code'); // ← you send this from frontend
+
+            if (! $code) {
+                return response()->json([
+                    'error' => 'Invalid request',
+                    'message' => 'Authorization code is missing.',
+                ], 400);
+            }
+
+            // Exchange code for access token manually
+            $accessTokenResponse = Socialite::driver('google')->stateless()->getAccessTokenResponse($code);
+            $accessToken = $accessTokenResponse['access_token'];
+
+            // Get user info from token
+            $googleUser = Socialite::driver('google')->stateless()->userFromToken($accessToken);
 
             $user = User::where('email', $googleUser->getEmail())->first();
 
