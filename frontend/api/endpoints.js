@@ -1,4 +1,5 @@
 const BASE_URL = "https://parkly-production.up.railway.app/api";
+//const LOCAL_URL = "http://10.33.184.152:8000/api"
 
 const endpoints = {
   // Parking API
@@ -16,9 +17,9 @@ const endpoints = {
   deleteUserCar: (userId, carId) => `${BASE_URL}/users/${userId}/cars/${carId}`,
 
   // Password Reset
-  forgotPassword: `${BASE_URL}/forgot-password`,
-  resetPassword: `${BASE_URL}/reset-password`,
-  verifyCode: `${BASE_URL}/verify-reset-code`,
+  forgotPassword: `${LOCAL_URL}/forgot-password`,
+  resetPassword: `${LOCAL_URL}/reset-password`,
+  verifyCode: `${LOCAL_URL}/verify-reset-code`,
 
   addReservation: `${BASE_URL}/reservations`,
   getReservations: `${BASE_URL}/reservations`,
