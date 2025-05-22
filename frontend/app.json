@@ -7,6 +7,8 @@
     "icon": "./assets/parkly.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "scheme": "parkly",                 
+    "platforms": ["ios", "android", "web"], 
     "splash": {
       "image": "./assets/parkly.png",
       "resizeMode": "contain",
@@ -23,6 +25,9 @@
     },
     "web": {
       "favicon": "./assets/parkly.png"
-    }
+    },
+    "plugins": [
+      "expo-web-browser"
+    ]
   }
 }

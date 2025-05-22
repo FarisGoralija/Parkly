@@ -22,8 +22,10 @@ import endpoints from "../api/endpoints";
 import MiniSpinner from "../components/Registration/MiniSpinner";
 import { useCar } from "../context/CarContext";
 import { Platform } from "react-native";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
 
-
+WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -33,7 +35,16 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(true); // Controls screen loading on mount
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Controls login button state
   const { clearCars } = useCar(); // ✅ add this line inside the component
-  
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    expoClientId:
+      "281629679014-osf8g8r404ptna52escces0h1voun901.apps.googleusercontent.com",
+    iosClientId:
+      "281629679014-lpv62ukp4ta56umotaomom116co4l2cf.apps.googleusercontent.com",
+    androidClientId:
+      "281629679014-eg9hsan1g883l6qoagjofeunj4tmepbp.apps.googleusercontent.com",
+    webClientId:
+      "281629679014-osf8g8r404ptna52escces0h1voun901.apps.googleusercontent.com",
+  });
 
   const navigation = useNavigation();
 
@@ -54,6 +65,37 @@ const LoginScreen = () => {
 
     loadFontsAndCheckToken();
   }, [navigation]);
+
+  useEffect(() => {
+  const handleGoogleLogin = async () => {
+    if (response?.type === "success") {
+      const { authentication } = response;
+      try {
+        const res = await fetch(endpoints.googleLogin, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authentication.accessToken}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          await AsyncStorage.setItem("auth_token", data.token);
+          await AsyncStorage.setItem("user", JSON.stringify(data.user));
+          navigation.navigate("Home");
+        } else {
+          Alert.alert("Google Login Failed", data.message || "Try again.");
+        }
+      } catch (err) {
+        Alert.alert("Error", err.message);
+      }
+    }
+  };
+
+  handleGoogleLogin();
+}, [response]);
+
 
   const handleLogin = async () => {
     if (!username || !password) return;
@@ -150,7 +192,9 @@ const LoginScreen = () => {
             <BlueUniversalButton
               disabled={isLoginDisabled}
               onPress={handleLogin}
-              text={isLoggingIn ? <MiniSpinner size={18} color="white" /> : "Log in"}
+              text={
+                isLoggingIn ? <MiniSpinner size={18} color="white" /> : "Log in"
+              }
             />
           </View>
 
@@ -169,7 +213,10 @@ const LoginScreen = () => {
               source={require("../assets/icons/pngwing2.png")}
               style={styles.googleIcon}
             />
-            <SocialButton text="Login with Google" onPress={() => {}} />
+            <SocialButton
+              text="Login with Google"
+              onPress={() => promptAsync()}
+            />
           </View>
         </View>
 
@@ -252,9 +299,9 @@ const styles = StyleSheet.create({
     top: 2,
   },
   footerContainer: {
-  alignItems: "center",
-  paddingBottom: Platform.OS === "android" ? 40 : 20, // 👈 increased bottom padding on Android
-},
+    alignItems: "center",
+    paddingBottom: Platform.OS === "android" ? 40 : 20, // 👈 increased bottom padding on Android
+  },
 
   inputField: {
     width: "100%",
@@ -267,22 +314,22 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 4,
   },
- appleIcon: {
-  width: 17.33,
-  height: 21,
-  position: "relative",
-  bottom: 8,
-  zIndex: 1,
-  left: Platform.OS === "android" ? 90 : 107, // 👈 adjusted for Android
-},
-googleIcon: {
-  width: 16.5,
-  height: 19,
-  position: "relative",
-  bottom: 7,
-  zIndex: 1,
-  left: Platform.OS === "android" ? 85 : 105, // 👈 adjusted for Android
-},
+  appleIcon: {
+    width: 17.33,
+    height: 21,
+    position: "relative",
+    bottom: 8,
+    zIndex: 1,
+    left: Platform.OS === "android" ? 90 : 107, // 👈 adjusted for Android
+  },
+  googleIcon: {
+    width: 16.5,
+    height: 19,
+    position: "relative",
+    bottom: 7,
+    zIndex: 1,
+    left: Platform.OS === "android" ? 85 : 105, // 👈 adjusted for Android
+  },
 
   registerContainer: {
     flexDirection: "row",

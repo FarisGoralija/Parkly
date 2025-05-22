@@ -31,12 +31,6 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'displayUser']);
 Route::patch('/profile', [UpdateProfileController::class, 'updateProfile'])->middleware('auth:sanctum');
 Route::post('/auth/google', [GoogleLogInController::class, 'handleGoogleLogin']);
-Route::get('/auth/redirect/google', function () {
-    /** @var AbstractProvider $googleDriver */
-    $googleDriver = Socialite::driver('google');
-    return $googleDriver->stateless()->redirect();
-});
-Route::get('/auth/callback/google', [GoogleLoginController::class, 'handleGoogleCallback']);
 Route::get('/check-username', [AuthController::class, 'checkUsername']);
 Route::get('/check-email', [AuthController::class, 'checkEmail']);
 

@@ -33,6 +33,10 @@ const endpoints = {
   getLoggedInUser: `${BASE_URL}/user`,
   updateProfile: `${BASE_URL}/profile`,
 
+googleLogin: `${BASE_URL}/auth/google`
+
+
+
 
 
 
