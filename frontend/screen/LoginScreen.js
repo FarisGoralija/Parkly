@@ -24,6 +24,7 @@ import { useCar } from "../context/CarContext";
 import { Platform } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
+import { makeRedirectUri } from "expo-auth-session";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -35,18 +36,17 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(true); // Controls screen loading on mount
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Controls login button state
   const { clearCars } = useCar(); // ✅ add this line inside the component
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId:
-      "281629679014-osf8g8r404ptna52escces0h1voun901.apps.googleusercontent.com",
-    iosClientId:
-      "281629679014-lpv62ukp4ta56umotaomom116co4l2cf.apps.googleusercontent.com",
-    androidClientId:
-      "281629679014-eg9hsan1g883l6qoagjofeunj4tmepbp.apps.googleusercontent.com",
-    webClientId:
-      "281629679014-osf8g8r404ptna52escces0h1voun901.apps.googleusercontent.com",
-    redirectUri: "https://auth.expo.io/@erol19/Parkly",
-  });
-
+ const [request, response, promptAsync] = Google.useAuthRequest({
+  expoClientId: "281629679014-osf8g8r404ptna52escces0h1voun901.apps.googleusercontent.com",
+  iosClientId: "281629679014-lpv62ukp4ta56umotaomom116co4l2cf.apps.googleusercontent.com",
+  androidClientId: "281629679014-eg9hsan1g883l6qoagjofeunj4tmepbp.apps.googleusercontent.com",
+  webClientId: "281629679014-osf8g8r404ptna52escces0h1voun901.apps.googleusercontent.com",
+  redirectUri: makeRedirectUri({
+    useProxy: true, // Use Expo's proxy
+    native: "parkly://redirect"
+  }),
+  responseType: "code",
+});
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -65,11 +65,10 @@ const LoginScreen = () => {
     };
 
     loadFontsAndCheckToken();
-  }, [navigation]);
-useEffect(() => {
+  }, [navigation]);useEffect(() => {
   const handleGoogleLogin = async () => {
-    if (response?.type === "success") {
-      const { code } = response.params; // <-- this is what Laravel expects
+    if (response?.type === "success" && response.params?.code) {
+      const { code } = response.params;
 
       try {
         const res = await fetch(endpoints.googleLogin, {
@@ -77,7 +76,7 @@ useEffect(() => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ code }), // <-- send the code
+          body: JSON.stringify({ code }), // Send the auth code
         });
 
         const data = await res.json();
@@ -87,7 +86,7 @@ useEffect(() => {
           await AsyncStorage.setItem("user", JSON.stringify(data.user));
           navigation.navigate("Home");
         } else {
-          Alert.alert("Google Login Failed", data.message || "Try again.");
+          Alert.alert("Login Failed", data.message || "Try again.");
         }
       } catch (err) {
         Alert.alert("Error", err.message);
@@ -97,6 +96,7 @@ useEffect(() => {
 
   handleGoogleLogin();
 }, [response]);
+
 
 
   const handleLogin = async () => {

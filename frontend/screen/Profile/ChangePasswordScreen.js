@@ -13,6 +13,8 @@ import BlueUniversalButton from "../../components/common/BlueUniversalButton";
 import TitleText from "../../components/common/TitleText";
 import { useRegistration } from "../../context/RegistrationContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import endpoints from "../../api/endpoints";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ChangePasswordScreen = () => {
   const { updateRegistrationData } = useRegistration();
@@ -24,17 +26,49 @@ const ChangePasswordScreen = () => {
   const [secureCurrent, setSecureCurrent] = useState(true);
   const [secureNew, setSecureNew] = useState(true);
 
-  const handleChangePassword = () => {
-    if (newPassword.length < 6) {
-      setErrorMessage("Password should be at least 6 characters.");
+  const handleChangePassword = async () => {
+  if (newPassword.length < 6) {
+    setErrorMessage("Password should be at least 6 characters.");
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem("auth_token");
+
+    const response = await fetch(endpoints.updateProfile, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        current_password: currentPassword,
+        password: newPassword,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // Handle validation or password mismatch errors
+      if (data.errors?.current_password) {
+        setErrorMessage(data.errors.current_password[0]);
+      } else if (data.errors?.password) {
+        setErrorMessage(data.errors.password[0]);
+      } else {
+        setErrorMessage("Something went wrong. Try again.");
+      }
       return;
     }
 
+    // Success
     setErrorMessage("");
-    updateRegistrationData("password", newPassword);
     navigation.goBack();
-  };
-
+  } catch (error) {
+    console.error("Password update failed:", error);
+    setErrorMessage("Network error. Please try again.");
+  }
+};
   const isSubmitDisabled = newPassword.trim() === "";
 
   return (

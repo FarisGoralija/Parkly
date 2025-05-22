@@ -3,41 +3,55 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Image,
   Text,
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // Import navigation hook
+import { useNavigation } from "@react-navigation/native";
 import InputField from "../../components/common/InputField.js";
 import BlueUniversalButton from "../../components/common/BlueUniversalButton.js";
 import TitleText from "../../components/common/TitleText.js";
-import { useRegistration } from "../../context/RegistrationContext.js"; // Import the context
+import { useRegistration } from "../../context/RegistrationContext.js";
 import { isValidEmail } from "../../utils/Validation.js";
 import { Ionicons } from "@expo/vector-icons";
+import endpoints from "../../api/endpoints"; // ✅ Import endpoints
 
 const RegistrationEmailScreen = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(true);
-  const { updateRegistrationData } = useRegistration(); // Access the context update function
-  const navigation = useNavigation(); // Initialize navigation
+  const { updateRegistrationData } = useRegistration();
+  const navigation = useNavigation();
 
   const isSubmitDisabled = email.trim() === "";
 
-  // Handle email validation and updating context
-  const handleResetPassword = () => {
-    if (isValidEmail(email)) {
-      setErrorMessage("");
-      setIsEmailValid(true);
-      updateRegistrationData("email", email); // Store email in context
-
-      console.log("Email created:", email);
-
-      // Navigate to the next screen (e.g., RegistrationPasswordScreen)
-      navigation.navigate("RegistrationPasswordScreen");
-    } else {
+  // ✅ Async email validation with backend
+  const handleResetPassword = async () => {
+    if (!isValidEmail(email)) {
       setErrorMessage("Please enter a valid email address.");
+      setIsEmailValid(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${endpoints.checkEmail}?email=${encodeURIComponent(email)}`
+      );
+      const data = await response.json();
+
+      if (data.exists) {
+        setErrorMessage("This email is already registered.");
+        setIsEmailValid(false);
+      } else {
+        setErrorMessage("");
+        setIsEmailValid(true);
+        updateRegistrationData("email", email);
+        console.log("Email created:", email);
+        navigation.navigate("RegistrationPasswordScreen");
+      }
+    } catch (error) {
+      console.error("Email check failed", error);
+      setErrorMessage("Error checking email. Please try again.");
       setIsEmailValid(false);
     }
   };

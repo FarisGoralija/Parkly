@@ -15,6 +15,7 @@ import BlueUniversalButton from "../../components/common/BlueUniversalButton";
 import { useRegistration } from "../../context/RegistrationContext"; // Import the context
 import { isValidUsername } from "../../utils/Validation"; // Import the validation utility
 import { Ionicons } from "@expo/vector-icons";
+import endpoints from "../../api/endpoints"; 
 
 const RegistrationUsernameScreen = () => {
   const [username, setUsername] = useState("");
@@ -25,23 +26,36 @@ const RegistrationUsernameScreen = () => {
 
   const isSubmitDisabled = username.trim() === "";
 
-  const handleCreateUsername = () => {
-    const result = isValidUsername(username); // Check the validity only when button is pressed
+  const handleCreateUsername = async () => {
+  const result = isValidUsername(username);
 
-    if (result.valid) {
+  if (!result.valid) {
+    setErrorMessage(result.message);
+    setIsValid(false);
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${endpoints.checkUsername}?username=${encodeURIComponent(username)}`
+    );
+    const data = await response.json();
+
+    if (data.exists) {
+      setErrorMessage("This username is already taken.");
+      setIsValid(false);
+    } else {
       setErrorMessage("");
       setIsValid(true);
-      console.log("Username created:", username);
-
-      // Update context with username and navigate to the next screen
-      updateRegistrationData("username", username); // Update context with username
-      navigation.navigate("RegistrationEmailScreen"); // Navigate to the next screen
-    } else {
-      setErrorMessage(result.message); // Display error message
-      setIsValid(false);
+      updateRegistrationData("username", username);
+      navigation.navigate("RegistrationEmailScreen");
     }
-  };
-
+  } catch (error) {
+    console.error("Username check failed", error);
+    setErrorMessage("Error checking username. Please try again.");
+    setIsValid(false);
+  }
+};
   // Clear input field
   const handleClearInput = () => {
     setUsername("");
