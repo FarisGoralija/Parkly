@@ -1,5 +1,5 @@
 const BASE_URL = "https://parkly-production.up.railway.app/api";
-//const LOCAL_URL = "http://10.33.184.152:8000/api"
+const LOCAL_URL = "http://192.168.0.10:8000/api"
 
 const endpoints = {
   // Parking API
