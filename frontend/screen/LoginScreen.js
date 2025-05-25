@@ -36,17 +36,17 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(true); // Controls screen loading on mount
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Controls login button state
   const { clearCars } = useCar(); // ✅ add this line inside the component
- const [request, response, promptAsync] = Google.useAuthRequest({
+   const [request, response, promptAsync] = Google.useAuthRequest({
   expoClientId: "281629679014-osf8g8r404ptna52escces0h1voun901.apps.googleusercontent.com",
   iosClientId: "281629679014-lpv62ukp4ta56umotaomom116co4l2cf.apps.googleusercontent.com",
   androidClientId: "281629679014-eg9hsan1g883l6qoagjofeunj4tmepbp.apps.googleusercontent.com",
   webClientId: "281629679014-osf8g8r404ptna52escces0h1voun901.apps.googleusercontent.com",
-  redirectUri: makeRedirectUri({
-    useProxy: true, // Use Expo's proxy
-    native: "parkly://redirect"
-  }),
+  redirectUri: "https://5db9-77-78-225-89.ngrok-free.app/api/auth/google/callback",
+  useProxy: false,
   responseType: "code",
 });
+
+
   const navigation = useNavigation();
 
   useEffect(() => {

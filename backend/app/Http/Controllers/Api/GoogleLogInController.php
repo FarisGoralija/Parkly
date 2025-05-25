@@ -78,11 +78,13 @@ class GoogleLogInController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
 
-        // Redirect back to mobile app or web app with token
-        return redirect()->to("parkly://redirect?token={$token}");
+        // Redirect back to mobile app
+        return response()->json([
+    'token' => $token,
+    'user' => $user,
+    'message' => 'Redirect successful'
+]);
 
-        // Or for web:
-        // return redirect()->to("https://your-frontend-app.com/login-success?token={$token}");
 
     } catch (\Exception $e) {
         return response()->json([
@@ -93,7 +95,7 @@ class GoogleLogInController extends Controller
 }
 
 
-    private function generateUsername($name)
+      private function generateUsername($name)
     {
         $base = Str::slug($name, '_');
         $username = $base;

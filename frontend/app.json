@@ -1,7 +1,9 @@
 {
   "expo": {
+    
     "name": "Parkly",
-    "slug": "Parkly",
+    "slug": "parkly",
+    "owner": "erol19",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/parkly.png",
