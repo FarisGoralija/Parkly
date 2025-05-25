@@ -30,8 +30,9 @@ Route::post('/verify-reset-code', [AuthController::class, 'verifyCode']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'displayUser']);
 Route::patch('/profile', [UpdateProfileController::class, 'updateProfile'])->middleware('auth:sanctum');
-Route::post('/auth/google', [GoogleLogInController::class, 'handleGoogleLogin']);
+Route::get('/auth/google/redirect', [GoogleLogInController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleLogInController::class, 'googleCallback']);
+Route::post('/auth/google', [GoogleLogInController::class, 'handleGoogleLogin']);
 Route::get('/check-username', [AuthController::class, 'checkUsername']);
 Route::get('/check-email', [AuthController::class, 'checkEmail']);
 
