@@ -56,6 +56,37 @@ class GoogleLogInController extends Controller
         }
     }
 
+    public function googleCallback(Request $request)
+{
+    try {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+
+        $user = User::firstOrCreate(
+            ['email' => $googleUser->getEmail()],
+            [
+                'name' => $googleUser->getName(),
+                'username' => $this->generateUsername($googleUser->getName()),
+                'password' => Hash::make(Str::random(16)),
+            ]
+        );
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        // Redirect back to mobile app or web app with token
+        return redirect()->to("parkly://redirect?token={$token}");
+
+        // Or for web:
+        // return redirect()->to("https://your-frontend-app.com/login-success?token={$token}");
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Google login failed',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+
     private function generateUsername($name)
     {
         $base = Str::slug($name, '_');
