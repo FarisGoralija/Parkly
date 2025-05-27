@@ -35,6 +35,7 @@ Route::get('/auth/google/callback', [GoogleLogInController::class, 'googleCallba
 Route::post('/auth/google', [GoogleLogInController::class, 'handleGoogleLogin']);
 Route::get('/check-username', [AuthController::class, 'checkUsername']);
 Route::get('/check-email', [AuthController::class, 'checkEmail']);
+Route::delete('/users/{id}', [AuthController::class, 'deleteUser'])->middleware('auth:sanctum');
 
 //kera
 
